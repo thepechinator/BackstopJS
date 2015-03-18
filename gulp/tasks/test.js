@@ -2,7 +2,7 @@ var gulp  = require('gulp');
 var fs    = require('fs');
 var spawn = require('child_process').spawn;
 var paths = require('../util/paths');
-
+var argv = require('yargs').argv;
 
 
 //This task will generate a date-named directory with DOM screenshot files as specified in `./capture/config.json` followed by running a report.
@@ -11,7 +11,7 @@ gulp.task('test',['init'], function () {
 
 
   // genReferenceMode contains the state which switches test or reference file generation modes
-  var genReferenceMode = false;
+  var genReferenceMode = argv.genReferenceMode || false;
 
   // THIS IS THE BLOCK WHICH SWITCHES US INTO "GENERATE REFERENCE" MODE.  I'D RATHER SOMETHING MORE EXPLICIT THO. LIKE AN ENV PARAMETER...
   if(!fs.existsSync(paths.bitmaps_reference)){
@@ -44,8 +44,21 @@ gulp.task('test',['init'], function () {
   // AT THIS POINT WE ARE EITHER RUNNING IN "TEST" OR "REFERENCE" MODE
 
   var tests = ['capture/genBitmaps.js'];
-
   var args = ['--ssl-protocol=any'];//added for https compatibility for older versions of phantom
+
+  // We have to translate the arguments into the options we want
+  var key, value;
+  
+  // Right now this only supports arguments that use '--'.
+  // We propogate those arguments into a options array,
+  // which we then pass to casperjs as options when we spawn
+  // the process.
+  for (key in argv) {
+    if (key === '_' || key === '$0') {
+      continue;
+    }
+    args.push('--' + key + '=' + argv[key])
+  }
 
   var casperArgs = tests.concat(args);
 

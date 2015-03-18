@@ -20,6 +20,7 @@ var compareConfig = {testPairs:[]};
 var casper = require("casper").create({
 	// clientScripts: ["jquery.js"] //lets try not to use this it's friggin 2014 already people...
 });
+var options = casper.cli.options;
 
 casper.on('resource.received', function(resource) {
 		//casper.echo(resource.url);
@@ -168,7 +169,7 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
 //`isReference` could be better passed as env parameter
 var exists = fs.exists(bitmaps_reference);
 var isReference = false;
-if(!exists){isReference=true; console.log('CREATING NEW REFERENCE FILES')}
+if(!exists || options.genReferenceMode){isReference=true; console.log('CREATING NEW REFERENCE FILES')}
 //========================
 
 
