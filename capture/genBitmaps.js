@@ -56,6 +56,8 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
 	var consoleBuffer = '';
 	var scriptTimeout = 20000;
 
+  // Keeps track of all the filenames.
+  var scenarioRegistry = {};
 
 	casper.on('remote.message', function(message) {
 	    this.echo(message);
@@ -69,7 +71,24 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
 
 
 	casper.each(scenarios,function(casper, scenario, scenario_index){
+    // If no label is present, default to normal labeling procedure.
+    if ( !scenario.hasOwnProperty('label') ) {
+      scenario.label = scenario_index;
+    }
+    // Replace certain special characters with underscores so
+    // we don't end up creating subdirectories.
+    scenario.label = scenario.label.replace(/[\/\.]/g, '_');
 
+    // To guarantee file name uniqueness, we need to perform this check.
+    // If the label is not unique, then we need to make it unique
+    // and then register that label to the registry.
+    if (scenarioRegistry[scenario.label]) {
+      var i = 1;
+      while (scenarioRegistry[scenario.label]) {
+        scenario.label = scenario.label + i;
+      }
+    }
+    scenarioRegistry[scenario.label] = true;
 
 		casper.each(viewports, function(casper, vp, viewport_index) {
 			this.then(function() {
@@ -105,36 +124,38 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
 				this.echo('Screenshots for ' + vp.name + ' (' + vp.width||vp.viewport.width + 'x' + vp.height||vp.viewport.height + ')', 'info');
 
 				//HIDE SELECTORS WE WANT TO AVOID
-		        if ( scenario.hasOwnProperty('hideSelectors') ) {
-		  				scenario.hideSelectors.forEach(function(o,i,a){
-		  					casper.evaluate(function(o){
-		  						Array.prototype.forEach.call(document.querySelectorAll(o), function(s, j){
-		  							s.style.visibility='hidden';
-		  						});
-		  					},o);
-		  				});
-		        }
+        if ( scenario.hasOwnProperty('hideSelectors') ) {
+  				scenario.hideSelectors.forEach(function(o,i,a){
+  					casper.evaluate(function(o){
+  						Array.prototype.forEach.call(document.querySelectorAll(o), function(s, j){
+  							s.style.visibility='hidden';
+  						});
+  					},o);
+  				});
+        }
 
 				//REMOVE UNWANTED SELECTORS FROM RENDER TREE
-		        if ( scenario.hasOwnProperty('removeSelectors') ) {
-		  				scenario.removeSelectors.forEach(function(o,i,a){
-		  					casper.evaluate(function(o){
-		  						Array.prototype.forEach.call(document.querySelectorAll(o), function(s, j){
-		  							s.style.display='none';
-		  						});
-		  					},o);
-		  				});
-		        }
+        if ( scenario.hasOwnProperty('removeSelectors') ) {
+  				scenario.removeSelectors.forEach(function(o,i,a){
+  					casper.evaluate(function(o){
+  						Array.prototype.forEach.call(document.querySelectorAll(o), function(s, j){
+  							s.style.display='none';
+  						});
+  					},o);
+  				});
+        }
 
 				//CREATE SCREEN SHOTS AND TEST COMPARE CONFIGURATION (CONFIG FILE WILL BE SAVED WHEN THIS PROCESS RETURNS)
-		        // If no selectors are provided then set the default 'body'
-		        if ( !scenario.hasOwnProperty('selectors') ) {
-		          scenario.selectors = [ 'body' ];
-		        }
+        // If no selectors are provided then set the default 'body'
+        if ( !scenario.hasOwnProperty('selectors') ) {
+          scenario.selectors = [ 'body' ];
+        }
+
 				scenario.selectors.forEach(function(o,i,a){
 					var cleanedSelectorName = o.replace(/[^a-zA-Z\d]/,'');//remove anything that's not a letter or a number
 					//var cleanedUrl = scenario.url.replace(/[^a-zA-Z\d]/,'');//remove anything that's not a letter or a number
-					var fileName = scenario_index + '_' + i + '_' + cleanedSelectorName + '_' + viewport_index + '_' + vp.name + '.png';;
+          
+          var fileName = scenario.label + '_' + i + '_' + cleanedSelectorName + '_' + viewport_index + '_' + vp.name + '.png';
 
 					var reference_FP 	= bitmaps_reference + '/' + fileName;
 					var test_FP 			= bitmaps_test + '/' + screenshotDateTime + '/' + fileName;
