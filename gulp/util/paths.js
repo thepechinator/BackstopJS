@@ -2,7 +2,6 @@ var path = require('path');
 var fs = require('fs');
 
 
-
 var paths = {};
 
 // BACKSTOP MODULE PATH
@@ -16,7 +15,7 @@ paths.bitmaps_reference             = paths.backstop + '/bitmaps_reference';
 paths.bitmaps_test                  = paths.backstop + '/bitmaps_test';
 
 // BACKSTOP CONFIG PATH
-paths.backstopConfigFileName        = path.join(paths.backstop, '../..', 'backstop.json');
+paths.backstopConfigFileName        = path.join('/Users/pechinp/Work/responsive/usn-styleguide', 'backstop.json');
 
 // COMPARE PATHS
 paths.comparePath                   = paths.backstop + '/compare';

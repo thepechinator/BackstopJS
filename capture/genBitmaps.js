@@ -1,12 +1,13 @@
-
+// The fs here actually refers to http://phantomjs.org/api/fs/
 var fs = require('fs');
+var utils = require('utils');
 
 
 
 var bitmaps_reference = 'bitmaps_reference';
 var bitmaps_test = 'bitmaps_test';
-var compareConfigFileName = 'compare/config.json'
-var genConfigPath = 'capture/config.json'
+var compareConfigFileName = 'compare/config.json';
+var genConfigPath = 'capture/config.json';
 
 
 var configJSON = fs.read(genConfigPath);
@@ -157,21 +158,40 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
           
           var fileName = scenario.label + '_' + i + '_' + cleanedSelectorName + '_' + viewport_index + '_' + vp.name + '.png';
 
+
 					var reference_FP 	= bitmaps_reference + '/' + fileName;
 					var test_FP 			= bitmaps_test + '/' + screenshotDateTime + '/' + fileName;
 
 					var filePath 			= (isReference)?reference_FP:test_FP;
 
-					if(!isReference)
+					if(!isReference) {
 						compareConfig.testPairs.push({
 							reference:reference_FP,
 							test:test_FP,
 							selector:o,
 							fileName:fileName,
 							label:scenario.label
-						})
+						});
+          }
 
-					casper.captureSelector(filePath, o);
+          // Check for this is options.sync is passed in, and copy over
+          // the file from .tmp if it exists there. Otherwise, create
+          // the file. We need to look up the image based on the selector name
+          // and label.
+          if (fs.exists(reference_FP)) {
+            console.log('IT EXISTS!!!');
+          }
+
+          // Don't do this unless the image does not exist when the sync flag
+          // is true.
+          if (options.sync) {
+
+          }
+
+          if (options.baseline) {
+            casper.captureSelector(filePath, o);
+          }
+
 					//casper.echo('remote capture to > '+filePath,'info');
 
 				});//end topLevelModules.forEach
