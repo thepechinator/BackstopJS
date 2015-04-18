@@ -125,46 +125,49 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
 				this.echo('Screenshots for ' + vp.name + ' (' + vp.width||vp.viewport.width + 'x' + vp.height||vp.viewport.height + ')', 'info');
 
 				//HIDE SELECTORS WE WANT TO AVOID
-        if ( scenario.hasOwnProperty('hideSelectors') ) {
-  				scenario.hideSelectors.forEach(function(o,i,a){
-  					casper.evaluate(function(o){
-  						Array.prototype.forEach.call(document.querySelectorAll(o), function(s, j){
-  							s.style.visibility='hidden';
-  						});
-  					},o);
-  				});
-        }
+                if ( scenario.hasOwnProperty('hideSelectors') ) {
+          				scenario.hideSelectors.forEach(function(o,i,a){
+          					casper.evaluate(function(o){
+          						Array.prototype.forEach.call(document.querySelectorAll(o), function(s, j){
+          							s.style.visibility='hidden';
+          						});
+          					},o);
+          				});
+                }
 
 				//REMOVE UNWANTED SELECTORS FROM RENDER TREE
-        if ( scenario.hasOwnProperty('removeSelectors') ) {
-  				scenario.removeSelectors.forEach(function(o,i,a){
-  					casper.evaluate(function(o){
-  						Array.prototype.forEach.call(document.querySelectorAll(o), function(s, j){
-  							s.style.display='none';
-  						});
-  					},o);
-  				});
-        }
+                if ( scenario.hasOwnProperty('removeSelectors') ) {
+          				scenario.removeSelectors.forEach(function(o,i,a){
+          					casper.evaluate(function(o){
+          						Array.prototype.forEach.call(document.querySelectorAll(o), function(s, j){
+          							s.style.display='none';
+          						});
+          					},o);
+          				});
+                }
 
 				//CREATE SCREEN SHOTS AND TEST COMPARE CONFIGURATION (CONFIG FILE WILL BE SAVED WHEN THIS PROCESS RETURNS)
-        // If no selectors are provided then set the default 'body'
-        if ( !scenario.hasOwnProperty('selectors') ) {
-          scenario.selectors = [ 'body' ];
-        }
+                // If no selectors are provided then set the default 'body'
+                if ( !scenario.hasOwnProperty('selectors') ) {
+                  scenario.selectors = [ 'body' ];
+                }
 
 				scenario.selectors.forEach(function(o,i,a){
-					var cleanedSelectorName = o.replace(/[^a-zA-Z\d]/,'');//remove anything that's not a letter or a number
-					//var cleanedUrl = scenario.url.replace(/[^a-zA-Z\d]/,'');//remove anything that's not a letter or a number
+                    //remove anything that's not a letter or a number
+					var cleanedSelectorName = o.replace(/[\]\[=]/g, '--').replace(/[^a-zA-Z\d-_]/g,'');
+					console.log('CLEANED SELECTOR NAME!!', cleanedSelectorName);
+                    //var cleanedUrl = scenario.url.replace(/[^a-zA-Z\d]/,'');//remove anything that's not a letter or a number
           
-          var fileName = scenario.label + '_' + i + '_' + cleanedSelectorName + '_' + viewport_index + '_' + vp.name + '.png';
+                    var fileName = scenario.label + '_' + i + '_' + cleanedSelectorName + '_' + viewport_index + '_' + vp.name + '.png';
 
 
 					var reference_FP 	= bitmaps_reference + '/' + fileName;
+                    var reference_tmp_FP = bitmaps_reference + '/.tmp/' + fileName;
 					var test_FP 			= bitmaps_test + '/' + screenshotDateTime + '/' + fileName;
 
 					var filePath 			= (isReference)?reference_FP:test_FP;
 
-					if(!isReference) {
+				    if(!isReference) {
 						compareConfig.testPairs.push({
 							reference:reference_FP,
 							test:test_FP,
@@ -172,25 +175,28 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
 							fileName:fileName,
 							label:scenario.label
 						});
-          }
+                     }
 
-          // Check for this is options.sync is passed in, and copy over
-          // the file from .tmp if it exists there. Otherwise, create
-          // the file. We need to look up the image based on the selector name
-          // and label.
-          if (fs.exists(reference_FP)) {
-            console.log('IT EXISTS!!!');
-          }
+                  // Check for this is options.sync is passed in, and copy over
+                  // the file from .tmp if it exists there. Otherwise, create
+                  // the file. We need to look up the image based on the selector name
+                  // and label.
+                  if (options.sync && fs.exists(reference_tmp_FP)) {
+                    console.log('FOUND... MOVING...');
+                    fs.move(reference_tmp_FP, reference_FP);
+                  } else {
+                    casper.captureSelector(filePath, o);
+                  }
 
-          // Don't do this unless the image does not exist when the sync flag
-          // is true.
-          if (options.sync) {
+                  // Don't do this unless the image does not exist when the sync flag
+                  // is true.
+                  // if (options.sync) {
 
-          }
+                  // }
 
-          if (options.baseline) {
-            casper.captureSelector(filePath, o);
-          }
+                  // if (options.baseline) {
+                  //   casper.captureSelector(filePath, o);
+                  // }
 
 					//casper.echo('remote capture to > '+filePath,'info');
 
