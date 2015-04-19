@@ -155,7 +155,6 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
 				scenario.selectors.forEach(function(o,i,a){
                     //remove anything that's not a letter or a number
 					var cleanedSelectorName = o.replace(/[\]\[=]/g, '--').replace(/[^a-zA-Z\d-_]/g,'');
-					console.log('CLEANED SELECTOR NAME!!', cleanedSelectorName);
                     //var cleanedUrl = scenario.url.replace(/[^a-zA-Z\d]/,'');//remove anything that's not a letter or a number
           
                     var fileName = scenario.label + '_' + i + '_' + cleanedSelectorName + '_' + viewport_index + '_' + vp.name + '.png';
@@ -175,28 +174,17 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
 							fileName:fileName,
 							label:scenario.label
 						});
-                     }
+                    }
 
-                  // Check for this is options.sync is passed in, and copy over
-                  // the file from .tmp if it exists there. Otherwise, create
-                  // the file. We need to look up the image based on the selector name
-                  // and label.
-                  if (options.sync && fs.exists(reference_tmp_FP)) {
-                    console.log('FOUND... MOVING...');
-                    fs.move(reference_tmp_FP, reference_FP);
-                  } else {
-                    casper.captureSelector(filePath, o);
-                  }
-
-                  // Don't do this unless the image does not exist when the sync flag
-                  // is true.
-                  // if (options.sync) {
-
-                  // }
-
-                  // if (options.baseline) {
-                  //   casper.captureSelector(filePath, o);
-                  // }
+                    // Check for this is options.sync is passed in, and copy over
+                    // the file from .tmp if it exists there. Otherwise, create
+                    // the file. We need to look up the image based on the selector name
+                    // and label.
+                    if (!options.baseline && options.sync && fs.exists(reference_tmp_FP)) {
+                        fs.move(reference_tmp_FP, reference_FP);
+                    } else {
+                        casper.captureSelector(filePath, o);
+                    }
 
 					//casper.echo('remote capture to > '+filePath,'info');
 
