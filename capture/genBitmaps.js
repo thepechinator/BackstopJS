@@ -122,7 +122,7 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
 
 			this.then(function(){
 
-				this.echo('Screenshots for ' + vp.name + ' (' + vp.width||vp.viewport.width + 'x' + vp.height||vp.viewport.height + ')', 'info');
+				this.echo('Screenshots for ' + vp.name + ' (' + (vp.width||vp.viewport.width) + 'x' + (vp.height||vp.viewport.height) + ')', 'info');
 
 				//HIDE SELECTORS WE WANT TO AVOID
                 if ( scenario.hasOwnProperty('hideSelectors') ) {
@@ -137,7 +137,9 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
 
 				//REMOVE UNWANTED SELECTORS FROM RENDER TREE
                 if ( scenario.hasOwnProperty('removeSelectors') ) {
+                    // this.echo('removeSelectors');
           				scenario.removeSelectors.forEach(function(o,i,a){
+                            this.echo('evaluate' + o);
           					casper.evaluate(function(o){
           						Array.prototype.forEach.call(document.querySelectorAll(o), function(s, j){
           							s.style.display='none';
@@ -145,6 +147,7 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
           					},o);
           				});
                 }
+                // this.echo('removeSelectors after');
 
 				//CREATE SCREEN SHOTS AND TEST COMPARE CONFIGURATION (CONFIG FILE WILL BE SAVED WHEN THIS PROCESS RETURNS)
                 // If no selectors are provided then set the default 'body'
@@ -152,11 +155,14 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
                   scenario.selectors = [ 'body' ];
                 }
 
+                var that = this;
+
 				scenario.selectors.forEach(function(o,i,a){
+                    // that.echo('something is fishy');
                     //remove anything that's not a letter or a number
 					var cleanedSelectorName = o.replace(/[\]\[=]/g, '--').replace(/[^a-zA-Z\d-_]/g,'');
                     //var cleanedUrl = scenario.url.replace(/[^a-zA-Z\d]/,'');//remove anything that's not a letter or a number
-          
+
                     var fileName = scenario.label + '_' + i + '_' + cleanedSelectorName + '_' + viewport_index + '_' + vp.name + '.png';
 
 
@@ -180,9 +186,16 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
                     // the file from .tmp if it exists there. Otherwise, create
                     // the file. We need to look up the image based on the selector name
                     // and label.
-                    if (!options.baseline && options.sync && fs.exists(reference_tmp_FP)) {
-                        fs.move(reference_tmp_FP, reference_FP);
+                    if (!options.baseline && options.sync && fs.exists(reference_tmp_FP) && !fs.exists(reference_FP)) {
+                        // If we don't catch the exception here, it will cause the backstop process
+                        // to just hang-- which sucks.
+                        try {
+                            fs.move(reference_tmp_FP, reference_FP);
+                        } catch(e) {
+                            that.echo(e);
+                        }
                     } else {
+                        // that.echo('capture');
                         casper.captureSelector(filePath, o);
                     }
 
