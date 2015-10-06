@@ -46,6 +46,54 @@ casper.on('resource.received', function(resource) {
 });
 
 
+// Keep a list of blacklist functions to run against certain types.
+var _isBlacklisted = function(requestData, request, regex) {
+    return (regex.test(requestData.url));
+}
+
+// Our list of types to blacklist functions.
+var _requestHash = {
+    'default': _isBlacklisted
+}
+
+// Block certain requests.
+casper.on('resource.requested', function(requestData, request) {
+    // Look for certain patterns to determine if they are of that type.
+    var blacklistedRequests = [
+        // {"type": "css", "regex": "https?:\/\/.+?\\.css", "regexFlags": "gi"}, 
+        {"type": "ad",  "regex": "https?:\/\/.*?(ad\\.doubleclick\\.net)|(adserver)|(doubleclick)|(googleads).*", "regexFlags": "gi"}
+    //     {"type": "social", "regex": "https?:\/\/.*?(tpc\\.googlesyndication\\.com)|((s-static|static)\\.ak\\.facebook\\.com\/connect)|(facebook\\.com).*", "regexFlags": "gi"},
+    //     {"type": "youtube", "regex": "https?:\/\/.*?(youtube\\.com).*", "regexFlags": "gi"}
+    ];
+
+    var abort = false,
+        i = 0;
+
+    while(i < blacklistedRequests.length) {
+        var obj = blacklistedRequests[i],
+            type = obj.type;
+            regex = new RegExp(obj.regex, obj.regexFlags);
+
+        if (typeof _requestHash[type] === 'undefined') {
+            type = 'default';
+        }
+
+        try {
+            abort = _requestHash[type](requestData, request, regex);
+        } catch(e) {
+            casper.echo(e);
+        }
+        if (abort) {
+            casper.echo('Aborting request: ' + requestData.url);
+            request.abort();
+            break;
+        }
+
+        i++;
+    }
+});
+
+
 
 function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_test,isReference){
 
@@ -95,6 +143,7 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
 			this.then(function() {
 				this.viewport(vp.width||vp.viewport.width, vp.height||vp.viewport.height);
 			});
+
 			this.thenOpen(scenario.url, function() {
 
 				casper.waitFor(
@@ -137,9 +186,7 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
 
 				//REMOVE UNWANTED SELECTORS FROM RENDER TREE
                 if ( scenario.hasOwnProperty('removeSelectors') ) {
-                    // this.echo('removeSelectors');
           				scenario.removeSelectors.forEach(function(o,i,a){
-                            this.echo('evaluate' + o);
           					casper.evaluate(function(o){
           						Array.prototype.forEach.call(document.querySelectorAll(o), function(s, j){
           							s.style.display='none';
