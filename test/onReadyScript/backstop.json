@@ -25,28 +25,21 @@
         "#carbonads-container"
       ],
       "selectors": [
-        "header",
-        "main",
-        "body .bs-docs-featurette:nth-of-type(1)",
-        "body .bs-docs-featurette:nth-of-type(2)",
-        "footer",
         "body"
       ],
       "readyEvent": null,
-      "delay": 500,
+      "delay": 100,
       "misMatchThreshold" : 0.1,
-      "onReadyScript": "onReady.js"
+      "onReadyScript": "../../onReady.js"
     }
   ],
   "paths": {
     "bitmaps_reference": "../../backstop_data/bitmaps_reference",
     "bitmaps_test": "../../backstop_data/bitmaps_test",
     "compare_data": "../../backstop_data/bitmaps_test/compare.json",
-    "casper_scripts": "../../backstop_data/casper_scripts"
+    "scripts": "../../backstop_data/scripts"
   },
   "engine": "phantomjs",
-  "report": ["CLI", "browser"],
-  "cliExitOnFail": false,
-  "casperFlags": [],
-  "debug": false
+  "report": ["CLI"],
+  "debug": true
 }

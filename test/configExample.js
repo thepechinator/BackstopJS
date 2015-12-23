@@ -1,4 +1,6 @@
-{
+// Example config using js rather than json.
+module.exports = {
+	// The viewports
   "viewports": [
     {
       "name": "phone",
@@ -16,6 +18,8 @@
       "height": 768
     }
   ],
+
+	// Scenarios
   "scenarios": [
     {
       "label": "measure twice",
@@ -44,4 +48,4 @@
   },
   "engine": "phantomjs",
   "report": ["CLI"]
-}
+};

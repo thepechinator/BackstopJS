@@ -1,4 +1,4 @@
-var fs = require('fs');
+var fsx = require('fs-extra');
 var paths = require('./paths');
 
 
@@ -7,8 +7,8 @@ var configDefault = {
 };
 
 var genDefaultCompareConfig = function () {
-  fs.writeFileSync(paths.compareConfigFileName, JSON.stringify(configDefault,null,2));
+  fsx.ensureFileSync(paths.compareConfigFileName);
+  fsx.writeFileSync(paths.compareConfigFileName, JSON.stringify(configDefault,null,2));
 };
-
 
 module.exports = genDefaultCompareConfig;

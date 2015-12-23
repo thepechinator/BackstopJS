@@ -30,8 +30,8 @@ gulp.task('test',['init'], function () {
       var cache = fs.readFileSync(paths.captureConfigFileNameCache, 'utf8');
       if(config !== cache){
         console.log('\nIt looks like the reference configuration has been changed since last reference batch.');
-        console.log('Please run `$ gulp reference` to generate a fresh set of reference files')
-        console.log('or run `$ gulp bless` then `$ gulp test` to enable testing with this configuration.\n\n')
+        console.log('Please run `$ gulp reference` to generate a fresh set of reference files');
+        console.log('or run `$ gulp bless` then `$ gulp test` to enable testing with this configuration.\n\n');
         return;
       }
 
@@ -44,27 +44,41 @@ gulp.task('test',['init'], function () {
   // AT THIS POINT WE ARE EITHER RUNNING IN "TEST" OR "REFERENCE" MODE
 
   var tests = ['capture/genBitmaps.js'];
-  var args = ['--ssl-protocol=any'];//added for https compatibility for older versions of phantom
 
-  // We have to translate the arguments into the options we want
-  var key, value;
-  
-  // Right now this only supports arguments that use '--'.
-  // We propogate those arguments into a options array,
-  // which we then pass to casperjs as options when we spawn
-  // the process.
-  for (key in argv) {
-    if (key === '_' || key === '$0') {
-      continue;
+  // var args = ['--ssl-protocol=any'];//added for https compatibility for older versions of phantom
+  //
+  // // We have to translate the arguments into the options we want
+  // var key, value;
+  //
+  // // Right now this only supports arguments that use '--'.
+  // // We propogate those arguments into a options array,
+  // // which we then pass to casperjs as options when we spawn
+  // // the process.
+  // for (key in argv) {
+  //   if (key === '_' || key === '$0') {
+  //     continue;
+  //   }
+  //   args.push('--' + key + '=' + argv[key])
+  // }
+  //
+  // var casperArgs = tests.concat(args);
+
+
+  var args = [];
+
+  if (/slimer/.test(paths.engine)) {
+    args = ['--engine=slimerjs'];
+  }
+
+  if (paths.casperFlags) {
+    if (/--engine=/.test(paths.casperFlags.toString())) {
+      args = paths.casperFlags; // casperFlags --engine setting takes presidence -- replace if found.
+    } else {
+      args.concat(paths.casperFlags)
     }
-    args.push('--' + key + '=' + argv[key])
   }
 
   var casperArgs = tests.concat(args);
-
-  // var args = ['test'].concat(tests); //this is required if using casperjs test option
-
-  // var casperChild = spawn('casperjs', tests);//use args here to add test option to casperjs execute stmt
   var casperProcess = (process.platform === "win32" ? "casperjs.cmd" : "casperjs");
   var casperChild = spawn(casperProcess, casperArgs);
 
