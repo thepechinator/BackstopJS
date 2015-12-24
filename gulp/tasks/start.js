@@ -34,9 +34,9 @@ gulp.task("start",function(){
     console.log('\nServer launched in background with PID: '+serverHook.pid);
 
     if (time > 0) {
-      console.log('NOTE: Sever will auto-shutdown in ' + time + ' mins.\n');
+      console.log('NOTE: Server will auto-shutdown in ' + time + ' mins.\n');
     } else {
-      console.log('NOTE: Sever will run until you stop it with \'gulp stop\'.\n')
+      console.log('NOTE: Server will run until you stop it with \'gulp stop\'.\n')
     }
 
   }

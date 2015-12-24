@@ -45,29 +45,25 @@ gulp.task('test',['init'], function () {
 
   var tests = ['capture/genBitmaps.js'];
 
-  // var args = ['--ssl-protocol=any'];//added for https compatibility for older versions of phantom
-  //
-  // // We have to translate the arguments into the options we want
-  // var key, value;
-  //
-  // // Right now this only supports arguments that use '--'.
-  // // We propogate those arguments into a options array,
-  // // which we then pass to casperjs as options when we spawn
-  // // the process.
-  // for (key in argv) {
-  //   if (key === '_' || key === '$0') {
-  //     continue;
-  //   }
-  //   args.push('--' + key + '=' + argv[key])
-  // }
-  //
-  // var casperArgs = tests.concat(args);
-
-
   var args = [];
 
   if (/slimer/.test(paths.engine)) {
     args = ['--engine=slimerjs'];
+  }
+
+  // FORK to make our stuff pass in.
+  // We have to translate the arguments into the options we want
+  var key, value;
+
+  // Right now this only supports arguments that use '--'.
+  // We propogate those arguments into a options array,
+  // which we then pass to casperjs as options when we spawn
+  // the process.
+  for (key in argv) {
+    if (key === '_' || key === '$0') {
+      continue;
+    }
+    args.push('--' + key + '=' + argv[key])
   }
 
   if (paths.casperFlags) {
