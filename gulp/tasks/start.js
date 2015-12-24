@@ -59,7 +59,8 @@ gulp.task("start",function(){
     var serverHook = spawn('node', ['server.js', '-t ' + time, '--report-port=' + port],  {detached: true, stdio:'ignore'});
     serverHook.unref();
 
-    fs.writeFileSync(paths.serverPidFile, serverHook.pid);
+    // FORK: Write json string in file so we can include the port number.
+    fs.writeFileSync(paths.serverPidFile, JSON.stringify({pid: serverHook.pid, port: port}));
     console.log('\nServer launched in background with PID: '+serverHook.pid);
 
     if (time > 0) {
