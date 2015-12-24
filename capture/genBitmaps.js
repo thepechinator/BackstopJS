@@ -259,6 +259,8 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
           var fileName = scenario.label + '_' + i + '_' + cleanedSelectorName + '_' + viewport_index + '_' + vp.name + '.png';;
 
           var reference_FP  = bitmaps_reference + '/' + fileName;
+          // FORK
+          var reference_tmp_FP = bitmaps_reference + '/.tmp/' + fileName;
           var test_FP       = bitmaps_test + '/' + screenshotDateTime + '/' + fileName;
 
           var filePath      = (isReference)?reference_FP:test_FP;
