@@ -14,7 +14,7 @@ var port = argv['report-port'] || paths.reportPort;
 
 //THIS WILL START THE LOCAL WEBSERVER
 //IF ALREADY STARTED IT WILL NOT TRY TO START AGAIN
-gulp.task("start",function(){
+gulp.task("start",function(cb){
 
   fs.readFile(paths.serverPidFile, function(err,data){
 
