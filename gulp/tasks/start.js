@@ -5,7 +5,12 @@ var isRunning = require('is-running');
 var paths = require('../util/paths');
 var argv  = require('yargs').argv;
 
+// FORK for stopping the server.
+// TODO: probably just leverage the 'stop' task to do this.
+var exec  = require('child_process').exec;
 
+// FORK grab report argument if there is one
+var port = argv['report-port'] || paths.reportPort;
 
 //THIS WILL START THE LOCAL WEBSERVER
 //IF ALREADY STARTED IT WILL NOT TRY TO START AGAIN
@@ -14,10 +19,31 @@ gulp.task("start",function(){
   fs.readFile(paths.serverPidFile, function(err,data){
 
     if(data){
+      // FORK: A bunch of logic that checks for the port from
+      // the currently running process, and launches a
+      // new server on a different port if the user
+      // wants that.
+      data = JSON.parse(data);
+      var pid = parseInt(data.pid);
+      var oldPort = data.port;
+
       var pid = parseInt(data);
 
-      if(!isRunning(pid)) {
-        start();
+      // FORK: additional check
+      if(!isRunning(pid) || oldPort !== port) {
+        // FORK: Kill previous process and start a new one.
+        exec('kill '+pid,function(error, stdout, stderr){
+          console.log('Stopping previous server on port ' + oldPort + ' with PID:'+pid)
+          fs.unlinkSync(paths.serverPidFile);
+
+          start();
+          cb();
+        });
+      } else {
+        // FORK: display something to let the user know the
+        // server is already running.
+        console.log('Server already running! Check port ' + port);
+        cb();
       }
     }else{
       start();
@@ -28,8 +54,11 @@ gulp.task("start",function(){
 
   function start() {
     var time = (Number(argv.t) === argv.t && argv.t % 1 === 0) ? argv.t : 15;
-    var serverHook = spawn('node', ['server.js', '-t ' + time],  {detached: true, stdio:'ignore'});
+
+    // FORK: also pass in the port for the server to use.
+    var serverHook = spawn('node', ['server.js', '-t ' + time, '--report-port=' + port],  {detached: true, stdio:'ignore'});
     serverHook.unref();
+
     fs.writeFileSync(paths.serverPidFile, serverHook.pid);
     console.log('\nServer launched in background with PID: '+serverHook.pid);
 

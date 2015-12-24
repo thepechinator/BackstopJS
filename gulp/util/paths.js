@@ -21,6 +21,10 @@ function getBackstopConfigFileName() {
 // BACKSTOP CONFIG PATH
 paths.backstopConfigFileName = getBackstopConfigFileName();
 
+// FORK -- Store Port. Priority order:
+// command argument > config > default
+paths.reportPort = 3001;
+
 // BITMAPS PATHS -- note: this path is overwritten if config files exist.  see below.
 paths.bitmaps_reference             = paths.backstop + '/bitmaps_reference';
 paths.bitmaps_test                  = paths.backstop + '/bitmaps_test';
@@ -28,7 +32,7 @@ paths.bitmaps_test                  = paths.backstop + '/bitmaps_test';
 // COMPARE PATHS -- note: compareConfigFileName is overwritten if config files exist.  see below.
 paths.comparePath                   = paths.backstop + '/compare';
 paths.compareConfigFileName         = paths.comparePath+'/config.json';
-paths.compareReportURL              = 'http://localhost:3001/compare/';
+paths.compareReportURL              = 'http://localhost:' + paths.reportPort + '/compare/';
 
 // CAPTURE CONFIG PATHS
 paths.captureConfigFileName         = paths.backstop + '/capture/config.json';
@@ -64,6 +68,17 @@ if(fs.existsSync(paths.activeCaptureConfigPath)){
     paths.compareConfigFileName = config.paths.compare_data || paths.compareConfigFileName;
     paths.casper_scripts = config.paths.casper_scripts || null;
   }
+
+  // FORK -- Store Port. Priority order:
+  // command argument > config > default
+  if (config.reportPort) {
+    paths.reportPort = config.reportPort;
+  }
+
+  if (argv['report-port']) {
+    paths.reportPort = argv['report-port'];
+  }
+  paths.compareReportURL = 'http://localhost:' + paths.reportPort + '/compare/';
 
   paths.cliExitOnFail = config.cliExitOnFail || false;
   paths.casperFlags = config.casperFlags || null;

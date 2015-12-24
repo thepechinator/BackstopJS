@@ -203,7 +203,8 @@ The location of the `backstop.json` file as well as all resource directories can
   "engine": "phantomjs",
   "report": ["browser", "CLI"],
   "cliExitOnFail": false,
-  "debug": false
+  "debug": false,
+  "reportPort": 3001
 }
 ```
 
@@ -303,7 +304,7 @@ There may also be elements which need to be completely removed during testing. F
     "removeSelectors": [
     	"#someUnpredictableSizedDomSelector"
     ]
-    
+
 ### Running custom CasperJS scripts (version 0.8.0+)
 
 Simulate user actions (click, scroll, hover, wait, etc.) by running your own Casper.js script on ready. For each scenario, the custom .js file you specify is imported and run when the BackstopJS ready event is fired.
@@ -311,7 +312,7 @@ Simulate user actions (click, scroll, hover, wait, etc.) by running your own Cas
 From your project root, place your scripts in...
 
     ./backstop_data/casper_scripts
-    
+
 And in your scenario...
 
     "onReadyScript": "filename.js"   // the .js suffix is optional
@@ -369,9 +370,9 @@ If you choose the CLI-only reporting you can always enter the following command 
     $ gulp openReport
 
 
-####CLI error handling 
+####CLI error handling
 
-When a layout error is found in CLI mode, BackstopJS will let you know in a general report displayed in the console. Optionally, BackstopJS can throw an error that can be passed to calling process. For this behavior enable `cliExitOnFail` in your config... 
+When a layout error is found in CLI mode, BackstopJS will let you know in a general report displayed in the console. Optionally, BackstopJS can throw an error that can be passed to calling process. For this behavior enable `cliExitOnFail` in your config...
 
 ```
 "cliExitOnFail": true,
@@ -450,13 +451,18 @@ This is for you if for some reason you find yourself needing advanced configurat
 
 ```
 "casperFlags": [
-  "--engine=slimerjs", 
+  "--engine=slimerjs",
   "--proxy-type=http",
-  "--proxy=proxyIp:port", 
+  "--proxy=proxyIp:port",
   "--proxy-auth=user:pass"
 ]
 ```
 
+### Change report server port (version 0.9.0+)
+The default is port 3001. This can be changed by setting the `reportPort` property in the `backstop.json` file.
+
+You may also pass in the `--report-port` flag on the command line. For example, to set the port to 3003,
+you would do something like `--report-port=3003`.
 
 ### Troubleshooting
 
@@ -482,7 +488,7 @@ To enable verbose console output when running your tests set the `debug` propert
 
 #### View file contents
 
-Sometimes it also helps to verify that BackstopJS is receiving the correct file contents. Enabling the `debug` property (above) will output this data to the console whenever a test is run. 
+Sometimes it also helps to verify that BackstopJS is receiving the correct file contents. Enabling the `debug` property (above) will output this data to the console whenever a test is run.
 
 You can also use the following command -- it will output your file contents to the console.
 
