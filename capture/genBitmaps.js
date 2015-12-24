@@ -254,7 +254,9 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
         scenario.selectors.forEach(function(o,i,a){
           // FORK: remove anything that's not a letter or a number
           var cleanedSelectorName = o.replace(/[\]\[=]/g, '--').replace(/[^a-zA-Z\d-_]/g,'');
-          var fileName = scenario_index + '_' + i + '_' + cleanedSelectorName + '_' + viewport_index + '_' + vp.name + '.png';;
+
+          // FORK: replace scenario_index with scenario.label
+          var fileName = scenario.label + '_' + i + '_' + cleanedSelectorName + '_' + viewport_index + '_' + vp.name + '.png';;
 
           var reference_FP  = bitmaps_reference + '/' + fileName;
           var test_FP       = bitmaps_test + '/' + screenshotDateTime + '/' + fileName;
