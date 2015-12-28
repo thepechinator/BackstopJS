@@ -45,6 +45,7 @@ gulp.task("start",function(cb){
       }
     }else{
       start();
+      cb();
     }
 
   });
