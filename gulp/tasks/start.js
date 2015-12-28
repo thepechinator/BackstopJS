@@ -27,8 +27,6 @@ gulp.task("start",function(cb){
       var pid = parseInt(data.pid);
       var oldPort = data.port;
 
-      var pid = parseInt(data);
-
       // FORK: additional check
       if(!isRunning(pid) || oldPort !== port) {
         // FORK: Kill previous process and start a new one.

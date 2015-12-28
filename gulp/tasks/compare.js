@@ -9,6 +9,15 @@ var _ = require('underscore');
 gulp.task('compare', function (done) {
   var compareConfig = JSON.parse(fs.readFileSync(paths.compareConfigFileName, 'utf8'));
 
+  // FORK: This is what compare.js uses.
+  var resembleTestConfig = {
+    errorColor: {red: 255, green: 0, blue: 255},
+    errorType: 'movement',
+    transparency: 0.1,
+    largeImageThreshold: 1200
+  };
+  resemble.outputSettings(resembleTestConfig);
+
   function updateProgress() {
     var results = {};
     _.each(compareConfig.testPairs, function (pair) {
@@ -43,6 +52,11 @@ gulp.task('compare', function (done) {
     var testPath = path.join(paths.backstop, pair.test);
 
     resemble(referencePath).compareTo(testPath).onComplete(function (data) {
+      // FORK: Set a default
+      if (typeof pair.misMatchThreshold === 'undefined') {
+        pair.misMatchThreshold = 1;
+      }
+
       var imageComparisonFailed = !data.isSameDimensions || data.misMatchPercentage > pair.misMatchThreshold;
 
       if (imageComparisonFailed) {
