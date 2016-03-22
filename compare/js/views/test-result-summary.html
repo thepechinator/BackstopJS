@@ -1,7 +1,9 @@
-<span class="test-title">{{ thisTestPair.meta.selector | testTitle }}</span>
-<a class="test-url" href="{{ thisTestPair.meta.scenario }}">
+<span class="test-title">{{ thisTestPair.meta.selector | testTitle: 'removeHyphens' }}</span>
+<a class="test-url right" href="{{ thisTestPair.meta.scenario }}">
     {{ thisTestPair.meta.scenario | scenarioTitle }}
 </a> 
-    
+
+<span class="test-title-actual pull-right">{{ thisTestPair.meta.selector | testTitle }}</span>
+
 <br>
 <small class="fileName">{{ thisTestPair.meta.fileName }}</small>

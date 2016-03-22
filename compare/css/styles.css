@@ -50,6 +50,7 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
 @keyframes blink {to { opacity: 0; } }
 @-webkit-keyframes blink {to { opacity: 0; } }
 
+
 /* custom styles & overrides */
 
 .summaryList {
@@ -60,4 +61,15 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
     font-size: 20px;
     text-transform: capitalize;
     margin-right: 5px;
+}
+
+.test-title-actual {
+    display: inline-block;
+    padding: 4px 10px;
+    font-style: italic;
+    color: #999;
+}
+
+.indicator {
+    padding-top: 4px;
 }

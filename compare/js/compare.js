@@ -10,10 +10,14 @@ compareApp.config( function( $routeProvider ){
 });
 
 compareApp.filter('testTitle', function() {
-  return function(input) {
+  return function(input, mod) {
     if (input) {
       var testName = input.split("*[data-test-name='")[1].split("']")[0];
-      return testName.replace(/-/g, ' ');
+      if (mod === 'removeHyphens') {
+        return testName.replace(/-/g, ' ');
+      } else {
+        return testName;
+      }
     }
   }
 });
