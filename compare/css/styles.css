@@ -61,6 +61,7 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
     font-size: 20px;
     text-transform: capitalize;
     margin-right: 5px;
+    cursor: pointer;
 }
 
 .test-title-actual {
@@ -72,4 +73,14 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
 
 .indicator {
     padding-top: 4px;
+}
+
+.icon-link {
+    display: none;
+    margin-left: -24px;
+    color: #999;
+}
+
+.test-title:hover .icon-link {
+    display: inline-block;
 }

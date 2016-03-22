@@ -1,4 +1,7 @@
-<span class="test-title">{{ thisTestPair.meta.selector | testTitle: 'removeHyphens' }}</span>
+<span ng-click="scrollTo(thisTestPair.meta.fileName)" class="test-title">
+    <i class="icon-link fa fa-link"></i>
+    {{ thisTestPair.meta.selector | testTitle: 'removeHyphens' }}
+</span>
 <a class="test-url right" href="{{ thisTestPair.meta.scenario }}">
     {{ thisTestPair.meta.scenario | scenarioTitle }}
 </a> 

@@ -9,6 +9,14 @@ compareApp.config( function( $routeProvider ){
     .otherwise( {action: "file"} );
 });
 
+compareApp.filter('anchor', function() {
+  return function(input) {
+    if (input) {
+      return input.slice(0, -4);
+    }
+  }
+});
+
 compareApp.filter('testTitle', function() {
   return function(input, mod) {
     if (input) {
@@ -37,7 +45,7 @@ compareApp.directive('testResultSummary', function() {
   }
 });
 
-compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $http, $filter) {
+compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $http, $filter, $location, $anchorScroll) {
 
   var resembleTestConfig = {
     errorColor: {red: 255, green: 0, blue: 255},
@@ -91,11 +99,16 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   $scope.$on("$routeChangeSuccess", function( $currentRoute, $previousRoute ){
     $scope.params = JSON.stringify($routeParams,null,2);
     $scope.action = $route.current.action;
-
-    if($scope.action=='url')
-      $scope.runUrlConfig($routeParams);
-    else
-      $scope.runFileConfig($routeParams);
+    // run the route based commands if not simply clicking an anchor link
+    // wonder why we have to tie diff test stuff to the route?
+    if(!$scope.anchoring) {
+      if($scope.action=='url') {
+        $scope.runUrlConfig($routeParams);
+      }
+      else if(!$scope.anchoring) {
+        $scope.runFileConfig($routeParams);
+      }
+    }
 
 
   });
@@ -174,6 +187,17 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     });
   };//scope.compareTestPair()
 
+  // initially no one is scrolling
+  $scope.anchoring = false;
+
+  // this is angular's way to allow in page anchor links
+  $scope.scrollTo = function (id) {
+    // when this is true
+    $scope.anchoring = true;
+    id = id.slice(0, -4);
+    $location.hash(id);
+    $anchorScroll();
+  }
 
 
 });

@@ -4,6 +4,7 @@
   <title>BackstopJS Report</title>
 
   <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="css/styles.css">
 
   <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
@@ -51,10 +52,15 @@
 
       </div>
 
-      <table ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter ">
+      <table id="{{ thisTestPair.meta.fileName | anchor }}" ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter ">
         <thead>
           <tr>
-            <th class="selector" colspan="2">{{ thisTestPair.meta.label }} {{ thisTestPair.meta.selector }}</th>
+            <th class="selector" colspan="2">
+              <span class="test-title">{{ thisTestPair.meta.selector | testTitle }}</span>
+            <a class="test-url" href="{{ thisTestPair.meta.scenario }}">
+              {{ thisTestPair.meta.scenario | scenarioTitle }}
+            </a> 
+            </th>
             <th class="filename" colspan="2">{{ thisTestPair.meta.fileName }}</th>
           </tr>
           <tr>
