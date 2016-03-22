@@ -49,3 +49,15 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
 .flash {animation: blink 350ms infinite alternate; -webkit-animation: blink 350ms infinite alternate; }
 @keyframes blink {to { opacity: 0; } }
 @-webkit-keyframes blink {to { opacity: 0; } }
+
+/* custom styles & overrides */
+
+.summaryList {
+    width: 100%;
+}
+
+.test-title {
+    font-size: 20px;
+    text-transform: capitalize;
+    margin-right: 5px;
+}

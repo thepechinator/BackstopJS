@@ -37,7 +37,7 @@
             <div class="indicator passed" ng-if="thisTestPair.passed"><span class="dot green"></span>passed</div>
           </td>
           <td>
-            {{ thisTestPair.meta.label }} {{ thisTestPair.meta.selector }} <span class="fileName">{{ thisTestPair.meta.fileName }}</span>
+            <test-result-summary></test-result-summary>
           </td>
         </tr>
       </table>

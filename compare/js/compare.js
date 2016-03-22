@@ -9,6 +9,29 @@ compareApp.config( function( $routeProvider ){
     .otherwise( {action: "file"} );
 });
 
+compareApp.filter('testTitle', function() {
+  return function(input) {
+    if (input) {
+      var testName = input.split("*[data-test-name='")[1].split("']")[0];
+      return testName.replace(/-/g, ' ');
+    }
+  }
+});
+
+compareApp.filter('scenarioTitle', function() {
+  return function(input) {
+    if (input) {
+      return input.split('/mocks/pages')[1];
+    }
+  }
+});
+
+compareApp.directive('testResultSummary', function() {
+  return {
+    restrict: 'EA',
+    templateUrl: 'js/views/test-result-summary.html'
+  }
+});
 
 compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $http, $filter) {
 
