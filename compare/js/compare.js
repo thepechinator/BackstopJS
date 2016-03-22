@@ -192,9 +192,12 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
   // this is angular's way to allow in page anchor links
   $scope.scrollTo = function (id) {
-    // when this is true
+    // when this is true you are in anchor clicking mode
+    // the routes to do comparison should be done
     $scope.anchoring = true;
-    id = id.slice(0, -4);
+    if (id.indexOf('.png') > 0) {
+      id = id.slice(0, -4);
+    }
     $location.hash(id);
     $anchorScroll();
   }

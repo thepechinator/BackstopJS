@@ -55,13 +55,9 @@
       <table id="{{ thisTestPair.meta.fileName | anchor }}" ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter ">
         <thead>
           <tr>
-            <th class="selector" colspan="2">
-              <span class="test-title">{{ thisTestPair.meta.selector | testTitle }}</span>
-            <a class="test-url" href="{{ thisTestPair.meta.scenario }}">
-              {{ thisTestPair.meta.scenario | scenarioTitle }}
-            </a> 
+            <th class="selector" colspan="4">
+              <test-result-summary></test-result-summary>
             </th>
-            <th class="filename" colspan="2">{{ thisTestPair.meta.fileName }}</th>
           </tr>
           <tr>
             <th>Reference</th>

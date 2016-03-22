@@ -15,7 +15,7 @@ th.filename{text-align: right;}
 .summaryList tr:nth-child(2n-1){background-color: #f0f0f0;}
 .detailReport{ margin:50px 10px 10px;}
 .detailReport select{display: inline-block;width: auto;}
-.summaryBlock .fileName{font-style: italic;font-weight: 100;color: #999;}
+/*.summaryBlock .fileName{font-style: italic;font-weight: 100;color: #999;}*/
 
 h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
 .progressBarBlock{width:130px;display: inline-block;margin-right: 2em;}
@@ -66,7 +66,7 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
 
 .test-title-actual {
     display: inline-block;
-    padding: 4px 10px;
+    padding: 7px 10px;
     font-style: italic;
     color: #999;
 }
@@ -83,4 +83,32 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
 
 .test-title:hover .icon-link {
     display: inline-block;
+}
+
+th.selector,
+th.filename {
+    background-color: #F0F0F0;
+    color:#000;
+}
+
+.img-filename {
+    font-style: italic;
+    font-weight: 100;
+    color: #666;
+}
+
+.back-to-top {
+    cursor: pointer;
+    background: #666;
+    color: #fff;
+    padding: 4px 7px;
+    margin-right: -10px;
+    position: relative;
+    top: -13px;
+    display: inline-block;
+    border-bottom-left-radius: 3px;
+}
+
+.summaryList .back-to-top {
+    display: none;
 }
