@@ -85,7 +85,8 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
 
 
-  var testPairObj = function(a,b,c,o){
+  // pass in testStatus from the already completed CLI tests if possible
+  var testPairObj = function(a,b,c,o,testStatus){
     this.a={src:a||'',srcClass:'reference'},
       this.b={src:b||'',srcClass:'test'},
       this.c={src:c||'',srcClass:'diff'},
@@ -94,6 +95,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     this.passed=false;
     this.meta = o;
     this.meta.misMatchThreshold = (o && o.misMatchThreshold && o.misMatchThreshold >= 0) ? o.misMatchThreshold : defaultMisMatchThreshold;
+    this.testStatus = testStatus;
   };
 
   $scope.$on("$routeChangeSuccess", function( $currentRoute, $previousRoute ){
@@ -105,7 +107,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
       if($scope.action=='url') {
         $scope.runUrlConfig($routeParams);
       }
-      else if(!$scope.anchoring) {
+      else {
         $scope.runFileConfig($routeParams);
       }
     }
@@ -121,16 +123,16 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     $scope.compareTestPair($scope.testPairs[0]);
   };
 
-
   //READS CONFIG FROM FILE AND RUNS IMG DIFF TEST
   $scope.runFileConfig = function(params){
     $http.get('./config.json')
       .success(function(data, status) {
         // console.log('got data!',status,data);
         data.testPairs.forEach(function(o,i,a){
-          $scope.testPairs.push(new testPairObj('../'+o.local_reference, '../'+o.local_test, null, o));
+          $scope.testPairs.push(new testPairObj('../'+o.local_reference, '../'+o.local_test, '../'+o.local_diff, o, o.local_testStatus));
         });
-        $scope.compareTestPairs($scope.testPairs);
+        $scope.displayTestPairs($scope.testPairs);
+        //$scope.compareTestPairs($scope.testPairs);
 
       })
       .error(function(data, status) {
@@ -138,6 +140,34 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
       });
   };
 
+
+  // JUST DISPLAYS THE TEST DATA
+  // TODO: This is just copied from compareTestPairs, simplify
+  $scope.displayTestPairs = function displayTestPairs(testPairs){
+    var startTs = new Date();
+
+    async.eachLimit(
+      testPairs
+      ,1
+      ,function(testPair,cb){
+        $scope.displayTestPair(testPair,function(o){
+          if(o.passed)$scope.passedCount++;
+          $scope.testPairsCompleted++;
+          $scope.testDuration = (new Date()-startTs);
+          //$scope.$digest();
+          cb();
+        });
+      }
+      ,function(){
+        $scope.testIsRunning = false;
+        if($scope.passedCount == $scope.testPairsCompleted)
+          $scope.statusFilter='passed';
+        else
+          $scope.statusFilter='failed';
+        //$scope.$digest();
+      }
+    );
+  };
 
 
   //LOOPS THROUGH TEST PAIR CONFIG AND CALLS compareTestPair(testPair) ON EACH ONE
@@ -170,6 +200,13 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
   };
 
+  // JUST DISPLAY INDIVIDUAL testPair OBJECT (does not call resemble to save time)
+  $scope.displayTestPair = function compareTestPair(testPair,cb){
+    testPair.processing=false;
+    // set passed based on testStatus
+    testPair.passed=testPair.testStatus === 'fail' ? false : true;
+    if(cb)cb(testPair);
+  };
 
 
   //TEST AN INDIVIDUAL testPair OBJECT.  UPDATES THE OBJECT WITH RESULTS AND THEN RETURNS THE OBJECT WITH THE CALLBACK
@@ -186,6 +223,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
       if(cb)cb(testPair);
     });
   };//scope.compareTestPair()
+
 
   // initially no one is scrolling
   $scope.anchoring = false;
