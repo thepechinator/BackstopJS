@@ -28,7 +28,7 @@
             <h2 class='lead'>
               <div class="stat">Passed <strong class='green circle'>{{passedCount}}</strong>&nbsp;&nbsp; Failed <strong class='red circle'>{{testPairsCompleted-passedCount}}</strong></div>
               <div class="stat">{{testPairsCompleted}} of {{testPairs.length}}</div>
-              <div class="stat">{{testDuration/1000 | number : 2}}s</div>
+              <div class="stat" ng-if=displayMode>{{testDuration/1000 | number : 2}}s</div>
               <div class="progressBarBlock" ng-if="testIsRunning">
                 <div class="progress">
                   <div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="{{testPairsCompleted}}" aria-valuemin="0" aria-valuemax="{{testPairs.length}}" style="width: {{testPairsCompleted/testPairs.length*100| number : 0}}%">

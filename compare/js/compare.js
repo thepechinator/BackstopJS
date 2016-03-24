@@ -165,6 +165,10 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
         });
       }
     );
+    // if we are not running the comparison client-side,
+    // no need for time info
+    $displayMode = true;
+    $scope.testIsRunning = false;
   };
 
 
