@@ -45,6 +45,13 @@ compareApp.directive('testResultSummary', function() {
   }
 });
 
+compareApp.directive('baselineCheckbox', function() {
+  return {
+    restrict: 'EA',
+    templateUrl: 'js/views/baseline-checkbox.html'
+  }
+});
+
 compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $http, $filter, $location, $anchorScroll) {
 
   var resembleTestConfig = {
@@ -81,7 +88,6 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
       return false;
     }
   };
-
 
 
 
@@ -239,6 +245,42 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     $location.hash(id);
     $anchorScroll();
   }
+
+  $scope.selection = [];
+  $scope.toggleSelection = function toggleSelection(name) {
+    var idx = $scope.selection.indexOf(name);
+
+    // is currently selected
+    if (idx > -1) {
+      $scope.selection.splice(idx, 1);
+    }
+
+    // is newly selected
+    else {
+      $scope.selection.push(name);
+    }
+
+    var selections = $scope.selection.map(function(n) {
+      return $filter('testTitle')(n);
+    });
+
+    $scope.gulpCommand = '$ gulp backstop --baseline --name=' + selections.join(',');
+  };
+
+  $scope.createBaseline = function() {
+    
+
+    /*$http({
+        url: '/baseline',
+        method: 'POST',
+        data: {'testNames' : selections}
+    }).success(function(data, status, headers, config) {
+        $scope.data = data;
+    }).error(function(data, status, headers, config) {
+        $scope.status = status;
+    });*/
+
+  };
 
 
 });
