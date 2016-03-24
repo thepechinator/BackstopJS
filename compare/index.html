@@ -54,7 +54,7 @@
 
       <h3>Summary</h3>
       <table class="summaryList">
-        <tr ng-repeat="thisTestPair in testPairs">
+        <tr ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter">
           <td class="statusInds">
             <div class="indicator scanning" ng-if="thisTestPair.processing"><span class="dot yellow flash"></span>scanning</div>
             <div class="indicator failed" ng-if="!thisTestPair.passed&&!thisTestPair.processing"><span class="dot red"></span>failed</div>

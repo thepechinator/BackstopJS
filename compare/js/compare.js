@@ -72,8 +72,8 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   $scope.testIsRunning = true;
 
 
-  $scope.detailFilterOptions = ['failed','passed','all','none'];
-  $scope.statusFilter = 'none';
+  $scope.detailFilterOptions = ['all','failed','passed','none'];
+  $scope.statusFilter = 'all';
 
   $scope.displayOnStatusFilter = function(o){
     if(o.processing)return false;
@@ -163,14 +163,6 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
           //$scope.$digest();
           cb();
         });
-      }
-      ,function(){
-        $scope.testIsRunning = false;
-        if($scope.passedCount == $scope.testPairsCompleted)
-          $scope.statusFilter='passed';
-        else
-          $scope.statusFilter='failed';
-        //$scope.$digest();
       }
     );
   };
