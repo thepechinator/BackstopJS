@@ -57,10 +57,12 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
 }
 
 .test-title {
-    font-size: 20px;
+    font-size: 14px;
     text-transform: capitalize;
     margin-right: 5px;
     cursor: pointer;
+    font-weight: bold;
+    color: #666666;
 }
 
 .test-title-actual {
@@ -76,7 +78,7 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
 
 .icon-link {
     display: none;
-    margin-left: -24px;
+    margin-left: -17px;
     color: #999;
 }
 
@@ -173,4 +175,47 @@ code {
 
 .invisible {
     visibility: hidden;
+}
+
+.filter-length {
+    margin-top: 31px;
+}
+
+.summaryList .statusInds {
+    width: 8.33333333%;
+}
+
+.summaryList .test-summary {
+    padding-left: 10px;
+}
+
+#statusFilter {
+    border: 2px #ddd solid !important;
+    height: 37px;
+    box-shadow: none;
+}
+
+/* completely */
+#directoryFilter {
+    border: 2px solid #ddd;
+    padding: 5px 10px;
+    background: #fff;
+}
+
+.completely-dropdown {
+    margin: 5px -12px !important;
+    border: 2px solid #ddd !important;
+    padding: 7px 10px 5px !important;    
+}
+.completely-dropdown > div {
+    color: #333;
+}
+.completely-dropdown > div:first-child {
+    display: none !important;
+}
+.completely-dropdown div:hover {
+    outline: 0 !important;
+    cursor: pointer;
+    color: #428bca !important;
+    border: 0 !important;
 }

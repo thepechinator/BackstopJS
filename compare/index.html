@@ -29,7 +29,7 @@
           <div class="col-md-3">
             <div class="form-group">
               <label for="directoryFilter">filter</label>
-              <completely id="directoryFilter" suggestions="directories"></completely>  
+              <div completely id="directoryFilter" suggestions="directories"></div>  
             </div>
           </div>
           <div class="col-md-2">
@@ -71,7 +71,7 @@
             <div class="indicator failed" ng-if="!thisTestPair.passed&&!thisTestPair.processing"><span class="dot red"></span>failed</div>
             <div class="indicator passed" ng-if="thisTestPair.passed"><span class="dot green"></span>passed</div>
           </td>
-          <td>
+          <td class="test-summary">
             <test-result-summary></test-result-summary>
           </td>
         </tr>
