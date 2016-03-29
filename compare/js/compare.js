@@ -52,7 +52,187 @@ compareApp.directive('baselineCheckbox', function() {
   }
 });
 
-compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $http, $filter, $location, $anchorScroll) {
+// A directive to build a input box that autosuggests
+// available directories to filter
+compareApp.directive('completely', [function() {
+  return {
+    restrict: 'EA',
+    link: function(scope, elem, attrs) {
+      var directoryCompleter = completely(elem[0]);
+
+      scope.$watch('directories', function(newVal) {
+        var dirData = newVal;
+        if(dirData) {
+          // for dropdowns to work properly, the array must be ordered
+          // with the nested directories on top
+          // this is a dumb way of doing it, should count slashes
+          dirData.sort(function(a, b){
+            return b.id.length - a.id.length; // ASC -> a - b; DESC -> b - a
+          });
+
+          // force the first item of every option to be blank
+          // this prevents pre-populating the first item and forces
+          // use of the down arrow
+          // will be less confusing since you can always filter for the current directory
+          dirData.forEach(function(item) {
+            if(item.options[0] !== "") {
+              item.options.unshift('')
+            }
+          });
+          
+          directoryCompleter.onChange = function(text) { 
+            scope.$apply(function() {
+              scope.directoryFilter = text;
+            });
+            
+            // search the matching dirDatanation.
+            for (var i = 0; i < dirData.length; i++) {
+              if (text.indexOf(dirData[i].id) === 0) {
+                directoryCompleter.startFrom = dirData[i].id.length;
+                directoryCompleter.options =   dirData[i].options;
+                directoryCompleter.repaint();
+                return;
+              }  
+            }
+          };
+
+          // store the text so that if user clicks back you can resume
+          var storedText = [];
+
+          // on click and focus show the dropdown
+          function initDropdown() {
+            // init if blank else input stored text
+            if(!directoryCompleter.getText()) {
+              // on click populate the dropdown with the first level (last item in dirData)
+              directoryCompleter.options = dirData[dirData.length -1].options;
+            } else {
+              directoryCompleter.options = storedText;
+            }
+            directoryCompleter.repaint();
+          }
+
+          // on blur remove the dropdown
+          function removeDropdown() {
+            storedText = directoryCompleter.options;
+            directoryCompleter.options = [];
+            directoryCompleter.repaint();
+          }
+
+          elem.bind('click', initDropdown);
+
+          // because of weird html in completely, need to go through this painful
+          // dom selection to get stuff to happen on focus
+          var secondInput = elem[0].querySelectorAll('input')[1];
+          angular.element(secondInput).bind('focus', initDropdown);
+
+          elem.find('input').bind('blur', removeDropdown);
+        }
+
+      });
+    }
+  };
+}]);
+
+// A service to build directory data for completely directive
+compareApp.factory('Directories', function() {
+    
+  function getPrevDirPaths(url, level) {
+    // level is how many preceding levels to join
+    // ex. if level is 2 (0 based) then you get: health/wellness/diet
+    var directories = [];
+    for(var i = 0; i < level; i++) {
+      directories.push(url[i] + '/');
+    }
+    return directories.join(''); // url.slice(0, level).join('/')    
+  }
+
+  function isDirectory(urlSegment) {
+    return urlSegment.indexOf('.html') === -1;
+  }
+
+  function buildData(rawUrls) {
+    var urlSegments = rawUrls.map(function(url) {
+      // remove the beginning of the url (http and mocks/pages)
+      // TODO: use the custom filter
+      var paths = url.split('mocks/pages/')[1];
+      return paths.split('/');
+    });
+    
+    // storing output
+    var data = [];
+    var firstLevel = [];
+
+    // create an object {id: DIR_PATHS, options: NEXT_AVAILABLE_DIRS}
+    function addToObj(urlSegs) {
+      // urlSegs is a url split into array, ex. ["health", "health-care", "portal.html"]
+      for (var i = 0; i < urlSegs.length; i++) {
+        var obj = {};
+        var currSeg = urlSegs[i]; // 'health'
+        var nextSeg = urlSegs[i + 1]; // 'health-care'
+
+        if (isDirectory(currSeg)) {
+          obj.id = getPrevDirPaths(urlSegs, i) + currSeg + '/';
+          if(i === 0) {
+            firstLevel.push(obj.id);    
+          }
+          if(isDirectory(nextSeg)) {
+            obj.options = nextSeg + '/';
+          } else {
+            // if the nextSeg is a url just pass in an empty string
+            obj.options = '';
+          }
+            data.push(obj);
+        }
+      }
+    }
+    
+    // create useable object for every url
+    urlSegments.forEach(addToObj);
+    
+    // add in the initial firstLevel paths where the id is empty
+    data.push({id: '', options: firstLevel.filter(function(item, i, ar){ return ar.indexOf(item) === i; })})
+
+    // merge repeated id's placing their option into an options array
+    var seen = {};
+    data = data.filter(function(entry) {
+      var previous;
+
+      // have we seen this label before?
+      if (seen.hasOwnProperty(entry.id)) {
+        // yes, grab it and add this data to it
+        previous = seen[entry.id];
+        if(previous.options.indexOf(entry.options) === -1) {
+          previous.options.push(entry.options);
+        }
+
+        // don't keep this entry, we've merged it into the previous one
+        return false;
+      }
+
+      // make entry.data an array if it is not
+      if (!Array.isArray(entry.options)) {
+        entry.options = [entry.options];
+      }
+
+      // Remember that we've seen it
+      seen[entry.id] = entry;
+
+      // keep this one, we'll merge any others that match into it
+      return true;
+    });
+
+    return data;
+  }
+  
+  return {
+    query: function(list) {
+      return buildData(list);
+    }
+  }
+  
+});
+
+compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $http, $filter, $location, $anchorScroll, Directories) {
 
   var resembleTestConfig = {
     errorColor: {red: 255, green: 0, blue: 255},
@@ -124,7 +304,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
   //TAKES PARAMETERS FROM URL AND RUNS IMG DIFF TEST
   $scope.runUrlConfig = function(params){
-    console.log(params);
+    //console.log(params);
     $scope.testPairs.push(new testPairObj('../'+params.a, '../'+params.b, null));
     $scope.compareTestPair($scope.testPairs[0]);
   };
@@ -133,12 +313,19 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   $scope.runFileConfig = function(params){
     $http.get('./config.json')
       .success(function(data, status) {
+        var rawDirectoriesList = [];
         // console.log('got data!',status,data);
         data.testPairs.forEach(function(o,i,a){
+          // collect scenario urls
+          rawDirectoriesList.push(o.scenario);
           $scope.testPairs.push(new testPairObj('../'+o.local_reference, '../'+o.local_test, '../'+o.local_diff, o, o.local_testStatus));
         });
         $scope.displayTestPairs($scope.testPairs);
         //$scope.compareTestPairs($scope.testPairs);
+        
+        // send raw rawDirectoriesList to get back directories data
+        // for use in the input filter
+        $scope.directories = Directories.query(rawDirectoriesList);
 
       })
       .error(function(data, status) {
@@ -277,6 +464,5 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     });*/
 
   };
-
 
 });

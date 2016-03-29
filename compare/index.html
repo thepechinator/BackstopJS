@@ -11,23 +11,34 @@
   <script type="text/javascript" src="bower_components/angular-route/angular-route.min.js"></script>
   <script type="text/javascript" src="bower_components/resemblejs/resemble.js"></script>
   <script type="text/javascript" src="bower_components/async/lib/async.js"></script>
+  <script type="text/javascript" src="bower_components/completely/completely.js"></script>
   <script type="text/javascript" src="js/compare.js"></script>
 </head>
 
 <body ng-app="compareApp">
+
   <a class="anchor" id="root"></a>
   <div ng-controller="MainCtrl">
     <div class="summaryBlock">
       <div class='filterGroup form-group'>
         <div class="row">
           <div class="col-md-1">
-            <label for="statusFilter" class="control-label">status filter</label>
+            <label for="statusFilter" class="control-label">status</label>
             <select id="statusFilter" class="form-control" ng-model="statusFilter" ng-options="status for status in detailFilterOptions"></select>
           </div>
-          <div class="col-md-7">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="directoryFilter">filter</label>
+              <completely id="directoryFilter" suggestions="directories"></completely>  
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="filter-length">showing <strong>{{filtered.length}}</strong> of <strong>{{testPairs.length}}</strong></div>
+          </div>
+          <div class="col-md-2">
             <h2 class='lead'>
               <div class="stat">Passed <strong class='green circle'>{{passedCount}}</strong>&nbsp;&nbsp; Failed <strong class='red circle'>{{testPairsCompleted-passedCount}}</strong></div>
-              <div class="stat">{{testPairsCompleted}} of {{testPairs.length}}</div>
+              <div class="stat" ng-if=displayMode>{{testPairsCompleted}} of {{testPairs.length}}</div>
               <div class="stat" ng-if=displayMode>{{testDuration/1000 | number : 2}}s</div>
               <div class="progressBarBlock" ng-if="testIsRunning">
                 <div class="progress">
@@ -51,10 +62,10 @@
           </div>
         </div>
       </div>
-
+      
       <h3>Summary</h3>
       <table class="summaryList">
-        <tr ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter">
+        <tr ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter | filter : directoryFilter as filtered">
           <td class="statusInds">
             <div class="indicator scanning" ng-if="thisTestPair.processing"><span class="dot yellow flash"></span>scanning</div>
             <div class="indicator failed" ng-if="!thisTestPair.passed&&!thisTestPair.processing"><span class="dot red"></span>failed</div>
@@ -70,7 +81,7 @@
     <div class="detailReport">
     <h3>Details</h3>
 
-      <div ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter ">
+      <div ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter | filter : directoryFilter ">
       <a class="anchor" id="{{ thisTestPair.meta.fileName | anchor }}"></a>
       <table>
         <thead>
@@ -113,7 +124,6 @@
 
 
   <footer></footer>
-
 
   </div> <!-- end #root -->
 
