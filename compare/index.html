@@ -41,12 +41,12 @@
                 <div><label>totals</label></div>
                 <div class="stat-main passed">
                   <div class="count">{{passedCount}}</div>
-                  <div class="count-label">passed</div>
+                  <div class="stat-label">passed</div>
                 </div>
                 
                 <div class="stat-main failed">
                   <div class="count">{{testPairsCompleted-passedCount}}</div>
-                  <div class="count-label">failed</div>
+                  <div class="stat-label">failed</div>
                 </div>
               </div>
               
@@ -79,41 +79,49 @@
       </div>
       
       <h3>Summary</h3>
-      <table class="summaryList">
+      <div class="summary-list-container">
+        <table class="summaryList">
         <tr ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter | filter : directoryFilter as filtered">
           <td class="statusInds">
-            <div class="indicator scanning" ng-if="thisTestPair.processing"><span class="dot yellow flash"></span>scanning</div>
-            <div class="indicator failed" ng-if="!thisTestPair.passed&&!thisTestPair.processing"><span class="dot red"></span>failed</div>
-            <div class="indicator passed" ng-if="thisTestPair.passed"><span class="dot green"></span>passed</div>
+            <div class="scanning" ng-if="thisTestPair.processing"><span class="dot yellow flash"></span>scanning</div>
+            <div class="failed" ng-if="!thisTestPair.passed&&!thisTestPair.processing"><div class="stat-label">failed</div></div>
+            <div class="passed" ng-if="thisTestPair.passed"><div class="stat-label">passed</div></div>
           </td>
           <td class="test-summary">
             <test-result-summary></test-result-summary>
           </td>
         </tr>
-      </table>
+        </table>
+      </div>
     </div> <!-- end summaryBlock -->
 
     <div class="detailReport">
     <h3>Details</h3>
-
-      <div ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter | filter : directoryFilter ">
+    <div class="detail-container">
+      <div class="detail" ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter | filter : directoryFilter ">
       <a class="anchor" id="{{ thisTestPair.meta.fileName | anchor }}"></a>
-      <table>
+      <table class="detail-topper">
         <thead>
           <tr>
-            <th class="selector" colspan="4">
+            <th class="statusInds">
+              <div class="failed" ng-if="!thisTestPair.passed&&!thisTestPair.processing"><div class="stat-label">failed</div></div>
+              <div class="passed" ng-if="thisTestPair.passed"><div class="stat-label">passed</div></div>
+            </th>
+            <th class="selector">
               <test-result-summary></test-result-summary>
             </th>
           </tr>
+        </thead>
+      </table>
+      <table class="detail-images">
           <tr>
-            <th>Reference</th>
+            <th class="reference">Reference</th>
             <th>Test</th>
             <th>Diff</th>
-            <th>Report</th>
           </tr>
         </thead>
         <tr>
-          <td>
+          <td class="reference">
             <img ng-src="{{ thisTestPair.a.src }}">
           </td>
           <td>
@@ -122,18 +130,10 @@
           <td>
             <img ng-src="{{ thisTestPair.c.src }}" image-name="c">
           </td>
-          <td>
-            <div class="statusInds">
-              <div class="indicator scanning" ng-if="thisTestPair.processing"><span class="dot yellow flash"></span>scanning</div>
-              <div class="indicator failed" ng-if="!thisTestPair.passed&&!thisTestPair.processing"><span class="dot red"></span>failed</div>
-              <div class="indicator passed" ng-if="thisTestPair.passed"><span class="dot green"></span>passed</div>
-            </div>
-            <div class="reportTxt">Threshold: {{ thisTestPair.meta.misMatchThreshold}}</div>
-            <div class="reportTxt">Report: {{ thisTestPair.report }}</div>
-          </td>
         </tr>
       </table>
       </div>
+    </div>
 
     </div> <!-- end detailReport -->
 
