@@ -70,15 +70,23 @@
         </div>
         <div class="row" ng-show="selection.length">
           <div class="col-md-12 command-container">
-            <div class="pull-right text-right">              
+            <div class="text-right">              
               <!--<button class="btn btn-lg btn-primary" ng-click="createBaseline()">create baselines</button>-->
               <div><code>{{ gulpCommand }}</code></div>
             </div>
           </div>
         </div>
       </div>
-      
-      <h3 ng-class="{'command-showing': selection.length}">Summary</h3>
+
+      <div class="test-all-checkbox pull-right">
+        <label for="toggleAll">select all viewable</label>
+        <input type="checkbox"
+          id="toggleAll" 
+          ng-model="allToggled"
+          ng-checked="filtered.length/3 == selection.length" 
+          ng-click="toggleAllViewable(filtered, allToggled)" />
+      </div>
+      <h3 ng-class="{'command-showing': selection.length}">Summary</h3>      
       <div class="summary-list-container">
         <table class="summaryList">
         <tr ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter | filter : directoryFilter as filtered">

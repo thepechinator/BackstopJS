@@ -61,6 +61,15 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
     color: #666666;
 }
 
+.test-all-checkbox {
+    margin-top: 15px;
+}
+.test-all-checkbox label {
+    margin-right: 10px;
+    font-style: italic;
+    font-size: 14px;
+}
+
 .test-title-actual {
     display: inline-block;
     padding: 7px 10px;
@@ -197,6 +206,7 @@ a.anchor {
 .command-container {
     background: #333;
     padding: 5px;
+    overflow: auto;
 }
 
 .command-showing {
@@ -209,6 +219,7 @@ code {
     color: #fff;
     background-color: transparent;
     border-radius: 4px;
+    white-space: nowrap;
 }
 
 .invisible {

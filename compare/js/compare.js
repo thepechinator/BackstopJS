@@ -450,6 +450,32 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     $scope.gulpCommand = '$ gulp backstop --baseline --name=' + selections.join(',');
   };
 
+  $scope.handleToggleAll = function(filtered) {
+    if(filtered) {
+      console.info('filtered.length: ', filtered.length); //wf
+      console.info('$scope.selection.length: ', $scope.selection.length); //wf  
+    }
+  };
+
+  $scope.toggleAllViewable = function(filtered, allToggled) {
+    if ($scope.selection.length && !allToggled) {
+      $scope.selection = [];
+    } else {
+      for (var i = 0; i < filtered.length; i++) {
+        if($scope.selection.indexOf(filtered[i].meta.selector) === -1) {
+          $scope.selection.push(filtered[i].meta.selector)
+        }
+      }
+    }
+
+
+    var selections = $scope.selection.map(function(n) {
+      return $filter('testTitle')(n);
+    });
+
+    $scope.gulpCommand = '$ gulp backstop --baseline --name=' + selections.join(',');
+  };
+
   $scope.createBaseline = function() {
     
 
