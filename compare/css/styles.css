@@ -136,7 +136,7 @@ th.filename {
 
 .filterGroup {
     padding: 5px 15px 0; 
-    background-color: #eee;
+    background-color: rgba(238, 238, 238, .95);
     margin: 0 -10px 15px;
     position: fixed;
     top: 0;
@@ -146,11 +146,22 @@ th.filename {
     border-bottom: 1px solid #ddd;
 }
 
+label {
+    color: #AAA;
+    font-size: 11px;
+}
+
 .filterGroup h2 {
     font-size: 21px;
-    /* lazy */
-    position: relative;
-    top: 8px;
+    margin-top: 12px;
+}
+
+.filterGroup .logo-container {
+    margin: -5px -15px;
+    color: #fff;
+    background-color: rgba(102, 102, 102, .75);
+    height: 81px;
+    padding: 5px 30px;
 }
 
 h3 {
@@ -189,9 +200,22 @@ code {
 }
 
 .filter-length {
-    margin-top: 31px;
+    margin-top: 23px;
 }
 
+.filter-length strong {
+    font-size: 24px;
+}
+
+.filter-length span {
+    position: relative;
+    top: -3px;
+    margin: 0 2px;
+}
+
+.filter-length span ~ span {
+    font-style: italic;
+}
 .summaryList .statusInds {
     width: 8.33333333%;
 }
@@ -202,7 +226,7 @@ code {
 
 #statusFilter {
     border: 2px #ddd solid !important;
-    height: 37px;
+    height: 36px;
     box-shadow: none;
 }
 
@@ -242,4 +266,63 @@ code {
 .summaryList tr:nth-child(6n), .summaryList tr:nth-child(6n-1), .summaryList tr:nth-child(6n-2) {
     background: #fff;
     border-top: 1px solid #eee;
+}
+
+/* main stats */
+
+.stat-main-container {
+    margin-top: -5px; /* matches outer padding */
+    border-left: 1px solid #ddd;
+    padding: 5px 16px 0 14px;
+    height: 80px;
+    display: inline-block;
+}
+
+.stat-main {
+    display: inline-block;
+    padding-right: 20px;
+    position: relative;
+    top: -4px;
+}
+
+.stat-main + .stat-main {
+    padding-right: 0;
+}
+
+.stat-main > div {
+    display: inline-block;
+}
+
+.stat-main .count {
+    font-size: 28px;
+    font-weight: bold;
+    margin-right: 4px;
+}
+
+.stat-main .count-label {
+    font-size: 11px;
+    padding: 4px 8px 3px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    position: relative;
+    top: -6px;
+}
+
+.stat-main.passed .count {
+    color: #47B04B;
+}
+
+.stat-main.failed .count {
+    color: #C80000;
+}
+
+.stat-main.passed .count-label {
+    color: #fff;
+    background-color: #47B04B;
+}
+
+.stat-main.failed .count-label {
+    color: #fff;
+    background-color: #C80000;
 }
