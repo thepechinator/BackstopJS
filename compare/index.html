@@ -78,7 +78,7 @@
         </div>
       </div>
       
-      <h3>Summary</h3>
+      <h3 ng-class="{'command-showing': selection.length}">Summary</h3>
       <div class="summary-list-container">
         <table class="summaryList">
         <tr ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter | filter : directoryFilter as filtered">

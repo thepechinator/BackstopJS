@@ -199,6 +199,10 @@ a.anchor {
     padding: 5px;
 }
 
+.command-showing {
+    margin-top: 135px;
+}
+
 code {
     padding: 2px 4px;
     font-size: 90%;
@@ -237,6 +241,7 @@ table .statusInds {
 
 .summaryList .test-summary {
     padding-left: 15px;
+    padding-right: 15px;
 }
 
 #statusFilter {
@@ -281,6 +286,10 @@ table .statusInds {
 .summaryList tr:nth-child(6n), .summaryList tr:nth-child(6n-1), .summaryList tr:nth-child(6n-2) {
     background: #fff;
     border-top: 1px solid #eee;
+}
+.summaryList tr:last-child {
+    border-top: 1px solid #e3e3e3;
+    border-bottom: 1px solid #e3e3e3;
 }
 
 td, th {
