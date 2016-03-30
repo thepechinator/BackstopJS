@@ -62,8 +62,8 @@
               </div>
             
           </div>
-          <div class="col-md-2 text-right">
-            <div class="logo-container">
+          <div class="col-md-2 text-right logo-container">
+            <div class="">
               <h2>CSS <br>Regression</h2>
             </div>
           </div>
@@ -78,27 +78,44 @@
         </div>
       </div>
 
-      <div class="test-all-checkbox pull-right">
-        <label for="toggleAll">select all viewable</label>
-        <input type="checkbox"
-          id="toggleAll" 
-          ng-model="allToggled"
-          ng-checked="filtered.length/3 == selection.length" 
-          ng-click="toggleAllViewable(filtered, allToggled)" />
-      </div>
-      <h3 ng-class="{'command-showing': selection.length}">Summary</h3>      
+      
       <div class="summary-list-container">
         <table class="summaryList">
-        <tr ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter | filter : directoryFilter as filtered">
-          <td class="statusInds">
-            <div class="scanning" ng-if="thisTestPair.processing"><span class="dot yellow flash"></span>scanning</div>
-            <div class="failed" ng-if="!thisTestPair.passed&&!thisTestPair.processing"><div class="stat-label">failed</div></div>
-            <div class="passed" ng-if="thisTestPair.passed"><div class="stat-label">passed</div></div>
-          </td>
-          <td class="test-summary">
-            <test-result-summary></test-result-summary>
-          </td>
-        </tr>
+        <thead>
+          <tr>
+            <th class="statusInds"><h3>Summary</h3></th>
+            <th></th>
+            <th class="baseline">
+              <div class="baseline-header pull-right">
+                <span>select to create new baseline</span> <i class="fa fa-long-arrow-down"></i>
+              </div>
+              
+              <div class="test-all-checkbox pull-right">
+                <label for="toggleAll">select all viewable</label>
+                <input type="checkbox"
+                  id="toggleAll" 
+                  ng-model="allToggled"
+                  ng-checked="filtered.length/3 == selection.length" 
+                  ng-click="toggleAllViewable(filtered, allToggled)" />
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter | filter : directoryFilter as filtered">
+            <td class="statusInds">
+              <div class="scanning" ng-if="thisTestPair.processing"><span class="dot yellow flash"></span>scanning</div>
+              <div class="failed" ng-if="!thisTestPair.passed&&!thisTestPair.processing"><div class="stat-label">failed</div></div>
+              <div class="passed" ng-if="thisTestPair.passed"><div class="stat-label">passed</div></div>
+            </td>
+            <td class="test-summary">
+              <test-result-summary></test-result-summary>
+            </td>
+            <td class="baseline">
+              <baseline-checkbox></baseline-checkbox>
+            </td>
+          </tr>
+        </tbody>
         </table>
       </div>
     </div> <!-- end summaryBlock -->
@@ -117,6 +134,9 @@
             </th>
             <th class="selector">
               <test-result-summary></test-result-summary>
+            </th>
+            <th class="baseline">
+              <baseline-checkbox></baseline-checkbox>
             </th>
           </tr>
         </thead>

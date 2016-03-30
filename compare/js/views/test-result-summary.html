@@ -6,15 +6,5 @@
     {{ thisTestPair.meta.scenario | scenarioTitle }}
 </a> 
 
-<span class="test-select-container pull-right">
-    <span class="test-title-actual">
-        {{ thisTestPair.meta.selector | testTitle }}
-    </span>
-    <span class="select-test" ng-class="{invisible: thisTestPair.meta.local_testStatus == 'pass'}">
-            <baseline-checkbox></baseline-checkbox>
-    </span>
-    <span class="back-to-top" ng-click="scrollTo('root')">top <i class="fa fa-chevron-up"></i></span>
-</span>
-
 <br>
 <small class="img-filename">{{ thisTestPair.meta.fileName }}</small>

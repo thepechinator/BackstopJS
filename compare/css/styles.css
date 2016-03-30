@@ -61,9 +61,6 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
     color: #666666;
 }
 
-.test-all-checkbox {
-    margin-top: 15px;
-}
 .test-all-checkbox label {
     margin-right: 10px;
     font-style: italic;
@@ -134,8 +131,6 @@ th.filename {
     text-align: center;
 }
 
-.test-title-checkbox[type=checkbox] {
-}
 
 .select-test-details {
     position: relative;
@@ -147,14 +142,49 @@ th.filename {
     margin: 50px 15px 10px;
 }
 
+.summaryList th {
+    background-color: #fff;
+}
+
+.baseline-header {
+    padding-right: 4px;
+    margin-bottom: 10px;
+}
+.baseline-header span {
+    margin-right: 10px;
+    font-style: italic;
+}
+
+.summaryList .baseline,
+.detailReport .baseline {
+    padding-right: 15px;
+    /*border-left: 1px solid #eee;*/
+}
+
+.summaryList th.baseline {
+    background-color: #fff;
+    padding-right: 15px;
+    border-left: 0;
+}
+
+.summaryList .baseline {
+    /*background: rgba(238, 238, 238, .5);*/
+    width: 16.66666667%;
+}
+
+.detailReport th.baseline {
+    background-color: #F0F0F0;
+    font-weight: normal;
+}
+
 .test-select-container {
     position: relative;
 }
 
 .filterGroup {
-    padding: 5px 10px 0; 
+    padding: 5px 15px 0;
     background-color: rgba(238, 238, 238, .95);
-    margin: 0 -10px 15px;
+    margin: 0 -10px 15px -15px;
     position: fixed;
     top: 0;
     z-index: 1;
@@ -174,7 +204,7 @@ label {
 }
 
 .filterGroup .logo-container {
-    margin: -5px -15px;
+    margin: -5px 0;
     color: #fff;
     background-color: rgba(102, 102, 102, .75);
     height: 81px;
@@ -185,7 +215,7 @@ h3 {
     margin-bottom: 20px;
 }
 .summaryBlock {
-    margin: 100px 15px 10px;
+    margin: 115px 15px 10px;
 }
 
 .summary-list-container, .detail-container {
@@ -207,6 +237,7 @@ a.anchor {
     background: #333;
     padding: 5px;
     overflow: auto;
+    padding-right: 25px;
 }
 
 .command-showing {
@@ -247,12 +278,16 @@ table .statusInds {
     width: 8.33333333%;
     padding-left: 15px;
     padding-right: 15px;
-    padding-top: 13px;
+    padding-top: 4px;
 }
 
+.statusInds h3 {
+    margin: 0;
+}
 .summaryList .test-summary {
     padding-left: 15px;
     padding-right: 15px;
+    width: 75%;
 }
 
 #statusFilter {
@@ -290,21 +325,30 @@ table .statusInds {
 /* table styles */
 
 .summaryList tr:nth-child(6n-3), .summaryList tr:nth-child(6n-4), .summaryList tr:nth-child(6n-5) {
-    background: #f2f2f2;
+    background-color: #fdfdfd;
     border-top: 1px solid #e3e3e3;
     border-bottom: 1px solid #e3e3e3;
 }g
 .summaryList tr:nth-child(6n), .summaryList tr:nth-child(6n-1), .summaryList tr:nth-child(6n-2) {
     background: #fff;
     border-top: 1px solid #eee;
+    border-bottom: 1px solid #e3e3e3;
 }
 .summaryList tr:last-child {
     border-top: 1px solid #e3e3e3;
     border-bottom: 1px solid #e3e3e3;
 }
 
+.summaryList tr:nth-child(3n+1) {
+    border-top: 2px solid #e3e3e3;
+}
+
+.summaryList thead tr {
+    border-top: 0 !important;
+}
+
 td, th {
-    vertical-align: top;
+    vertical-align: middle;
     padding: 8px;
     width: 33.33333%;
 }
