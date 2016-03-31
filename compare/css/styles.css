@@ -423,6 +423,11 @@ div.detail:nth-child(3n+1) table.detail-images img  {
     background-color: #C80000;
 }
 
+.blessed .stat-label {
+    color: #fff;
+    background-color: #428BCA;
+}
+
 .faily i {
     color: #C80000; 
     margin-right: 5px;
@@ -435,4 +440,16 @@ div.detail:nth-child(3n+1) table.detail-images img  {
     font-weight: bold;
     letter-spacing: 2px;
     text-transform: uppercase;
+}
+
+.detail-images-label {
+    margin-right: 10px;
+}
+
+.bless-help {
+    font-weight: 300;
+}
+
+.btn:focus,.btn:active {
+   outline: none !important;
 }

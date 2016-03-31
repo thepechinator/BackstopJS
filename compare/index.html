@@ -105,8 +105,9 @@
           <tr ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter | filter : directoryFilter as filtered">
             <td class="statusInds">
               <div class="scanning" ng-if="thisTestPair.processing"><span class="dot yellow flash"></span>scanning</div>
-              <div class="failed" ng-if="!thisTestPair.passed&&!thisTestPair.processing"><div class="stat-label">failed</div></div>
-              <div class="passed" ng-if="thisTestPair.passed"><div class="stat-label">passed</div></div>
+              <div class="failed" ng-if="thisTestPair.testStatus=='fail'&&!thisTestPair.processing"><div class="stat-label">failed</div></div>
+              <div class="passed" ng-if="thisTestPair.testStatus=='pass'"><div class="stat-label">passed</div></div>
+              <div class="blessed" ng-if="thisTestPair.testStatus=='blessed'"><div class="stat-label">blessed</div></div>
             </td>
             <td class="test-summary">
               <test-result-summary></test-result-summary>
@@ -129,11 +130,13 @@
         <thead>
           <tr>
             <th class="statusInds">
-              <div class="failed" ng-if="!thisTestPair.passed&&!thisTestPair.processing"><div class="stat-label">failed</div></div>
-              <div class="passed" ng-if="thisTestPair.passed"><div class="stat-label">passed</div></div>
+              <div class="failed" ng-if="thisTestPair.testStatus=='fail'&&!thisTestPair.processing"><div class="stat-label">failed</div></div>
+              <div class="passed" ng-if="thisTestPair.testStatus=='pass'"><div class="stat-label">passed</div></div>
+              <div class="blessed" ng-if="thisTestPair.testStatus=='blessed'"><div class="stat-label">blessed</div></div>
             </th>
             <th class="selector">
-              <test-result-summary></test-result-summary>
+              <test-result-summary></test-result-summary>              
+              {{msg}}
             </th>
             <th class="baseline">
               <baseline-checkbox></baseline-checkbox>
@@ -143,9 +146,13 @@
       </table>
       <table class="detail-images">
           <tr>
-            <th class="reference">Reference</th>
-            <th>Test</th>
-            <th>Diff</th>
+            <th class="reference"><span class="detail-images-label">Baseline Reference</span></th>
+            <th>
+              <span class="detail-images-label">Test</span> 
+              <button class="btn btn-primary btn-xs" ng-click="bless(thisTestPair.b.src, $index)"><i class="fa fa-thumbs-up"></i> Bless</button>
+              <small class="bless-help"><em>(make this test image the new baseline reference)</em></small>
+            </th>
+            <th><span class="detail-images-label">Diff</span></th>
           </tr>
         </thead>
         <tr>

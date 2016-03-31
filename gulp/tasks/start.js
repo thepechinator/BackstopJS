@@ -55,7 +55,7 @@ gulp.task("start",function(cb){
     var time = (Number(argv.t) === argv.t && argv.t % 1 === 0) ? argv.t : 15;
 
     // FORK: also pass in the port for the server to use.
-    var serverHook = spawn('node', ['server.js', '-t ' + time, '--report-port=' + port],  {detached: true, stdio:'ignore'});
+    var serverHook = spawn('node', ['server.js', '-t ' + time, '--report-port=' + port],  {detached: false, stdio:'inherit'});
     serverHook.unref();
 
     // FORK: Write json string in file so we can include the port number.

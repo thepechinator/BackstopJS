@@ -279,6 +279,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
       this.report=null;
     this.processing=true;
     this.passed=false;
+    this.blessed=false;
     this.meta = o;
     this.meta.misMatchThreshold = (o && o.misMatchThreshold && o.misMatchThreshold >= 0) ? o.misMatchThreshold : defaultMisMatchThreshold;
     this.testStatus = testStatus;
@@ -476,18 +477,23 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     $scope.gulpCommand = '$ gulp backstop --baseline --name=' + selections.join(',');
   };
 
-  $scope.createBaseline = function() {
-    
+  $scope.bless = function(image, index) {
+    console.info('image: ', image, index); //wf
 
-    /*$http({
+    $http({
         url: '/baseline',
         method: 'POST',
-        data: {'testNames' : selections}
+        data: {
+               'blessed' : image,
+               'index': index
+              }
     }).success(function(data, status, headers, config) {
-        $scope.data = data;
+        var testPairToUpdate = $scope.testPairs[data.testPairToUpdate];
+        testPairToUpdate.testStatus = 'blessed';
+        //$scope.msg = TODO;
     }).error(function(data, status, headers, config) {
         $scope.status = status;
-    });*/
+    });
 
   };
 
