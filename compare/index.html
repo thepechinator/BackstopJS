@@ -7,8 +7,10 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="css/styles.css">
 
+  <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
   <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
   <script type="text/javascript" src="bower_components/angular-route/angular-route.min.js"></script>
+  <script type="text/javascript" src="bower_components/fsm-sticky-header/fsm-sticky-header.js"></script>
   <script type="text/javascript" src="bower_components/resemblejs/resemble.js"></script>
   <script type="text/javascript" src="bower_components/async/lib/async.js"></script>
   <script type="text/javascript" src="bower_components/completely/completely.js"></script>
@@ -126,31 +128,36 @@
     <div class="detail-container">
       <div class="detail" ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter | filter : directoryFilter ">
       <a class="anchor" id="{{ thisTestPair.meta.fileName | anchor }}"></a>
-      <table class="detail-topper">
-        <thead>
+      <table class="detail-images" id="{{thisTestPair.meta.label + $index}}">
+        <thead fsm-sticky-header scroll-body="{{'#' + thisTestPair.meta.label + $index}}" scroll-stop="80">
           <tr>
-            <th class="statusInds">
-              <div class="failed" ng-if="thisTestPair.testStatus=='fail'&&!thisTestPair.processing"><div class="stat-label">failed</div></div>
-              <div class="passed" ng-if="thisTestPair.testStatus=='pass'"><div class="stat-label">passed</div></div>
-              <div class="blessed" ng-if="thisTestPair.testStatus=='blessed'"><div class="stat-label">blessed</div></div>
-            </th>
-            <th class="selector">
-              <test-result-summary></test-result-summary>              
-              {{msg}}
-            </th>
-            <th class="baseline">
-              <baseline-checkbox></baseline-checkbox>
-            </th>
+            <th class="detail-topper" colspan="3">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="statusInds">
+                      <div class="failed" ng-if="thisTestPair.testStatus=='fail'&&!thisTestPair.processing"><div class="stat-label">failed</div></div>
+                      <div class="passed" ng-if="thisTestPair.testStatus=='pass'"><div class="stat-label">passed</div></div>
+                      <div class="blessed" ng-if="thisTestPair.testStatus=='blessed'"><div class="stat-label">blessed</div></div>
+                    </th>
+                    <th class="selector">
+                      <test-result-summary></test-result-summary>              
+                      {{msg}}
+                    </th>
+                    <th class="baseline">
+                      <baseline-checkbox></baseline-checkbox>
+                    </th>
+                  </tr>
+                </thead>
+              </table>
+            </td>
           </tr>
-        </thead>
-      </table>
-      <table class="detail-images">
           <tr>
             <th class="reference"><span class="detail-images-label">Baseline Reference</span></th>
             <th>
               <span class="detail-images-label">Test</span> 
               <button class="btn btn-primary btn-xs" ng-click="bless(thisTestPair.b.src, $index)"><i class="fa fa-thumbs-up"></i> Bless</button>
-              <small class="bless-help"><em>(make this test image the new baseline reference)</em></small>
+              <small class="bless-help"><em>(make this the new baseline reference)</em></small>
             </th>
             <th><span class="detail-images-label">Diff</span></th>
           </tr>

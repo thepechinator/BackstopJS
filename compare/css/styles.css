@@ -86,18 +86,34 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
 
 
 .detailReport th.statusInds {
+
     background-color: #F0F0F0;
 }
 
-.detail-topper {
+th.detail-topper {
+    padding: 0;
+}
+.detail-topper table {
     margin-bottom: 0;
+}
+
+.detail-topper table th.statusInds {
+    width: 8.33333333% !important;
+}
+
+.detail-topper table th.selector {
+    width: 66.6666667% !important;
+}
+
+.detail-topper table th.baseline {
+    width: 25% !important;
 }
 
 th.selector,
 th.filename {
     background-color: #F0F0F0;
     color:#000;
-    width: 91.666666667%;
+    width: 66.666667%;
     padding-left: 15px;
 }
 
@@ -187,7 +203,7 @@ th.filename {
     margin: 0 -10px 15px -15px;
     position: fixed;
     top: 0;
-    z-index: 1;
+    z-index: 10001;
     width: 100%;
     color: #8B8B8B;
     border-bottom: 1px solid #ddd;
@@ -285,7 +301,6 @@ table .statusInds {
     margin: 0;
 }
 .summaryList .test-summary {
-    padding-left: 15px;
     padding-right: 15px;
     width: 66.666667%;
 }
@@ -398,6 +413,7 @@ div.detail:nth-child(3n+1) table.detail-images img  {
     letter-spacing: 2px;
     text-transform: uppercase;
     text-align: center;
+    width: 90px;
 }
 
 .stat-main .stat-label {
@@ -448,6 +464,10 @@ div.detail:nth-child(3n+1) table.detail-images img  {
 
 .bless-help {
     font-weight: 300;
+}
+
+.bless-help em {
+    margin-left: 8px;
 }
 
 .btn:focus,.btn:active {

@@ -1,4 +1,4 @@
-var compareApp = angular.module('compareApp', ['ngRoute']);
+var compareApp = angular.module('compareApp', ['ngRoute', 'fsm']);
 
 
 compareApp.config( function( $routeProvider ){
