@@ -169,7 +169,7 @@ th.filename {
 
 .summaryList .baseline {
     /*background: rgba(238, 238, 238, .5);*/
-    width: 16.66666667%;
+    width: 25%;
 }
 
 .detailReport th.baseline {
@@ -287,7 +287,7 @@ table .statusInds {
 .summaryList .test-summary {
     padding-left: 15px;
     padding-right: 15px;
-    width: 75%;
+    width: 66.666667%;
 }
 
 #statusFilter {
@@ -351,6 +351,10 @@ td, th {
     vertical-align: middle;
     padding: 8px;
     width: 33.33333%;
+}
+
+.detailReport td {
+    vertical-align: top;
 }
 
 div.detail:nth-child(3n+1) table.detail-images img  {
@@ -417,4 +421,18 @@ div.detail:nth-child(3n+1) table.detail-images img  {
 .failed .stat-label {
     color: #fff;
     background-color: #C80000;
+}
+
+.faily i {
+    color: #C80000; 
+    margin-right: 5px;
+}
+
+.faily span {
+    color: #C80000; 
+    font-size: 13px;
+    padding: 4px 8px 3px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
