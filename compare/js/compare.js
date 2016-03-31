@@ -490,6 +490,8 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     }).success(function(data, status, headers, config) {
         var testPairToUpdate = $scope.testPairs[data.testPairToUpdate];
         testPairToUpdate.testStatus = 'blessed';
+        testPairToUpdate.passed = true;
+        $scope.passedCount++;
         //$scope.msg = TODO;
     }).error(function(data, status, headers, config) {
         $scope.status = status;

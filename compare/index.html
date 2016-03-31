@@ -156,8 +156,10 @@
             <th class="reference"><span class="detail-images-label">Baseline Reference</span></th>
             <th>
               <span class="detail-images-label">Test</span> 
-              <button class="btn btn-primary btn-xs" ng-click="bless(thisTestPair.b.src, $index)"><i class="fa fa-thumbs-up"></i> Bless</button>
-              <small class="bless-help"><em>(make this the new baseline reference)</em></small>
+              <span ng-hide="thisTestPair.passed">
+                <button class="btn btn-primary btn-xs" ng-click="bless(thisTestPair.b.src, $index)"><i class="fa fa-thumbs-up"></i> Bless</button>
+                <small class="bless-help"><em>(make this the new baseline reference)</em></small>
+              </span>
             </th>
             <th><span class="detail-images-label">Diff</span></th>
           </tr>
