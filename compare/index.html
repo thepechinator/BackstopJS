@@ -159,14 +159,16 @@
             <th class="reference">
               <span class="detail-images-label">Baseline Reference</span>
               <span ng-hide="thisTestPair.passed">
-                <button class="btn btn-default btn-xs" ng-click="slideDiff('#' + thisTestPair.meta.label + $index + '-compare')"><i class="fa fa-eye"></i> Slide Diff</button>
+                <span class="btn btn-xs btn-diff" ng-click="slideDiff('#' + thisTestPair.meta.label + $index + '-compare')">
+                  <i class="fa fa-eye"></i> activate visual slide diff
+                </span>
                 <small class="bless-help"><em></em></small>
               </span>
             </th>
             <th>
               <span class="detail-images-label">Test</span> 
               <span ng-hide="thisTestPair.passed">
-                <button class="btn btn-primary btn-xs" ng-click="bless(thisTestPair.b.src, $index)"><i class="fa fa-thumbs-up"></i> Bless</button>
+                <span class="btn btn-primary btn-xs" ng-click="bless(thisTestPair.b.src, $index)"><i class="fa fa-thumbs-up"></i> bless</span>
                 <small class="bless-help"><em>(make this the new baseline reference)</em></small>
               </span>
             </th>
@@ -175,7 +177,7 @@
         </thead>
         <tr>
           <td class="reference">
-            <div id="{{thisTestPair.meta.label + $index + '-compare'}}">
+            <div id="{{thisTestPair.meta.label + $index + '-compare'}}" class="visual-diff-container">
               <img ng-src="{{ thisTestPair.a.src }}">
               <img ng-src="{{ thisTestPair.b.src }}">  
             </div>

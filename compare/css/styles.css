@@ -373,7 +373,8 @@ td, th {
     vertical-align: top;
 }
 
-div.detail:nth-child(3n+1) table.detail-images img  {
+div.detail:nth-child(3n+1) table.detail-images img, 
+div.detail:nth-child(3n+1) .visual-diff-container  {
     max-width: 320px;
 }
 /* main stats */
@@ -473,4 +474,16 @@ div.detail:nth-child(3n+1) table.detail-images img  {
 
 .btn:focus,.btn:active {
    outline: none !important;
+}
+
+.btn-diff {
+    background-color: #D935DB;
+    border-color: #D935DB;
+    color: #fff;
+}
+
+.btn-diff:hover {
+    background-color: #C530C8;
+    border-color: #C530C8;
+    color: #fff;
 }

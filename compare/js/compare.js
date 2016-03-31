@@ -500,8 +500,12 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   };
 
   // TODO: this is so wrong, should be a directive
-  $scope.slideDiff = function(selector) {
-    $(selector).twentytwenty();
+  // TODO: Add toggle to remove
+  $scope.slideDiff = function(selector, state) {
+    var $selector = $(selector);
+    if (!$selector.hasClass('twentytwenty-container')) {
+      $(selector).twentytwenty();
+    }
   }
 
 });
