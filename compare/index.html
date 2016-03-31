@@ -5,6 +5,7 @@
 
   <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="bower_components/twentytwenty/twentytwenty.css">
   <link rel="stylesheet" type="text/css" href="css/styles.css">
 
   <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
@@ -14,6 +15,8 @@
   <script type="text/javascript" src="bower_components/resemblejs/resemble.js"></script>
   <script type="text/javascript" src="bower_components/async/lib/async.js"></script>
   <script type="text/javascript" src="bower_components/completely/completely.js"></script>
+  <script type="text/javascript" src="bower_components/twentytwenty/jquery.twentytwenty.js"></script>
+  <script type="text/javascript" src="bower_components/twentytwenty/jquery.event.move.js"></script>
   <script type="text/javascript" src="js/compare.js"></script>
 </head>
 
@@ -153,7 +156,13 @@
             </td>
           </tr>
           <tr>
-            <th class="reference"><span class="detail-images-label">Baseline Reference</span></th>
+            <th class="reference">
+              <span class="detail-images-label">Baseline Reference</span>
+              <span ng-hide="thisTestPair.passed">
+                <button class="btn btn-default btn-xs" ng-click="slideDiff('#' + thisTestPair.meta.label + $index + '-compare')"><i class="fa fa-eye"></i> Slide Diff</button>
+                <small class="bless-help"><em></em></small>
+              </span>
+            </th>
             <th>
               <span class="detail-images-label">Test</span> 
               <span ng-hide="thisTestPair.passed">
@@ -166,7 +175,10 @@
         </thead>
         <tr>
           <td class="reference">
-            <img ng-src="{{ thisTestPair.a.src }}">
+            <div id="{{thisTestPair.meta.label + $index + '-compare'}}">
+              <img ng-src="{{ thisTestPair.a.src }}">
+              <img ng-src="{{ thisTestPair.b.src }}">  
+            </div>
           </td>
           <td>
             <img ng-src="{{ thisTestPair.b.src }}">

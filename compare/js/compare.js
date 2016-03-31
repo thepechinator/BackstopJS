@@ -499,4 +499,9 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
   };
 
+  // TODO: this is so wrong, should be a directive
+  $scope.slideDiff = function(selector) {
+    $(selector).twentytwenty();
+  }
+
 });
