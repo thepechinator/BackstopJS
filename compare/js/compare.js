@@ -3,6 +3,8 @@ var compareApp = angular.module('compareApp', ['ngRoute', 'fsm']);
 
 compareApp.config( function( $routeProvider ){
   $routeProvider
+    .when( '/running/:testName', {action: 'running'})
+    .when( '/baseline/:testName', {action: 'baseline'})
     .when( "/compare", {redirect:'/url'} )
     .when( "/url", {action: 'url'} )
     .when( "/file", {action:'file'} )
@@ -291,7 +293,15 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     // run the route based commands if not simply clicking an anchor link
     // wonder why we have to tie diff test stuff to the route?
     if(!$scope.anchoring) {
-      if($scope.action=='url') {
+      if ($scope.action === 'running') {
+        // this triggers test running UI
+        $scope.testRunning = true;
+        $scope.runTest($routeParams, false);
+      } else if ($scope.action === 'baseline') {
+        // this triggers test running UI
+        $scope.testRunning = true;
+        $scope.runTest($routeParams, true);
+      } else if ($scope.action=='url') {
         $scope.runUrlConfig($routeParams);
       }
       else {
@@ -302,6 +312,58 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
   });
 
+  // Makes a request to post test name(s)
+  // Sets up a new event source that triggers a gulp test by the same name(s)
+  // Prints Server Sent Events from the gulp stdout
+  $scope.backstopStdout = [];
+
+  $scope.runTest = function(test, baseline) {
+
+    $http({
+        url: '/backstop-test-prep',
+        method: 'POST',
+        data: {
+               'test_name' : test.testName,
+               'baseline'  : baseline
+              }
+    }).success(function(data, status, headers, config) {
+        // After successfully posting to /backstop-test-prep
+        // to store tests to run, connect to SSE stream
+        // TODO: shouldn't have DOM stuff in controller
+        // TODO: 
+        var container = $('#runningBlock')[0];
+
+        // TODO: dynamically include port
+        var evtSource = new EventSource('http://' + window.location.hostname + ':3033/backstop');
+
+        evtSource.onmessage = function(e) {
+          // push data from stream into array
+          $scope.backstopStdout.push(e.data);
+        // TODO: shouldn't have DOM stuff in controller
+          container.scrollTop = container.scrollHeight;
+          $scope.$apply();
+        };      
+
+        evtSource.onerror = function(e) {
+          console.log(e);
+        };
+
+        evtSource.addEventListener('done', function(e) {
+          //var obj = JSON.parse(e.data);
+          // close the connection and redirect to compare page
+          // TODO: can't we use $location?
+          evtSource.close()
+          window.location.href = '/compare';
+        }, false);
+
+        console.log(evtSource);
+    
+    }).error(function(data, status, headers, config) {
+        // TODO: take response and give feedback
+        $scope.status = status;
+    });
+
+  };
 
   //TAKES PARAMETERS FROM URL AND RUNS IMG DIFF TEST
   $scope.runUrlConfig = function(params){
@@ -474,7 +536,8 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
       return $filter('testTitle')(n);
     });
 
-    $scope.gulpCommand = '$ gulp backstop --baseline --name=' + selections.join(',');
+    $scope.testNames = selections.join(',');
+    $scope.gulpCommand = '$ gulp backstop --baseline --name=' + $scope.testNames;
   };
 
   $scope.bless = function(image, index) {
