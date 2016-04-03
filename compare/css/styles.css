@@ -1,5 +1,4 @@
 body{font-family: HelveticaNeue,Arial}
-footer{margin-bottom: 200px;}
 label span{display: block;}
 
 /*td:nth-child(4){background-color: #eee;}*/
@@ -73,12 +72,10 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
 .subheader {
     padding: 5px 15px 0;
     background-color: rgba(238, 238, 238, .95);
-    position: fixed;
-    z-index: 10001;
     width: 100%;
     color: #8B8B8B;
     border-bottom: 1px solid #ddd;
-    top: 40px;
+    margin-top: 40px;
 }
 
 .summaryList {
@@ -161,22 +158,6 @@ th.filename {
     color: #666;
 }
 
-.back-to-top {
-    cursor: pointer;
-    /* background: #666; */
-    /* color: #fff; */
-    /* padding: 4px 7px; */
-    right: 0;
-    position: absolute;
-    top: -40px;
-    display: inline-block;
-    /* border-bottom-left-radius: 3px; */
-}
-
-.summaryList .back-to-top {
-    display: none;
-}
-
 .select-test {
     text-align: center;
 }
@@ -253,7 +234,7 @@ h3 {
     margin-bottom: 20px;
 }
 .summaryBlock {
-    margin: 135px 15px 10px;
+    margin: 0 15px;
 }
 
 .summary-list-container, .detail-container {
@@ -263,7 +244,7 @@ h3 {
 a.anchor {
     display: block;
     position: relative;
-    top: -170px;
+    top: -40px;
     visibility: hidden;
 }
 
@@ -550,4 +531,23 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
 .is-running > .detailReport,
 .is-running > .subheader {
     display: none;
+}
+
+.summaryList .back-to-top {
+    display: none;
+}
+
+.back-to-top {
+    cursor: pointer;
+    /* background: #666; */
+    /* color: #fff; */
+    /* padding: 4px 7px; */
+    display: inline-block;
+    /* border-bottom-left-radius: 3px; */
+}
+
+.footer {
+    position: fixed;
+    bottom: 20px;
+    right: 15px;
 }

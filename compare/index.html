@@ -126,7 +126,7 @@
       <div class="detail" ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter | filter : directoryFilter ">
       <a class="anchor" id="{{ thisTestPair.meta.fileName | anchor }}"></a>
       <table class="detail-images" id="{{thisTestPair.meta.label + $index}}">
-        <thead fsm-sticky-header scroll-body="{{'#' + thisTestPair.meta.label + $index}}" scroll-stop="120">
+        <thead fsm-sticky-header scroll-body="{{'#' + thisTestPair.meta.label + $index}}" scroll-stop="40">
           <tr>
             <th class="detail-topper" colspan="3">
               <table>
@@ -190,7 +190,9 @@
     </div> <!-- end detailReport -->
 
 
-  <footer></footer>
+  <footer class="footer text-right">
+    <span class="btn btn-primary back-to-top" ng-click="scrollTo('root')">top <i class="fa fa-chevron-up"></i></span>
+  </footer>
 
   </div> <!-- end #root -->
 
