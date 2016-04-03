@@ -1,4 +1,4 @@
-var compareApp = angular.module('compareApp', ['ngRoute', 'fsm']);
+var compareApp = angular.module('compareApp', ['ngRoute', 'fsm', 'ngProgress']);
 
 
 compareApp.config( function( $routeProvider ){
@@ -234,7 +234,7 @@ compareApp.factory('Directories', function() {
   
 });
 
-compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $http, $filter, $location, $anchorScroll, Directories) {
+compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $http, $filter, $location, $anchorScroll, Directories, ngProgressFactory) {
 
   var resembleTestConfig = {
     errorColor: {red: 255, green: 0, blue: 255},
@@ -584,5 +584,8 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
       $(selector).twentytwenty();
     }
   }
+
+  $scope.progressbar = ngProgressFactory.createInstance();
+  $scope.progressbar.start();
 
 });
