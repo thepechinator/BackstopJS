@@ -24,7 +24,18 @@
 
   <a class="anchor" id="root"></a>
   <div ng-controller="MainCtrl" ng-class="{'is-running': testRunning == true}">
-  <header class="header" ng-include="'js/views/header.html'"></header>
+
+    <header class="header" ng-include="'js/views/header.html'"></header>
+    <div class="running-command">{{runningCommand}}</div>
+    <div id="runningBlock">
+      
+      <code>
+        <div ng-repeat="output in backstopStdout track by $index">
+          {{output}}
+        </div>
+      </code>
+    </div>
+
   <div class="filterGroup form-group subheader">
     <div class="row">
       <div class="col-md-1">
@@ -62,13 +73,6 @@
         </div>
       </div>
     </div>
-  </div>
-  <div id="runningBlock">
-    <code>
-      <div ng-repeat="output in backstopStdout track by $index">
-        {{output}}
-      </div>
-    </code>
   </div>
     <div class="summaryBlock">
 

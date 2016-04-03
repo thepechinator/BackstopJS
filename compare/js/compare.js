@@ -332,6 +332,20 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
         // TODO: shouldn't have DOM stuff in controller
         // TODO: 
         var container = $('#runningBlock')[0];
+        function printCommand () {
+          var gulpCommand = '$ gulp backstop ';
+          if(test.testName === 'all') {
+            gulpCommand += '--path=ALL';
+          } else if (baseline) {
+            gulpCommand += '--baseline ';
+          } else {
+            gulpCommand += '--name=';
+            gulpCommand += test.testName;
+          }
+          return gulpCommand;
+        }
+
+        $scope.runningCommand = printCommand();
 
         // TODO: dynamically include port
         var evtSource = new EventSource('http://' + window.location.hostname + ':3033/backstop');
