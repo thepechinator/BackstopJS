@@ -493,15 +493,25 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
    outline: none !important;
 }
 
+.btn-primary {
+    background-color: #64B5F6;
+    border-color: #64B5F6;
+}
+
+.btn-primary:hover {
+    background-color: #428BCA;
+    border-color: #428BCA;
+}
+
 .btn-diff {
-    background-color: #D935DB;
-    border-color: #D935DB;
+    background-color: #E57373;
+    border-color: #E57373;
     color: #fff;
 }
 
 .btn-diff:hover {
-    background-color: #C530C8;
-    border-color: #C530C8;
+    background-color: #B05757;
+    border-color: #B05757;
     color: #fff;
 }
 

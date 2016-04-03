@@ -16,7 +16,7 @@ gulp.task('compare', function (done) {
 
   // FORK: This is what compare.js uses.
   var resembleTestConfig = {
-    errorColor: {red: 255, green: 0, blue: 255},
+    errorColor: {red: 244, green: 67, blue: 54},
     errorType: 'movement',
     transparency: 0.1,
     largeImageThreshold: 1200
