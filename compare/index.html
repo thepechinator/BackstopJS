@@ -24,6 +24,45 @@
 
   <a class="anchor" id="root"></a>
   <div ng-controller="MainCtrl" ng-class="{'is-running': testRunning == true}">
+  <header class="header" ng-include="'js/views/header.html'"></header>
+  <div class="filterGroup form-group subheader">
+    <div class="row">
+      <div class="col-md-1">
+        <label for="statusFilter" class="control-label">status</label>
+        <select id="statusFilter" class="form-control" ng-model="statusFilter" ng-options="status for status in detailFilterOptions"></select>
+      </div>
+      <div class="col-md-3">
+        <div class="form-group">
+          <label for="directoryFilter">filter</label>
+          <div completely id="directoryFilter" suggestions="directories"></div>  
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="filter-length"><span>showing</span> <strong>{{filtered.length}}</strong> <span>of</span> <strong>{{testPairs.length}}</strong></div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat" ng-if=displayMode>{{testPairsCompleted}} of {{testPairs.length}}</div>
+        <div class="stat" ng-if=displayMode>{{testDuration/1000 | number : 2}}s</div>
+        <div class="progressBarBlock" ng-if="testIsRunning">
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="{{testPairsCompleted}}" aria-valuemin="0" aria-valuemax="{{testPairs.length}}" style="width: {{testPairsCompleted/testPairs.length*100| number : 0}}%">
+              <span class="sr-only">{{testPairsCompleted}} of {{testPairs.length}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 text-right logo-container">
+      </div>
+    </div>
+    <div class="row" ng-show="selection.length">
+      <div class="col-md-12 command-container">
+        <div class="text-right">              
+          <!--<button class="btn btn-lg btn-primary" ng-click="createBaseline()">create baselines</button>-->
+          <div><code>{{ gulpCommand }}</code></div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="runningBlock">
     <code>
       <div ng-repeat="output in backstopStdout track by $index">
@@ -32,63 +71,7 @@
     </code>
   </div>
     <div class="summaryBlock">
-      <div class='filterGroup form-group'>
-        <div class="row">
-          <div class="col-md-1">
-            <label for="statusFilter" class="control-label">status</label>
-            <select id="statusFilter" class="form-control" ng-model="statusFilter" ng-options="status for status in detailFilterOptions"></select>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group">
-              <label for="directoryFilter">filter</label>
-              <div completely id="directoryFilter" suggestions="directories"></div>  
-            </div>
-          </div>
-          <div class="col-md-2">
-            <div class="filter-length"><span>showing</span> <strong>{{filtered.length}}</strong> <span>of</span> <strong>{{testPairs.length}}</strong></div>
-          </div>
-          <div class="col-md-4">
-              
-              <div class="stat-main-container">
-                <div><label>totals</label></div>
-                <div class="stat-main passed">
-                  <div class="count">{{passedCount}}</div>
-                  <div class="stat-label">passed</div>
-                </div>
-                
-                <div class="stat-main failed">
-                  <div class="count">{{testPairsCompleted-passedCount}}</div>
-                  <div class="stat-label">failed</div>
-                </div>
-              </div>
-              
-              <!-- TODO: Enable clientside test mode -->
-              <div class="stat" ng-if=displayMode>{{testPairsCompleted}} of {{testPairs.length}}</div>
-              <div class="stat" ng-if=displayMode>{{testDuration/1000 | number : 2}}s</div>
-              <div class="progressBarBlock" ng-if="testIsRunning">
-                <div class="progress">
-                  <div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="{{testPairsCompleted}}" aria-valuemin="0" aria-valuemax="{{testPairs.length}}" style="width: {{testPairsCompleted/testPairs.length*100| number : 0}}%">
-                    <span class="sr-only">{{testPairsCompleted}} of {{testPairs.length}}</span>
-                  </div>
-                </div>
-              </div>
-            
-          </div>
-          <div class="col-md-2 text-right logo-container">
-            <div class="">
-              <h2>CSS <br>Regression</h2>
-            </div>
-          </div>
-        </div>
-        <div class="row" ng-show="selection.length">
-          <div class="col-md-12 command-container">
-            <div class="text-right">              
-              <!--<button class="btn btn-lg btn-primary" ng-click="createBaseline()">create baselines</button>-->
-              <div><code>{{ gulpCommand }}</code></div>
-            </div>
-          </div>
-        </div>
-      </div>
+
 
       
       <div class="summary-list-container">
@@ -139,7 +122,7 @@
       <div class="detail" ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter | filter : directoryFilter ">
       <a class="anchor" id="{{ thisTestPair.meta.fileName | anchor }}"></a>
       <table class="detail-images" id="{{thisTestPair.meta.label + $index}}">
-        <thead fsm-sticky-header scroll-body="{{'#' + thisTestPair.meta.label + $index}}" scroll-stop="80">
+        <thead fsm-sticky-header scroll-body="{{'#' + thisTestPair.meta.label + $index}}" scroll-stop="120">
           <tr>
             <th class="detail-topper" colspan="3">
               <table>

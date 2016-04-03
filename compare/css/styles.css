@@ -20,7 +20,7 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
 .progress{margin-bottom: -3px;}
 .progress-bar{transition:width 0ms;min-width:20%;}
 
-.filterGroup{padding: 7px; background-color: #eee;}
+
 
 .circle{
     padding: 3px;
@@ -47,6 +47,39 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
 
 
 /* custom styles & overrides */
+
+.header {
+    padding: 6px 15px;
+    background-color: #3C3C3C;
+    position: fixed;
+    top: 0;
+    z-index: 10001;
+    width: 100%;
+}
+
+.header-title {
+    font-size: 24px;
+    margin: 0;
+    color: #fff;
+    font-weight: 600;
+}
+
+.header-title span {
+    font-weight: 300;
+}
+
+.filterGroup{padding: 7px; background-color: #eee;}
+
+.subheader {
+    padding: 5px 15px 0;
+    background-color: rgba(238, 238, 238, .95);
+    position: fixed;
+    z-index: 10001;
+    width: 100%;
+    color: #8B8B8B;
+    border-bottom: 1px solid #ddd;
+    top: 40px;
+}
 
 .summaryList {
     width: 100%;
@@ -198,18 +231,6 @@ th.filename {
     position: relative;
 }
 
-.filterGroup {
-    padding: 5px 15px 0;
-    background-color: rgba(238, 238, 238, .95);
-    margin: 0 -10px 15px -15px;
-    position: fixed;
-    top: 0;
-    z-index: 10001;
-    width: 100%;
-    color: #8B8B8B;
-    border-bottom: 1px solid #ddd;
-}
-
 label {
     color: #AAA;
     font-size: 11px;
@@ -232,7 +253,7 @@ h3 {
     margin-bottom: 20px;
 }
 .summaryBlock {
-    margin: 115px 15px 10px;
+    margin: 135px 15px 10px;
 }
 
 .summary-list-container, .detail-container {
@@ -242,7 +263,7 @@ h3 {
 a.anchor {
     display: block;
     position: relative;
-    top: -135px;
+    top: -170px;
     visibility: hidden;
 }
 
@@ -333,7 +354,7 @@ table .statusInds {
 .completely-dropdown div:hover {
     outline: 0 !important;
     cursor: pointer;
-    color: #428bca !important;
+    color: #64B5F6 !important;
     border: 0 !important;
 }
 
@@ -380,22 +401,13 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
 /* main stats */
 
 .stat-main-container {
-    margin-top: -5px; /* matches outer padding */
-    border-left: 1px solid #ddd;
-    padding: 5px 16px 0 14px;
-    height: 80px;
-    display: inline-block;
+    padding-top: 4px;
 }
-
 .stat-main {
     display: inline-block;
     padding-right: 20px;
     position: relative;
     top: -4px;
-}
-
-.stat-main + .stat-main {
-    padding-right: 0;
 }
 
 .stat-main > div {
@@ -406,6 +418,7 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
     font-size: 28px;
     font-weight: bold;
     margin-right: 4px;
+    line-height: 1;
 }
 
 .stat-label {
@@ -424,35 +437,39 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
 }
 
 .passed .count {
-    color: #47B04B;
+    color: #81C784;
+}
+
+.blessed .count {
+    color: #64B5F6;
 }
 
 .failed .count {
-    color: #C80000;
+    color: #E57373;
 }
 
 .passed .stat-label {
     color: #fff;
-    background-color: #47B04B;
+    background-color: #81C784;
 }
 
 .failed .stat-label {
     color: #fff;
-    background-color: #C80000;
+    background-color: #E57373;
 }
 
 .blessed .stat-label {
     color: #fff;
-    background-color: #428BCA;
+    background-color: #64B5F6;
 }
 
 .faily i {
-    color: #C80000; 
+    color: #E57373; 
     margin-right: 5px;
 }
 
 .faily span {
-    color: #C80000; 
+    color: #E57373; 
     font-size: 13px;
     padding: 4px 8px 3px;
     font-weight: bold;

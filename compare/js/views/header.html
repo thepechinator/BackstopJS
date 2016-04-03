@@ -1,0 +1,29 @@
+<div class="row">
+    <div class="col-md-3">
+        <h1 class="header-title">CSS <span>Regression Testing</span></h1>
+    </div>
+    <div class="col-md-6">
+        <div class="stat-main-container text-center">
+            <!-- <div><label>totals</label></div> -->
+
+            <!-- passed -->    
+            <div class="stat-main passed">
+                <div class="count">{{passedCount}}</div>
+                <div class="stat-label">passed</div>
+            </div>
+          
+            <!-- failed -->
+            <div class="stat-main failed">
+                <div class="count">{{testPairsCompleted-passedCount}}</div>
+                <div class="stat-label">failed</div>
+            </div>
+
+            <!-- blessed -->
+            <div class="stat-main blessed">
+                <div class="count">{{testPairsCompleted-passedCount}}</div>
+                <div class="stat-label">blessed</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3"></div>
+</div>
