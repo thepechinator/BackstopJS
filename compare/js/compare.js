@@ -234,7 +234,7 @@ compareApp.factory('Directories', function() {
   
 });
 
-compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $http, $filter, $location, $anchorScroll, Directories, ngProgressFactory) {
+compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $http, $filter, $location, $anchorScroll, Directories, ngProgressFactory, $timeout) {
 
   var resembleTestConfig = {
     errorColor: {red: 255, green: 0, blue: 255},
@@ -288,8 +288,10 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   };
 
   $scope.$on("$routeChangeSuccess", function( $currentRoute, $previousRoute ){
+
     $scope.params = JSON.stringify($routeParams,null,2);
     $scope.action = $route.current.action;
+    console.info('$scope.action: ', $scope.action); //wf
     // run the route based commands if not simply clicking an anchor link
     // wonder why we have to tie diff test stuff to the route?
     if(!$scope.anchoring) {
@@ -387,8 +389,14 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
           // 30%
           var stageDur = 30;
           if(msg.indexOf('FAILED:' || 'PASSED:') !== -1) {
+            $scope.testPairsCompleted++;
             progressStage(stageDur/($scope.numScenarios * 3)); 
           }
+
+          if(msg.indexOf('PASSED:') !== -1) {
+              $scope.testPairsCompleted++;
+              $scope.passedCount++;
+            }
           
         }
 
@@ -444,9 +452,17 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
           //var obj = JSON.parse(e.data);
           // close the connection and redirect to compare page
           // TODO: can't we use $location?
-          evtSource.close()
-          $scope.progress = 100;
-          window.location.href = '/compare';
+          evtSource.close();
+          
+          $scope.progressbar.set(100);
+
+          // only works with a timeout
+          $timeout(function() {  
+            $location.path('/');
+            $scope.testRunning = false;
+          });
+
+          //window.location.href = '/compare';
         }, false);
 
         console.log(evtSource);
@@ -493,6 +509,10 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   // JUST DISPLAYS THE TEST DATA
   // TODO: This is just copied from compareTestPairs, simplify
   $scope.displayTestPairs = function displayTestPairs(testPairs){
+
+    // reset
+    $scope.passedCount = 0;
+    $scope.testPairsCompleted = 0;
     var startTs = new Date();
 
     async.eachLimit(

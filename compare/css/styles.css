@@ -535,14 +535,19 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
     border-bottom: 5px solid #eee;
 }
 
-.is-running > #runningBlock,
+.is-running #runningBlock,
 .is-running .running-command {
     display: block;
 }
-.is-running > .summaryBlock,
-.is-running > .detailReport,
-.is-running > .subheader {
+
+.is-running .summaryBlock,
+.is-running .detailReport,
+.is-running .subheader {
     display: none;
+}
+
+.is-running #ngProgress-container {
+    display: block;
 }
 
 .summaryList .back-to-top {
@@ -565,6 +570,7 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
 }
 
 #ngProgress-container {
+    display: none;
     top: 76px;
 }
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="compareApp">
 <head>
   <title>BackstopJS Report</title>
 
@@ -22,10 +22,10 @@
   <script type="text/javascript" src="js/compare.js"></script>
 </head>
 
-<body ng-app="compareApp">
+<body ng-controller="MainCtrl" ng-class="{'is-running': testRunning == true}">
 
   <a class="anchor" id="root"></a>
-  <div ng-controller="MainCtrl" ng-class="{'is-running': testRunning == true}">
+  <div>
 
     <header class="header" ng-include="'js/views/header.html'"></header>
     <div class="running-command">{{runningCommand}}</div>
