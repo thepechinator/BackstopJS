@@ -66,7 +66,6 @@ app.post('/backstop-test-prep', function(req, res) {
     console.log('Preparing to test: ', req.body.test_name);
     fs.writeFileSync('current-test.txt', JSON.stringify(req.body));
     console.log('Writing to current-test.txt');
-
     // TODO: send a more helpful response
     res.send('ok');
 });
@@ -108,15 +107,15 @@ app.get('/backstop', function(req, res) {
   spw.stdout.on('data', function (data) {
     str += data.toString();
 
-    console.log(str);
-
     // Flush out line by line.
     var lines = str.split("\n");
     
+    // this cleans up the string \n
     for (var i in lines) {
       if (i == lines.length - 1) {
         str = lines[i];
       } else {
+        console.log(lines[i]);
         // Note: The double-newline is *required*
         res.write('data: ' + lines[i] + "\n\n");
       }

@@ -331,6 +331,12 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
         // to store tests to run, connect to SSE stream
         // TODO: shouldn't have DOM stuff in controller
         // TODO: 
+
+        // START progress bar
+        $scope.progressbar = ngProgressFactory.createInstance();
+        $scope.progressbar.setHeight('5px');
+        $scope.progressbar.setColor('#64B5F6');
+        
         var container = $('#runningBlock')[0];
         function printCommand () {
           var gulpCommand = '$ gulp backstop ';
@@ -349,11 +355,83 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
         // TODO: dynamically include port
         var evtSource = new EventSource('http://' + window.location.hostname + ':3033/backstop');
+        
+        // init progress bar and stages
+        $scope.progress = 0;
+        $scope.prepStage = false;
+        $scope.scenarioStage = false;
+        $scope.compareStage = false;
 
+        // increments progress bar an amt
+        function progressStage(increment) {
+          $scope.progress += (increment);
+          $scope.progressbar.set($scope.progress);
+        }
+
+        function prepStage(msg) {          
+          // 10%
+          var stageDur = 10; // how many percent the whole stage takes
+          var numExtraLines = 106; // TODO: 106 is a bs number, there are just 106 lines in the prepstage at the moment
+          progressStage(stageDur/numExtraLines)
+        }
+
+        function scenarioStage(msg) {
+          // 60%
+          var stageDur = 60;
+          if(msg.indexOf('Screenshots for ') !== -1) {
+            progressStage(stageDur/($scope.numScenarios * 3));
+          }
+        }
+
+        function compareStage(msg) {
+          // 30%
+          var stageDur = 30;
+          if(msg.indexOf('FAILED:' || 'PASSED:') !== -1) {
+            progressStage(stageDur/($scope.numScenarios * 3)); 
+          }
+          
+        }
+
+        // this is where the data comes in
         evtSource.onmessage = function(e) {
-          // push data from stream into array
+
+          // Detect the 3 different stages of progress for the gulp backstop process
+          // TODO: consolidate this crap
+          if (e.data.indexOf('ngProgress') !== -1) {
+            // if the data has something like ngProgress|compareStage|43
+            // we split it to grab usedata from it
+            var stage = e.data.split('|')[1];
+
+            if (stage === 'prepStage') {
+              $scope.progressbar.start();
+              $scope.prepStage = true;
+              console.info('prepStage started!'); //wf
+            } else if (stage === 'scenarioStage') {
+              $scope.prepStage = false;
+              $scope.scenarioStage = true;
+              // this is where we get the important info of how many tests
+              $scope.numScenarios = parseInt(e.data.split('|')[2]);
+              console.info('scenarioStage started!'); //wf
+            } else if (e.data.indexOf('compareStage')) {
+              $scope.scenarioStage = false; 
+              $scope.compareStage = true;
+              console.info('compareStage started!'); //wf
+            }
+          }
+
+          // watch for scope changes
+          if ($scope.prepStage) {            
+            prepStage(e.data);
+          }
+          if ($scope.scenarioStage) {
+            scenarioStage(e.data);
+          }
+          if ($scope.compareStage) {
+            compareStage(e.data);
+          }
+
           $scope.backstopStdout.push(e.data);
-        // TODO: shouldn't have DOM stuff in controller
+          // TODO: shouldn't have DOM stuff in controller
           container.scrollTop = container.scrollHeight;
           $scope.$apply();
         };      
@@ -367,6 +445,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
           // close the connection and redirect to compare page
           // TODO: can't we use $location?
           evtSource.close()
+          $scope.progress = 100;
           window.location.href = '/compare';
         }, false);
 
@@ -584,8 +663,5 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
       $(selector).twentytwenty();
     }
   }
-
-  $scope.progressbar = ngProgressFactory.createInstance();
-  $scope.progressbar.start();
 
 });

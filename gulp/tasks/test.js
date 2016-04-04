@@ -89,7 +89,7 @@ gulp.task('test',['init'], function () {
     var result = (success)?'Bitmap file generation completed.':'Testing script failed with code: '+code;
 
     console.log('\n'+result);
-
+    console.info('ngProgress|compareStage');
     //exit if there was some kind of failure in the casperChild process
     if(code!=0){
       console.log('\nLooks like an error occured. You may want to try running `$ gulp echo`. This will echo the requested test URL output to the console. You can check this output to verify that the file requested is indeed being received in the expected format.');

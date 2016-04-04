@@ -93,10 +93,10 @@ gulp.task('compare', function (done) {
 
       if (imageComparisonFailed) {
         pair.testStatus = "fail";
-        console.log('ERROR:', pair.scenario);
+        console.log('FAILED:', pair.scenario);
       } else {
         pair.testStatus = "pass";
-        console.log('OK:', pair.scenario);
+        console.log('PASSED:', pair.scenario);
       }
       
       storeDiffImage(testPath, data, pair.testStatus);

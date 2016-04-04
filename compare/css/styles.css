@@ -48,6 +48,7 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
 /* custom styles & overrides */
 
 .header {
+    height: 40px;
     padding: 6px 15px 0;
     background-color: #3C3C3C;
     position: fixed;
@@ -379,6 +380,16 @@ div.detail:nth-child(3n+1) table.detail-images img,
 div.detail:nth-child(3n+1) .visual-diff-container  {
     max-width: 320px;
 }
+
+.visual-diff-container img + img {
+    display: none;
+}
+
+/* if 20/20 is engaged show it */
+.twentytwenty-wrapper .visual-diff-container img + img {
+    display: block;
+}
+
 /* main stats */
 
 .stat-main-container {
@@ -503,24 +514,25 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
     overflow-y: scroll;
     padding: 10px 15px 10px;
     overflow-x: hidden;
-    margin-top: 55px;
+    margin-top: 59px;
     position: relative;
 }
 
 .running-command {
     display: none;
     position: absolute;
-    top: 44px;
+    top: 41px;
     z-index: 1002;
     width: 100%;
     color: #000;
     background-color: #FFF;
     white-space: nowrap;
-    height: 32px;
+    height: 40px;
     font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
-    padding-top: 5px;
+    padding-top: 7px;
     padding-left: 15px;
     box-shadow: 0px 15px 0 0px #333;
+    border-bottom: 5px solid #eee;
 }
 
 .is-running > #runningBlock,
@@ -550,4 +562,33 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
     position: fixed;
     bottom: 20px;
     right: 15px;
+}
+
+#ngProgress-container {
+    top: 76px;
+}
+
+#ngProgress {
+    box-shadow: none !important;
+}
+
+
+/* make keyframes that tell the start state and the end state of our object */
+@-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+.fade-in {
+  opacity:0;  /* make things invisible upon start */
+  -webkit-animation:fadeIn ease-in 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+  -moz-animation:fadeIn ease-in 1;
+  animation:fadeIn ease-in 1;
+
+  -webkit-animation-fill-mode:forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+  -moz-animation-fill-mode:forwards;
+  animation-fill-mode:forwards;
+
+  -webkit-animation-duration:1s;
+  -moz-animation-duration:1s;
+  animation-duration:1s;
 }

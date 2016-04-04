@@ -25,6 +25,8 @@ var casper_scripts = config.paths.casper_scripts || null;
 var compareConfigFileName = config.paths.compare_data || 'compare/config.json';
 var viewports = config.viewports;
 var scenarios = config.scenarios||config.grabConfigs;
+console.info('ngProgress|scenarioStage|' + scenarios.length); //wf
+console.info('CasperJS: One sec, we are just getting started...');
 
 var compareConfig = {testPairs:[]};
 
@@ -94,7 +96,7 @@ casper.on('resource.requested', function(requestData, request) {
             casper.echo(e);
         }
         if (abort) {
-            casper.echo('Aborting request: ' + requestData.url);
+            casper.echo('Aborting blacklisted request: ' + requestData.url);
             request.abort();
             break;
         }
@@ -222,6 +224,7 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
 
       this.then(function(){
 
+        // Note: this echo w/ string 'Screenshots for ' is currently necessary for detecting progress of test for the ngProgress bar 
         this.echo('Screenshots for ' + vp.name + ' (' + (vp.width||vp.viewport.width) + 'x' + (vp.height||vp.viewport.height) + ')', 'info');
 
         //HIDE SELECTORS WE WANT TO AVOID
