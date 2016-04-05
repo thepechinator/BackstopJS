@@ -79,6 +79,29 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
     margin-top: 40px;
 }
 
+.subheader .logo {
+    position: absolute;
+    right: 0;
+    z-index: 100000;
+    top: 0;
+    padding: 16px 30px 15px;
+    background-color: #81C784;
+}
+
+.subheader .logo.hasFails {
+    background-color: #E57373;
+}
+
+.subheader .logo svg {
+    height: 84px;
+    width: 57px;
+    fill: #AADAAB;
+}
+
+.subheader .logo.hasFails svg {
+    fill: #EEA1A0;
+}
+
 .summaryList {
     width: 100%;
 }
@@ -221,14 +244,6 @@ label {
 .filterGroup h2 {
     font-size: 21px;
     margin-top: 12px;
-}
-
-.filterGroup .logo-container {
-    margin: -5px 0;
-    color: #fff;
-    background-color: rgba(102, 102, 102, .75);
-    height: 81px;
-    padding: 5px 30px;
 }
 
 h3 {
