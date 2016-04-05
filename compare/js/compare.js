@@ -377,10 +377,12 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
           progressStage(stageDur/numExtraLines)
         }
 
+        $scope.capturesCompleted = 0;
         function scenarioStage(msg) {
           // 60%
           var stageDur = 60;
           if(msg.indexOf('Screenshots for ') !== -1) {
+            $scope.capturesCompleted++;
             progressStage(stageDur/($scope.numScenarios * 3));
           }
         }

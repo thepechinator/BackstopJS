@@ -53,16 +53,13 @@
         <label for="statusFilter" class="control-label">status</label>
         <select id="statusFilter" class="form-control" ng-model="statusFilter" ng-options="status for status in detailFilterOptions"></select>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-4">
         <div class="form-group">
           <label for="directoryFilter">filter</label>
           <div completely id="directoryFilter" suggestions="directories"></div>  
         </div>
       </div>
-      <div class="col-md-2">
-        <div class="filter-length"><span>showing</span> <strong>{{filtered.length}}</strong> <span>of</span> <strong>{{testPairs.length}}</strong></div>
-      </div>
-      <div class="col-md-6">
+      <div class="col-md-7">
         <div class="stat" ng-if=displayMode>{{testPairsCompleted}} of {{testPairs.length}}</div>
         <div class="stat" ng-if=displayMode>{{testDuration/1000 | number : 2}}s</div>
         <div class="progressBarBlock" ng-if="testIsRunning">

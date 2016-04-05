@@ -1,8 +1,30 @@
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-6 col-lg-5">
         <h1 class="header-title">CSS <span>Regression Testing</span></h1>
+        <span ng-show="testRunning && scenarioStage" class="filter-length">
+            <span>capturing</span>
+            <strong>{{capturesCompleted}}</strong> 
+            <span>of</span>
+            <strong>{{numScenarios * 3}}</strong> 
+            <span>screenshots</span>
+        </span>
+        <span ng-show="testRunning && compareStage" class="filter-length">
+            <span>comparing</span> 
+            <strong>{{testPairsCompleted}}</strong>
+            <span>of</span>
+            <strong>{{numScenarios * 3}}</strong> 
+            <span>screenshots</span>
+        </span>
+        <span ng-show="!testRunning" class="filter-length">
+            <span>showing</span> 
+            <strong>{{filtered.length}}</strong> 
+            <span>of</span> 
+            <strong>{{testPairs.length}}</strong> 
+            <span>screenshots</span>
+        </span>
+    
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4 col-lg-4">
         <div class="stat-main-container text-center">
             <!-- <div><label>totals</label></div> -->
 
@@ -29,5 +51,5 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3"></div>
+    <div class="col-md-2 col-lg-3"></div>
 </div>

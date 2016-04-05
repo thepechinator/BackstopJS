@@ -62,6 +62,7 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
     margin: 0;
     color: #fff;
     font-weight: 600;
+    float: left;
 }
 
 .header-title span {
@@ -293,7 +294,10 @@ code {
 }
 
 .filter-length {
-    margin-top: 23px;
+    margin-left: 30px;
+    color: #fff;
+    position: relative;
+    top: -4px;
 }
 
 .filter-length strong {
@@ -304,11 +308,9 @@ code {
     position: relative;
     top: -3px;
     margin: 0 2px;
+    color: #777;
 }
 
-.filter-length span ~ span {
-    font-style: italic;
-}
 table .statusInds {
     width: 8.33333333%;
     padding-left: 15px;
