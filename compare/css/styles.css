@@ -50,7 +50,7 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
 .header {
     height: 40px;
     padding: 6px 15px 0;
-    background-color: #3C3C3C;
+    background-color: #333;
     position: fixed;
     top: 0;
     z-index: 10001;
@@ -514,30 +514,38 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
     overflow-y: scroll;
     padding: 10px 15px 10px;
     overflow-x: hidden;
-    margin-top: 59px;
+    margin-top: 94px;
     position: relative;
 }
 
 .running-command {
     display: none;
     position: absolute;
-    top: 41px;
-    z-index: 1002;
+    top: 43px;
+    z-index: 100000;
     width: 100%;
-    color: #000;
-    background-color: #FFF;
+    color: #fff;
     white-space: nowrap;
-    height: 40px;
+    height: 37px;
     font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
     padding-top: 7px;
     padding-left: 15px;
     box-shadow: 0px 15px 0 0px #333;
-    border-bottom: 5px solid #eee;
+}
+
+.is-running {
+    overflow: hidden;
 }
 
 .is-running #runningBlock,
-.is-running .running-command {
+.is-running .running-command,
+.is-running .running-progress,
+.is-running .phalanx-dude {
     display: block;
+}
+
+.is-running .header {
+    position: absolute;
 }
 
 .is-running .summaryBlock,
@@ -548,6 +556,7 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
 
 .is-running #ngProgress-container {
     display: block;
+    background: #3C3C3C;
 }
 
 .summaryList .back-to-top {
@@ -571,7 +580,8 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
 
 #ngProgress-container {
     display: none;
-    top: 76px;
+    position: absolute;
+    top: 40px;
 }
 
 #ngProgress {
@@ -597,4 +607,34 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
   -webkit-animation-duration:1s;
   -moz-animation-duration:1s;
   animation-duration:1s;
+}
+
+/*.running-progress {
+    display: none;
+    position: absolute;
+    left: 50%;
+    margin-left: 140px;
+    top: 585px;
+    width: 200px;
+    height: 80px;
+    text-align: center;
+    font-size: 16px;
+    color: #eee;
+    font-weight: bold;
+}*/
+
+
+.phalanx-dude {
+    display: none;
+    height: 900px;
+    background-color: #333;
+}
+
+.phalanx-dude svg {
+    position: absolute;
+    top: 245px;
+    left: 50%;
+    margin-left: -130px;
+    width: 260px;
+    fill: #3C3C3C;
 }

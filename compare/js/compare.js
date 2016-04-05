@@ -336,7 +336,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
         // START progress bar
         $scope.progressbar = ngProgressFactory.createInstance();
-        $scope.progressbar.setHeight('5px');
+        $scope.progressbar.setHeight('40px');
         $scope.progressbar.setColor('#64B5F6');
         
         var container = $('#runningBlock')[0];
@@ -453,7 +453,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
           // close the connection and redirect to compare page
           // TODO: can't we use $location?
           evtSource.close();
-          
+          //alert('done');
           $scope.progressbar.set(100);
 
           // only works with a timeout
