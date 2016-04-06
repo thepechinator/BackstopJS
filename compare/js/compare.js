@@ -576,7 +576,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   $scope.displayTestPair = function compareTestPair(testPair,cb){
     testPair.processing=false;
     // set passed based on testStatus
-    testPair.passed=testPair.testStatus === 'fail' ? false : true;
+    testPair.passed = testPair.testStatus === 'pass' ? true : false;
     if(cb)cb(testPair);
   };
 
@@ -661,20 +661,25 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   };
 
   $scope.bless = function(image, index) {
-    console.info('image: ', image, index); //wf
-
+    var toBless = $scope.testPairs[index].blessed;
     $http({
         url: '/baseline',
         method: 'POST',
         data: {
+               'toBless' : toBless,
                'blessed' : image,
                'index': index
               }
     }).success(function(data, status, headers, config) {
         var testPairToUpdate = $scope.testPairs[data.testPairToUpdate];
-        testPairToUpdate.testStatus = 'blessed';
-        testPairToUpdate.passed = true;
-        $scope.passedCount++;
+        console.log(data);
+        if (toBless) {
+          testPairToUpdate.testStatus = 'blessed';
+        } else {
+          testPairToUpdate.testStatus = 'fail';
+        }
+        //testPairToUpdate.passed = true;
+        //$scope.passedCount++;
         //$scope.msg = TODO;
     }).error(function(data, status, headers, config) {
         $scope.status = status;

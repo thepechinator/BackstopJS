@@ -31,6 +31,9 @@ app.post('/baseline', function(req, res) {
   
   // TODO: Make the string splitting and manipulation more robust
   // TODO: Add error handling
+  var toBless = req.body.toBless;
+  var status = toBless ? 'blessed' : 'fail';
+
   var blessed = req.body.blessed.split('.././bitmaps_test/')[1];
   var blessedDest = blessed.split('/')[1];
 
@@ -46,18 +49,33 @@ app.post('/baseline', function(req, res) {
     if (err) throw err;
     configObj = JSON.parse(data);
 
-    configObj.testPairs[configToUpdate].local_testStatus = 'blessed';
+    configObj.testPairs[configToUpdate].local_testStatus = status;
 
     fs.writeFile(configFileName, JSON.stringify(configObj, null, 2), function (err) {
       if (err) throw err;
-      console.log('Blessed file received: ' + blessedDest);
-      console.log('Moving to baseline reference directory'); 
+
+      console.log('\n');
+      if (toBless) {
+        console.log('Blessed file received: ' + blessedDest);
+        console.log('Moving to baseline reference directory, ready for version control'); 
+      } else {
+        console.log('File to Unbless received: ' + blessedDest);
+        console.log('Reset to "fail" status'); 
+        var clean_file = spawn('gulp', ['backstop:clean_file', '--file=' + blessedDest], {cwd: '../../'});
+        clean_file.stdout.on('close', function (data) {
+          console.log(blessedDest + ' no longer blessed for version control');
+        });
+        clean_file.stderr.on('data', function (data) {
+          console.log('error: ', data.toString()); //wf
+        });
+      }
       console.log('Updating data (writing to ' + configFileName + ')');
 
       // respond with the index of the object to update on the client
       res.send({testPairToUpdate: configToUpdate});
     });
   });
+
 
 });
 

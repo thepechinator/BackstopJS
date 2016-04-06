@@ -4,7 +4,7 @@
   <title>BackstopJS Report</title>
 
   <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="bower_components/twentytwenty/twentytwenty.css">
   <link rel="stylesheet" href="bower_components/ngprogress/ngProgress.css">
   <link rel="stylesheet" type="text/css" href="css/styles.css">
@@ -172,19 +172,21 @@
           </tr>
           <tr>
             <th class="reference">
-              <span class="detail-images-label">Baseline Reference</span>
+              <span class="detail-images-label">Baseline Reference Screenshot</span>
               <span ng-hide="thisTestPair.passed">
-                <span class="btn btn-xs btn-diff" ng-click="slideDiff('#' + thisTestPair.meta.label + $index + '-compare')">
-                  <i class="fa fa-eye"></i> activate visual slide diff
-                </span>
+                
+                <i class="material-icons diff-icon" ng-click="slideDiff('#' + thisTestPair.meta.label + $index + '-compare')">visibility</i>
+              
                 <small class="bless-help"><em></em></small>
               </span>
             </th>
             <th>
-              <span class="detail-images-label">Test</span> 
-              <span ng-hide="thisTestPair.passed">
-                <span class="btn btn-primary btn-xs" ng-click="bless(thisTestPair.b.src, $index)"><i class="fa fa-thumbs-up"></i> bless</span>
-                <small class="bless-help"><em>(make this the new baseline reference)</em></small>
+              <span class="detail-images-label detail-images-label-test">Test Screenshot</span> 
+              <span ng-hide="thisTestPair.passed" class="bless">
+                <label class="bless-label">
+                  <input class="bless-checkbox" type="checkbox" ng-model="thisTestPair.blessed" ng-change="bless(thisTestPair.b.src, $index)" />
+                  <i class="material-icons">thumb_up</i> Bless this screenshot
+                </label>
               </span>
             </th>
             <th><span class="detail-images-label">Diff</span></th>
