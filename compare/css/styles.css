@@ -195,7 +195,8 @@ th.filename {
 }
 
 .detailReport { 
-    margin: 50px 15px 10px;
+    margin: 50px 15px 0px;
+    padding-bottom: 50px;
 }
 
 .summaryList th {
@@ -571,12 +572,36 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
     display: none;
 }
 
+.is-error .header,
+.is-error .summaryBlock,
+.is-error .detailReport,
+.is-error .subheader {
+    display: none;
+}
+
+body {
+    background-color: #333;
+}
+
+.content-main {
+    background-color: #fff;
+}
+
+.detail:last-child table {
+    margin-bottom: 0;
+}
+
 .is-running #ngProgress-container {
     display: block;
     background: #3C3C3C;
 }
 
 .summaryList .back-to-top {
+    display: none;
+}
+
+.is-running .back-to-top,
+.is-error .back-to-top {
     display: none;
 }
 
@@ -649,9 +674,17 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
 
 .phalanx-dude svg {
     position: absolute;
-    top: 245px;
+    top: 225px;
     left: 50%;
     margin-left: -130px;
     width: 260px;
     fill: #3C3C3C;
+}
+
+.panel-error {
+    position: relative;
+    top: 100px;
+    border-color: transparent;
+    background-color: #3B3B3B;
+    color: #aaa;
 }

@@ -62,11 +62,11 @@ gulp.task("start",function(cb){
     fs.writeFileSync(paths.serverPidFile, JSON.stringify({pid: serverHook.pid, port: port}));
     console.log('\nServer launched in background on port ' + port + ' with PID: '+serverHook.pid);
 
-    if (time > 0) {
-      console.log('NOTE: Server will auto-shutdown in ' + time + ' mins.\n');
-    } else {
-      console.log('NOTE: Server will run until you stop it with \'gulp stop\'.\n')
-    }
+    //if (time > 0) {
+    //  console.log('NOTE: Server will auto-shutdown in ' + time + ' mins.\n');
+    //} else {
+    // console.log('NOTE: Server will run until you stop it with \'gulp stop\'.\n')
+    //}
 
   }
 

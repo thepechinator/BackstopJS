@@ -334,6 +334,11 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
         // TODO: shouldn't have DOM stuff in controller
         // TODO: 
 
+        if(data.status === 'busy') {
+          $scope.isError = true;
+          return;
+        }
+
         // START progress bar
         $scope.progressbar = ngProgressFactory.createInstance();
         $scope.progressbar.setHeight('40px');

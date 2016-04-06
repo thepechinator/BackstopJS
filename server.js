@@ -9,7 +9,9 @@ var express = require('express'),
     //paths   = require('../util/paths'),
     fs      = require('fs');
 
-var autoShutDownMs = (Number(argv.t) === argv.t && argv.t % 1 === 0) ? 1000 * 60 * argv.t : 1000 * 60 * 15;
+fs.writeFileSync('current-test.txt', 'done');
+
+//var autoShutDownMs = (Number(argv.t) === argv.t && argv.t % 1 === 0) ? 1000 * 60 * argv.t : 1000 * 60 * 60;
 var rootDir = __dirname;
 
 // FORK: Allow port to be configurable.
@@ -63,11 +65,15 @@ app.post('/baseline', function(req, res) {
 // The /backstop request will read the data from this file
 // TODO: see if this is even necessary
 app.post('/backstop-test-prep', function(req, res) {
-    console.log('Preparing to test: ', req.body.test_name);
-    fs.writeFileSync('current-test.txt', JSON.stringify(req.body));
-    console.log('Writing to current-test.txt');
-    // TODO: send a more helpful response
-    res.send('ok');
+    var currentTest = fs.readFileSync('current-test.txt', 'utf8');
+    if (currentTest === 'done') {
+      console.log('Preparing to test: ', req.body.test_name);
+      fs.writeFileSync('current-test.txt', JSON.stringify(req.body));
+      console.log('Writing to current-test.txt');
+      res.send('ok');
+    } else {
+      res.send({'status': 'busy'});
+    }
 });
 
 // This fires off a gulp backstop task
@@ -78,8 +84,10 @@ app.get('/backstop', function(req, res) {
   // since you can't pass data to SSE, grab the tests to run
   // from current-test.txt
   var current_test_data = fs.readFileSync('current-test.txt', 'utf8');
-  
+
   current_test_data = JSON.parse(current_test_data);
+
+  fs.writeFileSync('current-test.txt', 'running');
 
   // array of options for spawn
   var gulpBackstopOptions = ['backstop'];
@@ -127,6 +135,7 @@ app.get('/backstop', function(req, res) {
     if (code === 0) {
       res.write('event: done' + "\n");
       res.write('data: {"test_name": "TODO: Actually pass in uselful test_name"}' + '\n\n');
+      fs.writeFileSync('current-test.txt', 'done');
       console.log('Done! Gulp backstop child process closed with code 0');
     } else {
       console.log('Gulp backstop child process FAILED to be killed.');
@@ -151,14 +160,14 @@ console.log('Listening on: ' + getAddresses() + ':' + port + '');
 console.log('Press Ctrl + C to stop.');
 
 
-if(autoShutDownMs>0){
+/*if(autoShutDownMs>0){
   setTimeout(function(){
     console.log('\n['+new Date()+'] Server is shutting down now. Bye!\n');
     listenerHook.close();
   }, autoShutDownMs);
 
   console.log('\n['+new Date()+'] PLEASE NOTE: THIS SERVER WILL AUTOMATICALLY SHUT DOWN IN ' + Math.round(autoShutDownMs/60000 * 100) / 100+ ' MINS.\n')
-}
+}*/
 
 //=====================
 function getAddresses(){

@@ -22,10 +22,25 @@
   <script type="text/javascript" src="js/compare.js"></script>
 </head>
 
-<body ng-controller="MainCtrl" ng-class="{'is-running': testRunning == true}">
-
+<body ng-controller="MainCtrl" ng-class="{'is-running': testRunning == true, 'is-error': isError == true}">
+  
+  <div ng-show="isError" class="fade-in">
+    <div class="row">
+    <div class="col-md-4"></div>
+     <div class="col-md-4 panel panel-default panel-error">
+        <div class="panel-body">
+          <p>Another CSS Regression test is either currently running 
+          (probably in another tab) or something went horribly wrong.</p>
+          <p>You can try re-running this test when the current test is 
+          completed by refreshing this page.</p>
+          <p>Another option is to restart the test server.</p>
+        </div>
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+  </div>
   <a class="anchor" id="root"></a>
-  <div>
+  <div class="content-main">
 
     <header class="header" ng-include="'js/views/header.html'"></header>
     <div class="running-command">{{runningCommand}}</div>
@@ -42,7 +57,7 @@
         <div class="fade-in" ng-show="scenarioStage">Visiting urls and taking screenshots!</div>
         <div class="fade-in" ng-show="compareStage">Comparing screenshots to baseline references!</div>
       </div> -->
-      <div ng-show="prepStage || scenarioStage || compareStage" ng-include="'js/views/logo.html'"></div>
+      <div ng-show="prepStage || scenarioStage || compareStage || isError" ng-include="'js/views/logo.html'"></div>
     </div>
 
 
