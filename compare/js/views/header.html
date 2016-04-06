@@ -25,10 +25,10 @@
     
     </div>
     <div class="col-md-4 col-lg-4">
-        <div class="stat-main-container text-center">
+        <div class="stat-main-container text-center fade-in">
             <!-- <div><label>totals</label></div> -->
 
-            <div ng-show="compareStage || !testRunning" class="fade-in">
+            <div ng-show="compareStage || !testRunning">
                 <!-- passed -->    
                 <div class="stat-main passed">
                     <div class="count">{{passedCount}}</div>
@@ -37,15 +37,15 @@
               
                 <!-- failed -->
                 <div class="stat-main failed">
-                    <div class="count">{{testPairsCompleted-passedCount}}</div>
+                    <div class="count">{{testPairsCompleted-passedCount-blessedCount}}</div>
                     <div class="stat-label">failed</div>
                 </div>
             </div>
 
-            <div ng-show="blessed.length > 1">
+            <div ng-show="blessedCount >= 1">
                 <!-- blessed -->
                 <div class="stat-main blessed">
-                    <div class="count">{{testPairsCompleted-passedCount}}</div>
+                    <div class="count">{{blessedCount}}</div>
                     <div class="stat-label">blessed</div>
                 </div>
             </div>

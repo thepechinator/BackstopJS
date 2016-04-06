@@ -250,6 +250,8 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
   $scope.testPairsCompleted = 0;
   $scope.passedCount = 0;
+  $scope.failedCount = 0;
+  $scope.blessedCount = 0;
   $scope.testDuration = 0;
   $scope.testIsRunning = true;
 
@@ -519,6 +521,8 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
     // reset
     $scope.passedCount = 0;
+    $scope.failedCount = 0;
+    $scope.blessedCount = 0; 
     $scope.testPairsCompleted = 0;
     var startTs = new Date();
 
@@ -527,7 +531,13 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
       ,1
       ,function(testPair,cb){
         $scope.displayTestPair(testPair,function(o){
-          if(o.passed)$scope.passedCount++;
+          console.info('o: ', o); //wf
+          if (o.passed) {
+            $scope.passedCount++;
+          }
+          if (o.testStatus === 'blessed') {
+            $scope.blessedCount++;
+          }
           $scope.testPairsCompleted++;
           $scope.testDuration = (new Date()-startTs);
           //$scope.$digest();
@@ -577,6 +587,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     testPair.processing=false;
     // set passed based on testStatus
     testPair.passed = testPair.testStatus === 'pass' ? true : false;
+    testPair.blessed = testPair.testStatus === 'blessed' ? true : false;
     if(cb)cb(testPair);
   };
 
@@ -675,8 +686,11 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
         console.log(data);
         if (toBless) {
           testPairToUpdate.testStatus = 'blessed';
+          $scope.blessedCount++;
+          console.info('$scope.blessedCount: ', $scope.blessedCount); //wf
         } else {
           testPairToUpdate.testStatus = 'fail';
+          $scope.blessedCount--;
         }
         //testPairToUpdate.passed = true;
         //$scope.passedCount++;

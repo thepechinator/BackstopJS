@@ -417,6 +417,11 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
 .stat-main-container {
     padding-top: 4px;
 }
+
+.stat-main-container > div {
+    display: inline-block;
+}
+
 .stat-main {
     display: inline-block;
     padding-right: 20px;
