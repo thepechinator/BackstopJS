@@ -114,6 +114,7 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
     cursor: pointer;
     font-weight: bold;
     color: #666666;
+    position: relative;
 }
 
 .test-all-checkbox label {
@@ -133,6 +134,10 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
     display: none;
     margin-left: -17px;
     color: #999;
+    vertical-align: middle;
+    position: absolute;
+    top: -3px;
+    left: -8px;
 }
 
 .test-title:hover .icon-link {
@@ -728,4 +733,8 @@ input.bless-checkbox {
 }
 .detail-images-label-test {
     float: left;
+}
+
+.material-icons { 
+    vertical-align: middle 
 }
