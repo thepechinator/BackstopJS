@@ -71,16 +71,16 @@
       <div class="col-md-2 viewport">
         <label class="control-label">viewports</label>
         <div class="viewport-container">
-          <label class="viewport-filter">
-            <input type="checkbox" checked="true" ng-click="includeViewport('SMALL')">
+          <label class="viewport-filter" ng-click="includeViewport('SMALL')">
+            <i class="material-icons checkbox-small">{{toggleFauxCheck('SMALL')}}</i>
             <i class="material-icons small-viewport">phone_iphone</i>
           </label class="viewport-filter">
-          <label class="viewport-filter">
-            <input type="checkbox" checked="true" ng-click="includeViewport('MEDIUM')">
+          <label class="viewport-filter" ng-click="includeViewport('MEDIUM')">
+            <i class="material-icons checkbox-small">{{toggleFauxCheck('MEDIUM')}}</i>
             <i class="material-icons medium-viewport">tablet_mac</i>
           </label class="viewport-filter">
-          <label class="viewport-filter">
-            <input type="checkbox" checked="true" ng-click="includeViewport('LARGE')">
+          <label class="viewport-filter" ng-click="includeViewport('LARGE')">
+            <i class="material-icons checkbox-small">{{toggleFauxCheck('LARGE')}}</i>
             <i class="material-icons large-viewport">desktop_mac</i>
           </label>
         </div>
@@ -144,7 +144,7 @@
     <div class="detailReport fade-in">
     <h3>Details</h3>
     <div class="detail-container">
-      <div class="detail" ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter | filter : directoryFilter ">
+      <div class="detail" ng-repeat="thisTestPair in testPairs | filter:viewportFilter | filter : displayOnStatusFilter | filter : directoryFilter track by $index">
       <a class="anchor" id="{{ thisTestPair.meta.fileName | anchor }}"></a>
       <table class="detail-images" id="{{thisTestPair.meta.label + $index}}">
         <thead fsm-sticky-header scroll-body="{{'#' + thisTestPair.meta.label + $index}}" scroll-stop="40">
@@ -171,17 +171,14 @@
             <th class="reference">
               <span class="detail-images-label">Baseline Reference Screenshot</span>
               <span ng-hide="thisTestPair.passed">
-                
                 <i class="material-icons diff-icon" ng-click="slideDiff('#' + thisTestPair.meta.label + $index + '-compare')">visibility</i>
-              
-                <small class="bless-help"><em></em></small>
               </span>
             </th>
             <th>
               <span class="detail-images-label detail-images-label-test">Test Screenshot</span> 
               <span ng-hide="thisTestPair.passed" class="bless">
-                <label class="bless-label">
-                  <input class="bless-checkbox" type="checkbox" ng-model="thisTestPair.blessed" ng-change="bless(thisTestPair.b.src, $index)" />
+                <label ng-click="bless(thisTestPair, $index)" class="bless-label">
+                  <i class="material-icons">{{getBlessCheckbox(thisTestPair.blessed)}}</i>
                   <i class="material-icons">thumb_up</i> Bless this screenshot
                 </label>
               </span>

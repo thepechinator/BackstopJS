@@ -293,7 +293,6 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
     $scope.params = JSON.stringify($routeParams,null,2);
     $scope.action = $route.current.action;
-    console.info('$scope.action: ', $scope.action); //wf
     // run the route based commands if not simply clicking an anchor link
     // wonder why we have to tie diff test stuff to the route?
     if(!$scope.anchoring) {
@@ -531,10 +530,9 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
       ,1
       ,function(testPair,cb){
         $scope.displayTestPair(testPair,function(o){
-          console.info('o: ', o); //wf
           if (o.passed) {
             $scope.passedCount++;
-          }
+          } 
           if (o.testStatus === 'blessed') {
             $scope.blessedCount++;
           }
@@ -671,14 +669,17 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     $scope.gulpCommand = '$ gulp backstop --baseline --name=' + $scope.testNames;
   };
 
-  $scope.bless = function(image, index) {
+  $scope.bless = function(testPair, index) {
+
+    $scope.testPairs[index].blessed = !$scope.testPairs[index].blessed;
     var toBless = $scope.testPairs[index].blessed;
+    console.info('toBless: ', toBless); //wf
     $http({
         url: '/baseline',
         method: 'POST',
         data: {
                'toBless' : toBless,
-               'blessed' : image,
+               'blessed' : testPair.b.src,
                'index': index
               }
     }).success(function(data, status, headers, config) {
@@ -686,10 +687,12 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
         console.log(data);
         if (toBless) {
           testPairToUpdate.testStatus = 'blessed';
+          testPairToUpdate.blessed = true;
           $scope.blessedCount++;
           console.info('$scope.blessedCount: ', $scope.blessedCount); //wf
         } else {
           testPairToUpdate.testStatus = 'fail';
+          testPairToUpdate.blessed = false;
           $scope.blessedCount--;
         }
         //testPairToUpdate.passed = true;
@@ -701,12 +704,29 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
   };
 
+  $scope.getBlessCheckbox = function(blessed) {
+    if(blessed) {
+      return 'check_box';
+    } else {
+      return 'check_box_outline_blank';
+    }
+  };
+
   // TODO: this is so wrong, should be a directive
   // TODO: Add toggle to remove
   $scope.slideDiff = function(selector, state) {
     var $selector = $(selector);
     if (!$selector.hasClass('twentytwenty-container')) {
       $(selector).twentytwenty();
+    }
+  }
+
+  $scope.toggleFauxCheck = function(viewport) {
+    console.info('$.inArray(viewport, $scope.viewports > -1): ', $.inArray(viewport, $scope.viewports)); //wf
+    if ($.inArray(viewport, $scope.viewports) > -1) {
+      return 'check_box'
+    } else {
+      return 'check_box_outline_blank';
     }
   }
 

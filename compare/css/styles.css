@@ -733,6 +733,7 @@ label.bless-label {
     color: #fff;
     font-size: 12px;
     font-weight: normal;
+    cursor: pointer;
 }
 
 label.bless-label i {
@@ -765,6 +766,7 @@ input.bless-checkbox {
 
 .viewport-filter {
     margin-right: 30px;
+    cursor: pointer;
 }
 
 .viewport-filter:last-child {
@@ -776,4 +778,10 @@ input.bless-checkbox {
 
 .viewport-filter i {
     color: #666;
+    cursor: pointer;
+}
+
+.material-icons.checkbox-small {
+    font-size: 14px;
+    cursor: pointer;
 }
