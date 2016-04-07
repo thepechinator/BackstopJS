@@ -671,6 +671,10 @@ body {
     margin-right: 5px;
 }
 
+.viewport {
+    padding-left: 5px;
+}
+
 .viewport-container {
     margin-top: 5px;
 }
@@ -787,6 +791,10 @@ th.filename {
 .detail-summary-header {
     padding: 8px 0;
     background-color: #eeeeee;
+}
+
+.detail-summary-id {
+    padding-left: 5px; /* less padding to line up with table above */
 }
 
 /* second row in sticky detail headers*/
