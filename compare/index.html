@@ -68,13 +68,30 @@
         <label for="statusFilter" class="control-label">status</label>
         <select id="statusFilter" class="form-control" ng-model="statusFilter" ng-options="status for status in detailFilterOptions"></select>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-2 viewport">
+        <label class="control-label">viewports</label>
+        <div class="viewport-container">
+          <label class="viewport-filter">
+            <input type="checkbox" checked="true" ng-click="includeViewport('SMALL')">
+            <i class="material-icons small-viewport">phone_iphone</i>
+          </label class="viewport-filter">
+          <label class="viewport-filter">
+            <input type="checkbox" checked="true" ng-click="includeViewport('MEDIUM')">
+            <i class="material-icons medium-viewport">tablet_mac</i>
+          </label class="viewport-filter">
+          <label class="viewport-filter">
+            <input type="checkbox" checked="true" ng-click="includeViewport('LARGE')">
+            <i class="material-icons large-viewport">desktop_mac</i>
+          </label>
+        </div>
+      </div>
+      <div class="col-md-6">
         <div class="form-group">
           <label for="directoryFilter">filter</label>
           <div completely id="directoryFilter" suggestions="directories"></div>  
         </div>
       </div>
-      <div class="col-md-7">
+      <div class="col-md-3">
         <div class="stat" ng-if=displayMode>{{testPairsCompleted}} of {{testPairs.length}}</div>
         <div class="stat" ng-if=displayMode>{{testDuration/1000 | number : 2}}s</div>
         <div class="progressBarBlock" ng-if="testIsRunning">
@@ -108,7 +125,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter | filter : directoryFilter as filtered">
+          <tr ng-repeat="thisTestPair in testPairs | filter:viewportFilter | filter : displayOnStatusFilter | filter : directoryFilter as filtered">
             <td class="statusInds">
               <div class="scanning" ng-if="thisTestPair.processing"><span class="dot yellow flash"></span>scanning</div>
               <div class="failed" ng-if="thisTestPair.testStatus=='fail'&&!thisTestPair.processing"><div class="stat-label">failed</div></div>

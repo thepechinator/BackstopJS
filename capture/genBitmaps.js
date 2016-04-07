@@ -304,7 +304,8 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
               fileName:fileName,
               label:scenario.label,
               misMatchThreshold: scenario.misMatchThreshold,
-              scenario: scenario.url
+              scenario: scenario.url,
+              viewport: vp.name
             });
           }
 

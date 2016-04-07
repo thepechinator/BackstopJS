@@ -758,3 +758,22 @@ input.bless-checkbox {
     font-size: 20px;
     margin-right: 5px;
 }
+
+.viewport-container {
+    margin-top: 5px;
+}
+
+.viewport-filter {
+    margin-right: 30px;
+}
+
+.viewport-filter:last-child {
+    margin-right: 0;
+}
+.viewport-filter input {
+    margin-right: 4px;
+}
+
+.viewport-filter i {
+    color: #666;
+}

@@ -35,7 +35,7 @@ compareApp.filter('testTitle', function() {
 compareApp.filter('scenarioTitle', function() {
   return function(input) {
     if (input) {
-      return input.split('/mocks/pages')[1];
+      return input.split('/mocks/pages/')[1];
     }
   }
 });
@@ -709,5 +709,24 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
       $(selector).twentytwenty();
     }
   }
+
+  $scope.viewports = ['SMALL', 'MEDIUM', 'LARGE'];
+
+  $scope.includeViewport = function(viewport) {
+    var i = $.inArray(viewport, $scope.viewports);
+    if (i > -1) {
+        $scope.viewports.splice(i, 1);
+    } else {
+        $scope.viewports.push(viewport);
+    }
+  };
+
+  $scope.viewportFilter = function(viewport) {
+    if ($scope.viewports.length > 0) {
+      if ($.inArray(viewport.meta.viewport, $scope.viewports) < 0)
+          return;
+      }
+    return viewport;
+  };
 
 });
