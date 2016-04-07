@@ -12,7 +12,7 @@
   <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
   <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
   <script type="text/javascript" src="bower_components/angular-route/angular-route.min.js"></script>
-  <script type="text/javascript" src="bower_components/fsm-sticky-header/fsm-sticky-header.js"></script>
+  <script type="text/javascript" src="bower_components/ngSticky/sticky.min.js"></script>
   <script type="text/javascript" src="bower_components/resemblejs/resemble.js"></script>
   <script type="text/javascript" src="bower_components/async/lib/async.js"></script>
   <script type="text/javascript" src="bower_components/completely/completely.js"></script>
@@ -142,68 +142,8 @@
     </div> <!-- end summaryBlock -->
 
     <div class="detailReport fade-in">
-    <h3>Details</h3>
-    <div class="detail-container">
-      <div class="detail" ng-repeat="thisTestPair in testPairs | filter:viewportFilter | filter : displayOnStatusFilter | filter : directoryFilter track by $index">
-      <a class="anchor" id="{{ thisTestPair.meta.fileName | anchor }}"></a>
-      <table class="detail-images" id="{{thisTestPair.meta.label + $index}}">
-        <thead fsm-sticky-header scroll-body="{{'#' + thisTestPair.meta.label + $index}}" scroll-stop="40">
-          <tr>
-            <th class="detail-topper" colspan="3">
-              <table>
-                <thead>
-                  <tr>
-                    <th class="statusInds">
-                      <div class="failed" ng-if="thisTestPair.testStatus=='fail'&&!thisTestPair.processing"><div class="stat-label">failed</div></div>
-                      <div class="passed" ng-if="thisTestPair.testStatus=='pass'"><div class="stat-label">passed</div></div>
-                      <div class="blessed" ng-if="thisTestPair.testStatus=='blessed'"><div class="stat-label">blessed</div></div>
-                    </th>
-                    <th class="selector">
-                      <test-result-summary></test-result-summary>              
-                      {{msg}}
-                    </th>
-                  </tr>
-                </thead>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <th class="reference">
-              <span class="detail-images-label">Baseline Reference Screenshot</span>
-              <span ng-hide="thisTestPair.passed">
-                <i class="material-icons diff-icon" ng-click="slideDiff('#' + thisTestPair.meta.label + $index + '-compare')">visibility</i>
-              </span>
-            </th>
-            <th>
-              <span class="detail-images-label detail-images-label-test">Test Screenshot</span> 
-              <span ng-hide="thisTestPair.passed" class="bless">
-                <label ng-click="bless(thisTestPair, $index)" class="bless-label">
-                  <i class="material-icons">{{getBlessCheckbox(thisTestPair.blessed)}}</i>
-                  <i class="material-icons">thumb_up</i> Bless this screenshot
-                </label>
-              </span>
-            </th>
-            <th><span class="detail-images-label">Diff</span></th>
-          </tr>
-        </thead>
-        <tr>
-          <td class="reference">
-            <div id="{{thisTestPair.meta.label + $index + '-compare'}}" class="visual-diff-container">
-              <img ng-src="{{ thisTestPair.a.src }}">
-              <img ng-src="{{ thisTestPair.b.src }}">  
-            </div>
-          </td>
-          <td>
-            <img ng-src="{{ thisTestPair.b.src }}">
-          </td>
-          <td>
-            <img ng-src="{{ thisTestPair.c.src }}" image-name="c">
-          </td>
-        </tr>
-      </table>
-      </div>
-    </div>
-
+      <h3>Details</h3>
+      <div class="detail-container" ng-include="'js/views/detail-view.html'"></div>
     </div> <!-- end detailReport -->
 
 

@@ -8,8 +8,6 @@ th{text-align: left;background: #ddd;padding: 10px;white-space: nowrap;}
 th.selector,th.filename{background-color: #666;color:#fff;}
 th.filename{text-align: right;}
 .reportTxt{white-space: pre-wrap;font-family: monospace; font-size: 11px;}
-.detailReport{ margin:50px 10px 10px;}
-.detailReport select{display: inline-block;width: auto;}
 /*.summaryBlock .fileName{font-style: italic;font-weight: 100;color: #999;}*/
 
 h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
@@ -164,65 +162,7 @@ h2>.stat{white-space: nowrap;margin-right: 2em;display: inline-block;}
 }
 
 
-.detailReport th.statusInds {
 
-    background-color: #F0F0F0;
-}
-
-th.detail-topper {
-    padding: 0;
-}
-.detail-topper table {
-    margin-bottom: 0;
-}
-
-.detail-topper table th.statusInds {
-    width: 8.33333333% !important;
-}
-
-.detail-topper table th.selector {
-    width: 91.66666667% !important;
-    padding-left: 5px;
-    padding-right: 10px;
-}
-
-.detail-topper table th.baseline {
-    width: 25% !important;
-}
-
-th.selector,
-th.filename {
-    background-color: #F0F0F0;
-    color:#000;
-    width: 66.666667%;
-}
-
-.reference {
-    padding-left: 15px;
-}
-
-.img-filename {
-    display: none; /* hide for now */
-    font-style: italic;
-    font-weight: 100;
-    color: #666;
-}
-
-.select-test {
-    text-align: center;
-}
-
-
-.select-test-details {
-    position: relative;
-    top: -8px;
-    margin-right: 5px;
-}
-
-.detailReport { 
-    margin: 50px 15px 0px;
-    padding-bottom: 50px;
-}
 
 .summaryList th {
     background-color: #fff;
@@ -423,6 +363,10 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
     max-width: 320px;
 }
 
+.detail-images thead {
+    width: 100%;
+}
+
 .visual-diff-container img + img {
     display: none;
 }
@@ -514,10 +458,6 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
     font-weight: bold;
     letter-spacing: 2px;
     text-transform: uppercase;
-}
-
-.detail-images-label {
-    margin-right: 10px;
 }
 
 .bless-help {
@@ -718,35 +658,6 @@ body {
     color: #aaa;
 }
 
-.bless {
-    margin-top: -10px;
-    display: inline-block;
-    margin-bottom: -8px;
-    width: 184px;
-    background: #64B5F6;
-    padding: 7px 12px 5px;
-    cursor: pointer;
-    margin-left: 19px;
-}
-
-label.bless-label {
-    color: #fff;
-    font-size: 12px;
-    font-weight: normal;
-    cursor: pointer;
-}
-
-label.bless-label i {
-    font-size: 18px;
-    vertical-align: middle;
-    position: relative;
-    top: -2px;
-    margin-right: 2px;
-}
-
-input.bless-checkbox {
-    margin-right: 5px;
-}
 .detail-images-label-test {
     float: left;
 }
@@ -784,4 +695,144 @@ input.bless-checkbox {
 .material-icons.checkbox-small {
     font-size: 14px;
     cursor: pointer;
+}
+
+
+
+/* detail view */
+
+.detailReport { 
+    margin: 50px 10px 10px;
+}
+
+/* ???? */
+.detailReport select {
+    display: inline-block;
+    width: auto;
+}
+
+
+.detailReport th.statusInds {
+
+    background-color: #F0F0F0;
+}
+
+th.detail-topper {
+    padding: 0;
+    width: 100%;
+}
+
+th.detail-topper th {
+    width: 100%;
+}
+
+.detail-topper table {
+    margin-bottom: 0;
+}
+
+.detail-topper table th.statusInds {
+    width: 8.33333333% !important;
+}
+
+.detail-topper table th.selector {
+    width: 91.66666667% !important;
+    padding-left: 5px;
+    padding-right: 10px;
+}
+
+.detail-topper table th.baseline {
+    width: 25% !important;
+}
+
+th.selector,
+th.filename {
+    background-color: #F0F0F0;
+    color:#000;
+    width: 66.666667%;
+}
+
+.reference {
+    padding-left: 15px;
+}
+
+.img-filename {
+    display: none; /* hide for now */
+    font-style: italic;
+    font-weight: 100;
+    color: #666;
+}
+
+.select-test {
+    text-align: center;
+}
+
+
+.select-test-details {
+    position: relative;
+    top: -8px;
+    margin-right: 5px;
+}
+
+.detailReport { 
+    margin: 50px 15px 0px;
+    padding-bottom: 50px;
+}
+
+/* repeater */
+.detail {
+    margin-bottom: 45px;
+}
+
+/* top row in sticky detail headers*/
+.detail-summary-header {
+    padding: 8px 0;
+    background-color: #eeeeee;
+}
+
+/* second row in sticky detail headers*/
+.detail-label-header {
+    background-color: #dddddd;
+    font-weight: bold;
+    padding: 4px 0;
+}
+
+/* centers text and sets height */
+.detail-label {
+    padding: 6px 0;
+    display: inline-block;
+}
+
+.detail-images {
+    margin-top: 15px; /* margin top necessary, don't put margin bottom on header*/
+}
+
+/* bless toggle button/faux checkbox */
+.bless {
+    display: inline-block;
+    width: 200px;
+    background: #64B5F6;
+    position: absolute;
+    top: -4px; /* pulls flush with top */
+    padding: 9px 12px 5px; /* important, fills detail-label flush */
+    cursor: pointer;
+    margin-left: 15px;
+}
+
+label.bless-label {
+    color: #fff;
+    font-size: 12px;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+label.bless-label i {
+    font-size: 18px;
+    vertical-align: middle;
+    position: relative;
+    top: -2px;
+    margin-right: 2px;
+}
+
+input.bless-checkbox {
+    margin-right: 5px;
 }

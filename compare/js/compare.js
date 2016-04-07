@@ -1,4 +1,4 @@
-var compareApp = angular.module('compareApp', ['ngRoute', 'fsm', 'ngProgress']);
+var compareApp = angular.module('compareApp', ['ngRoute', 'sticky', 'ngProgress']);
 
 
 compareApp.config( function( $routeProvider ){
@@ -271,6 +271,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     }else{
       return false;
     }
+
   };
 
 
@@ -722,7 +723,6 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   }
 
   $scope.toggleFauxCheck = function(viewport) {
-    console.info('$.inArray(viewport, $scope.viewports > -1): ', $.inArray(viewport, $scope.viewports)); //wf
     if ($.inArray(viewport, $scope.viewports) > -1) {
       return 'check_box'
     } else {

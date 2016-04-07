@@ -1,0 +1,55 @@
+<div class="detail container-fluid" ng-repeat="thisTestPair in testPairs | filter:viewportFilter | filter : displayOnStatusFilter | filter : directoryFilter track by $index">
+    <a class="anchor" id="{{ thisTestPair.meta.fileName | anchor }}"></a>
+
+    <div sticky confine="true" offset="40" class="row">
+        <div class="col-md-12">
+            <div class="detail-summary-header row">
+                <div class="detail-summary-status status col-md-1">
+                    <div class="failed" ng-if="thisTestPair.testStatus=='fail'&&!thisTestPair.processing"><div class="stat-label">failed</div></div>
+                    <div class="passed" ng-if="thisTestPair.testStatus=='pass'"><div class="stat-label">passed</div></div>
+                    <div class="blessed" ng-if="thisTestPair.testStatus=='blessed'"><div class="stat-label">blessed</div></div>
+                </div>
+                <div class="detail-summary-id col-md-11">
+                    <test-result-summary></test-result-summary>              
+                    {{msg}}
+                </div>
+            </div><!-- detail-summary row -->
+            <div class="detail-label-header row">
+                <div class="col-md-4">
+                  <span class="detail-label detail-label-reference">Baseline Reference Screenshot</span>
+                  <span ng-hide="thisTestPair.passed">
+                    <i class="material-icons diff-icon" ng-click="slideDiff('#' + thisTestPair.meta.label + $index + '-compare')">visibility</i>
+                  </span>
+                </div>
+                <div class="col-md-4">
+                  <span class="detail-label detail-label-test">Test Screenshot</span> 
+                  <span ng-hide="thisTestPair.passed" class="bless">
+                    <label ng-click="bless(thisTestPair, $index)" class="bless-label">
+                      <i class="material-icons">{{getBlessCheckbox(thisTestPair.blessed)}}</i>
+                      <i class="material-icons">thumb_up</i> Bless this screenshot
+                    </label>
+                  </span>
+                </div>
+                <div class="col-md-4">
+                    <span class="detail-label detail-label-diff">Diff</span>
+                </div>
+            </div>
+        </div>
+    </div><!-- sticky container -->
+
+    <div class="detail-images row">
+        <div class="col-md-4">
+            <div id="{{thisTestPair.meta.label + $index + '-compare'}}" class="visual-diff-container">
+                <img class="img-responsive" ng-src="{{ thisTestPair.a.src }}">
+                <img class="img-responsive" ng-src="{{ thisTestPair.b.src }}">  
+            </div>
+        </div>
+        <div class="col-md-4">
+            <img class="img-responsive" ng-src="{{ thisTestPair.b.src }}">
+        </div>
+        <div class="col-md-4">
+            <img class="img-responsive" ng-src="{{ thisTestPair.c.src }}" image-name="c">
+        </div>
+    </div>
+
+</div>
