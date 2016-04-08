@@ -844,3 +844,13 @@ label.bless-label i {
 input.bless-checkbox {
     margin-right: 5px;
 }
+
+/* sticky header hacks 
+something about header when it sticks that needs adjustment */
+.custom-sticky-class {
+    margin-right: -30px;
+}
+
+.custom-sticky-class > div {
+    padding-left: 30px;
+}

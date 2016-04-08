@@ -1,7 +1,6 @@
-<div class="detail container-fluid" ng-repeat="thisTestPair in testPairs | filter:viewportFilter | filter : displayOnStatusFilter | filter : directoryFilter track by $index">
+<div id="{{thisTestPair.meta.label + thisTestPair.meta.viewport}}" class="detail container-fluid" ng-repeat="thisTestPair in testPairs | filter:viewportFilter | filter : displayOnStatusFilter | filter : directoryFilter track by $index">
     <a class="anchor" id="{{ thisTestPair.meta.fileName | anchor }}"></a>
-
-    <div sticky confine="true" offset="40" class="row">
+    <div hl-sticky="" sticky-class="custom-sticky-class" offset-top="40" container="{{thisTestPair.meta.label + thisTestPair.meta.viewport}}" class="row">
         <div class="col-md-12">
             <div class="detail-summary-header row">
                 <div class="detail-summary-status status col-md-1">
@@ -11,7 +10,6 @@
                 </div>
                 <div class="detail-summary-id col-md-11">
                     <test-result-summary></test-result-summary>              
-                    {{msg}}
                 </div>
             </div><!-- detail-summary row -->
             <div class="detail-label-header row">
