@@ -10,7 +10,7 @@
   <link rel="stylesheet" type="text/css" href="css/styles.css">
 
   <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.9/angular.js"></script>
+  <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
   <script type="text/javascript" src="bower_components/angular-route/angular-route.min.js"></script>
   <script type="text/javascript" src="bower_components/sticky-kit/sticky-kit.min.js"></script>
   <script type="text/javascript" src="bower_components/resemblejs/resemble.js"></script>
@@ -125,7 +125,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="thisTestPair in testPairs | filter:viewportFilter | filter : displayOnStatusFilter | filter : directoryFilter as filtered">
+          <tr ng-class="{new: markNewGroup($index, thisTestPair.meta.label)}" ng-repeat="thisTestPair in testPairs | filter:viewportFilter | filter : displayOnStatusFilter | filter : directoryFilter as filtered">
             <td class="statusInds">
               <div class="scanning" ng-if="thisTestPair.processing"><span class="dot yellow flash"></span>scanning</div>
               <div class="failed" ng-if="thisTestPair.testStatus=='fail'&&!thisTestPair.processing"><div class="stat-label">failed</div></div>
