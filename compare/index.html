@@ -10,9 +10,9 @@
   <link rel="stylesheet" type="text/css" href="css/styles.css">
 
   <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
-  <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.9/angular.js"></script>
   <script type="text/javascript" src="bower_components/angular-route/angular-route.min.js"></script>
-  <script type="text/javascript" src="bower_components/angular-sticky/angular-sticky.min.js"></script>
+  <script type="text/javascript" src="bower_components/sticky-kit/sticky-kit.min.js"></script>
   <script type="text/javascript" src="bower_components/resemblejs/resemble.js"></script>
   <script type="text/javascript" src="bower_components/async/lib/async.js"></script>
   <script type="text/javascript" src="bower_components/completely/completely.js"></script>
@@ -65,7 +65,7 @@
     <div class="logo" ng-class="{hasFails: (testPairsCompleted - passedCount) > 0}" ng-include="'js/views/logo.html'"></div>
     <div class="row">
       <div class="col-md-1">
-        <label for="statusFilter" class="control-label">status</label>
+        <label for="statusFilter" class="control-label">status</label>{{statusFilter}}
         <select id="statusFilter" class="form-control" ng-model="statusFilter" ng-options="status for status in detailFilterOptions"></select>
       </div>
       <div class="col-md-2 viewport">

@@ -1,4 +1,4 @@
-var compareApp = angular.module('compareApp', ['ngRoute', 'hl.sticky', 'ngProgress']);
+var compareApp = angular.module('compareApp', ['ngRoute', 'ngProgress']);
 
 
 compareApp.config( function( $routeProvider ){
@@ -260,6 +260,8 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   $scope.statusFilter = 'failed';
 
   $scope.displayOnStatusFilter = function(o){
+    // TODO: Move this into a directive that watches this
+    $('.sticky').stick_in_parent({offset_top:40});
     if(o.processing)return false;
     //console.log($scope.statusFilter,o)
     if($scope.statusFilter=='all'){
