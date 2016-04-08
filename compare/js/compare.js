@@ -751,4 +751,12 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     return viewport;
   };
 
+  $scope.markNewGroup = function(index, label) {
+    if (index>0) {
+      if ($scope.filtered[index-1].meta.label != label) {
+        return true;
+      }
+    }
+  };
+
 });

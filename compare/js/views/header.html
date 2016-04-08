@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-md-6 col-lg-5">
+    <div class="col-md-5">
         <h1 class="header-title">CSS <span>Regression Testing</span></h1>
         <span ng-show="testRunning && scenarioStage" class="filter-length">
             <span>capturing</span>
@@ -24,9 +24,17 @@
         </span>
     
     </div>
-    <div class="col-md-4 col-lg-4">
+    <div class="col-md-5">
         <div class="stat-main-container text-center fade-in">
             <!-- <div><label>totals</label></div> -->
+            
+            <div ng-show="blessedCount >= 1">
+                <!-- blessed -->
+                <div class="stat-main blessed">
+                    <div class="count">{{blessedCount}}</div>
+                    <div class="stat-label">blessed</div>
+                </div>
+            </div>
 
             <div ng-show="compareStage || !testRunning">
                 <!-- passed -->    
@@ -42,14 +50,8 @@
                 </div>
             </div>
 
-            <div ng-show="blessedCount >= 1">
-                <!-- blessed -->
-                <div class="stat-main blessed">
-                    <div class="count">{{blessedCount}}</div>
-                    <div class="stat-label">blessed</div>
-                </div>
-            </div>
+            
         </div>
     </div>
-    <div class="col-md-2 col-lg-3"></div>
+    <div class="col-md-2"></div>
 </div>

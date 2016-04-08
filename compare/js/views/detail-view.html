@@ -2,7 +2,7 @@
     <a class="anchor" id="{{ thisTestPair.meta.fileName | anchor }}"></a>
     <div class="row sticky">
         <div class="col-md-12">
-            <div class="detail-summary-header row">
+            <div class="{{thisTestPair.testStatus}} detail-summary-header row">
                 <div class="detail-summary-status status col-md-1">
                     <div class="failed" ng-if="thisTestPair.testStatus=='fail'&&!thisTestPair.processing"><div class="stat-label">failed</div></div>
                     <div class="passed" ng-if="thisTestPair.testStatus=='pass'"><div class="stat-label">passed</div></div>

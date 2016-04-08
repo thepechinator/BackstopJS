@@ -325,27 +325,22 @@ table .statusInds {
 
 /* table styles */
 
-.summaryList tr:nth-child(6n-3), .summaryList tr:nth-child(6n-4), .summaryList tr:nth-child(6n-5) {
+.summaryList tr {
     background-color: #fdfdfd;
-    border-top: 1px solid #e3e3e3;
     border-bottom: 1px solid #e3e3e3;
-}g
-.summaryList tr:nth-child(6n), .summaryList tr:nth-child(6n-1), .summaryList tr:nth-child(6n-2) {
-    background: #fff;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #e3e3e3;
-}
-.summaryList tr:last-child {
-    border-top: 1px solid #e3e3e3;
     border-bottom: 1px solid #e3e3e3;
 }
 
-.summaryList tr:nth-child(3n+1) {
+.summaryList tr.new {
     border-top: 2px solid #e3e3e3;
 }
 
-.summaryList thead tr {
-    border-top: 0 !important;
+.summaryList tbody tr:first-child {
+    border-top: 2px solid #e3e3e3;   
+}
+
+.summaryList tbody tr:last-child {
+    border-bottom: 2px solid #e3e3e3;   
 }
 
 td, th {
@@ -790,7 +785,27 @@ th.filename {
 /* top row in sticky detail headers*/
 .detail-summary-header {
     padding: 8px 0;
-    background-color: #eeeeee;
+}
+
+.detail-summary-header.pass {
+    background-color: #80C683;
+}
+.detail-summary-header.fail {
+    background-color: #E57373;
+}
+.detail-summary-header.blessed {
+    background-color: #64B5F6;
+}
+
+.detail-summary-header .stat-label {
+    border: 1px solid #fff;
+    /*background-color: transparent;*/
+}
+
+.detail-summary-header .test-title,
+.detail-summary-header .test-url,
+.detail-summary-header .test-title i {
+    color: #fff !important;
 }
 
 .detail-summary-id {
@@ -799,7 +814,7 @@ th.filename {
 
 /* second row in sticky detail headers*/
 .detail-label-header {
-    background-color: #dddddd;
+    background-color: #CACACA;
     font-weight: bold;
     padding: 4px 0;
 }
@@ -808,6 +823,10 @@ th.filename {
 .detail-label {
     padding: 6px 0;
     display: inline-block;
+    text-transform: uppercase;
+    color: #868686;
+    font-size: 12px;
+    font-weight: 600;
 }
 
 .detail-images {
@@ -821,7 +840,7 @@ th.filename {
     background: #64B5F6;
     position: absolute;
     top: -4px; /* pulls flush with top */
-    padding: 9px 12px 5px; /* important, fills detail-label flush */
+    padding: 7px 12px 4px; /* important, fills detail-label flush */
     cursor: pointer;
     margin-left: 15px;
 }
