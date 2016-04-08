@@ -120,7 +120,7 @@
         <table class="summaryList">
         <thead>
           <tr>
-            <th class="statusInds"><h3>Summary</h3></th>
+            <th class="statusInds"><h3 ng-if="filtered.length > 0">Summary</h3></th>
             <th><!-- <a class="btn btn-primary" href="#/running/{{testNames}}">Run Test</a> --></th>
           </tr>
         </thead>
@@ -142,8 +142,14 @@
     </div> <!-- end summaryBlock -->
 
     <div class="detailReport fade-in">
-      <h3>Details</h3>
+      <h3 ng-if="filtered.length > 0">Details</h3>
       <div class="detail-container" ng-include="'js/views/detail-view.html'"></div>
+      <div class="no-results-msg" ng-if="filtered.length === 0">
+        <p>Nothing to see here!
+          <br>
+          <small><em>Try changing filters.</em></small>
+        </p>
+      </div>
     </div> <!-- end detailReport -->
 
 

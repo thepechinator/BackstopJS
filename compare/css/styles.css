@@ -325,13 +325,12 @@ table .statusInds {
 
 /* table styles */
 
-.summaryList tr {
+.summaryList tbody tr {
     background-color: #fdfdfd;
-    border-bottom: 1px solid #e3e3e3;
     border-bottom: 1px solid #e3e3e3;
 }
 
-.summaryList tr.new {
+.summaryList tbody tr.new {
     border-top: 2px solid #e3e3e3;
 }
 
@@ -776,6 +775,7 @@ th.filename {
 .detailReport { 
     margin: 50px 15px 0px;
     padding-bottom: 50px;
+    min-height: 500px; /* pull the white done in case there are no results */
 }
 
 /* repeater */
@@ -868,4 +868,17 @@ input.bless-checkbox {
 /* sticky header */
 .sticky {
     z-index: 999999;
+}
+
+/* when you filters come up empty */
+.no-results-msg p {
+    text-align: center;
+    color: #bbb;
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 200px;
+}
+
+.no-results-msg p small {
+    font-weight: normal;
 }

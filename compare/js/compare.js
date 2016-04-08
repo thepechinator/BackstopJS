@@ -249,8 +249,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   $scope.testPairs = [];
 
   $scope.testPairsCompleted = 0;
-  $scope.passedCount = 0;
-  $scope.failedCount = 0;
+  $scope.passedCount = 0
   $scope.blessedCount = 0;
   $scope.testDuration = 0;
   $scope.testIsRunning = true;
@@ -263,7 +262,6 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   }
 
   $scope.displayOnStatusFilter = function(o){
-    
     // TODO: Move this into a directive that watches this
     $('.sticky').stick_in_parent({offset_top:40});
     
@@ -283,6 +281,10 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
   };
 
+
+  if ($scope.passedCount === $scope.testPairsCompleted) {
+    $scope.statusFilter = 'passed';
+  }
 
 
   // pass in testStatus from the already completed CLI tests if possible
@@ -530,7 +532,6 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
     // reset
     $scope.passedCount = 0;
-    $scope.failedCount = 0;
     $scope.blessedCount = 0; 
     $scope.testPairsCompleted = 0;
     var startTs = new Date();
@@ -558,7 +559,6 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     $displayMode = true;
     $scope.testIsRunning = false;
   };
-
 
   //LOOPS THROUGH TEST PAIR CONFIG AND CALLS compareTestPair(testPair) ON EACH ONE
   $scope.compareTestPairs = function compareTestPairs(testPairs){
