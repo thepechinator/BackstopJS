@@ -5,7 +5,7 @@
     {{ thisTestPair.meta.selector | testTitle: 'removeHyphens' }}
     <i class="icon-link material-icons">link</i>
 </span>
-<a class="test-url right" href="{{ thisTestPair.meta.scenario }}" target="_blank">
+<a resolve-host class="test-url right" href="{{ thisTestPair.meta.scenario }}" target="_blank">
     {{ thisTestPair.meta.scenario | scenarioTitle }} 
     <i class="material-icons">open_in_new</i>
 </a> 
