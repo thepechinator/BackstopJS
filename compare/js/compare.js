@@ -256,21 +256,28 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   $scope.testIsRunning = true;
 
 
-  $scope.detailFilterOptions = ['all','failed','passed','none'];
+  $scope.detailFilterOptions = ['all','blessed', 'failed','passed'];
   $scope.statusFilter = 'failed';
+  $scope.setStatus = function(status) {
+    $scope.statusFilter = status;
+  }
 
   $scope.displayOnStatusFilter = function(o){
+    
     // TODO: Move this into a directive that watches this
     $('.sticky').stick_in_parent({offset_top:40});
-    if(o.processing)return false;
-    //console.log($scope.statusFilter,o)
-    if($scope.statusFilter=='all'){
+    
+    if (o.processing) return false;
+    
+    if ($scope.statusFilter == 'all') {
       return true;
-    }else if($scope.statusFilter=='failed'){
-      if(!o.passed){return true;}
-    }else if($scope.statusFilter=='passed'){
-      if(o.passed){return true;}
-    }else{
+    } else if ($scope.statusFilter=='blessed') {
+      if (o.testStatus === 'blessed') { return true; }
+    } else if ($scope.statusFilter=='failed') {
+      if (!o.passed) { return true; }
+    } else if ($scope.statusFilter == 'passed') {
+      if (o.passed) { return true; }
+    } else {
       return false;
     }
 

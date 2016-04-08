@@ -386,6 +386,7 @@ div.detail:nth-child(3n+1) .visual-diff-container  {
     padding-right: 20px;
     position: relative;
     top: -4px;
+    cursor: pointer;
 }
 
 .stat-main > div {

@@ -30,7 +30,7 @@
             
             <div ng-show="blessedCount >= 1">
                 <!-- blessed -->
-                <div class="stat-main blessed">
+                <div class="stat-main blessed" ng-click="setStatus('blessed')">
                     <div class="count">{{blessedCount}}</div>
                     <div class="stat-label">blessed</div>
                 </div>
@@ -38,13 +38,13 @@
 
             <div ng-show="compareStage || !testRunning">
                 <!-- passed -->    
-                <div class="stat-main passed">
+                <div class="stat-main passed" ng-click="setStatus('passed')">
                     <div class="count">{{passedCount}}</div>
                     <div class="stat-label">passed</div>
                 </div>
               
                 <!-- failed -->
-                <div class="stat-main failed">
+                <div class="stat-main failed" ng-click="setStatus('failed')">
                     <div class="count">{{testPairsCompleted-passedCount-blessedCount}}</div>
                     <div class="stat-label">failed</div>
                 </div>
