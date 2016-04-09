@@ -307,12 +307,6 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
   };
 
-
-  if ($scope.passedCount === $scope.testPairsCompleted) {
-    $scope.statusFilter = 'passed';
-  }
-
-
   // pass in testStatus from the already completed CLI tests if possible
   var testPairObj = function(a,b,c,o,testStatus){
     this.a={src:a||'',srcClass:'reference'},
@@ -580,6 +574,10 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
         });
       }
     );
+
+    if ($scope.passedCount === $scope.testPairsCompleted) {
+      $scope.statusFilter = 'all';
+    }
     // if we are not running the comparison client-side,
     // no need for time info
     $displayMode = true;
@@ -709,7 +707,6 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
     $scope.testPairs[index].blessed = !$scope.testPairs[index].blessed;
     var toBless = $scope.testPairs[index].blessed;
-    console.info('toBless: ', toBless); //wf
     $http({
         url: '/baseline',
         method: 'POST',
@@ -720,7 +717,6 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
               }
     }).success(function(data, status, headers, config) {
         var testPairToUpdate = $scope.testPairs[data.testPairToUpdate];
-        console.log(data);
         if (toBless) {
           testPairToUpdate.testStatus = 'blessed';
           testPairToUpdate.blessed = true;
