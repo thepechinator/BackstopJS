@@ -24,16 +24,16 @@ describe('directive navbar', function() {
   }));
 
   it('should be compiled', () => {
-    expect(element.html()).not.toEqual(null);
+    expect(element.html()).not.to.equal(null);
   });
 
   it('should have isolate scope object with instanciate members', () => {
-    expect(vm).toEqual(jasmine.any(Object));
+    expect(vm).to.be.an('object');
 
-    expect(vm.creationDate).toEqual(jasmine.any(Number));
-    expect(vm.creationDate).toEqual(timeInMs);
+    expect(vm.creationDate).to.be.a('number');
+    expect(vm.creationDate).to.equal(timeInMs);
 
-    expect(vm.relativeDate).toEqual(jasmine.any(String));
-    expect(vm.relativeDate).toEqual('a day ago');
+    expect(vm.relativeDate).to.be.a('string');
+    expect(vm.relativeDate).to.equal('a day ago');
   });
 });

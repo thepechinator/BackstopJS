@@ -7,11 +7,14 @@
 describe('directive malarkey', function() {
   let vm;
   let element;
+  let sandbox;
 
   beforeEach(angular.mock.module('compare'));
 
   beforeEach(inject(($compile, $rootScope, githubContributor, $q) => {
-    spyOn(githubContributor, 'getContributors').and.callFake(() => {
+    sandbox = sinon.sandbox.create();
+
+    sandbox.stub(githubContributor, 'getContributors', function() {
       return $q.when([{}, {}, {}, {}, {}, {}]);
     });
 
@@ -22,20 +25,24 @@ describe('directive malarkey', function() {
     $compile(element)($rootScope.$new());
     $rootScope.$digest();
     vm = element.isolateScope().vm;
+
   }));
 
+  afterEach(function() {
+    sandbox.restore();
+  });
+
   it('should be compiled', () => {
-    expect(element.html()).not.toEqual(null);
+    expect(element.html()).not.to.equal(null);
   });
 
   it('should have isolate scope object with instanciate members', () => {
-    expect(vm).toEqual(jasmine.any(Object));
-
-    expect(vm.contributors).toEqual(jasmine.any(Array));
-    expect(vm.contributors.length).toEqual(6);
+    expect(vm).to.be.an('object');
+    expect(vm.contributors).to.be.an('array');
+    expect(vm.contributors.length).to.equal(6);
   });
 
   it('should log a info', inject($log => {
-    expect($log.info.logs).toEqual(jasmine.stringMatching('Activated Contributors View'));
+    expect($log.info.logs[0][0]).to.contain('Activated Contributors View');
   }));
 });
