@@ -33,13 +33,13 @@ function browserSyncInit(baseDir, browser) {
    *
    * For more details and option, https://github.com/chimurai/http-proxy-middleware/blob/v0.9.0/README.md
    */
-  server.middleware = proxyMiddleware('[/backstop-test-prep, /baseline]', {target: 'http://localhost:3022', changeOrigin: true});
+  server.middleware = proxyMiddleware(['/backstop-test-prep', '/baseline'], {target: 'http://localhost:3022'});
 
   browserSync.instance = browserSync.init({
+    port: 3033,
     startPath: '/',
     server: server,
-    browser: browser,
-    port: 3033
+    browser: browser
   });
 }
 
