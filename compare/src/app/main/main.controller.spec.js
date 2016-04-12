@@ -1,15 +1,12 @@
 describe('controllers', () => {
   let vm;
   let sandbox;
-  let route;
 
   beforeEach(angular.mock.module('compare'));
 
-  beforeEach(inject(($controller, $route, webDevTec, toastr) => {
+  beforeEach(inject(($controller, webDevTec, toastr) => {
 
     sandbox = sinon.sandbox.create();
-
-    route = $route;
 
     sandbox.stub(webDevTec, 'getTec', function() {
       return [{}, {}, {}, {}, {}];
@@ -25,13 +22,6 @@ describe('controllers', () => {
   
   afterEach(() => {
     sandbox.restore();
-  });
-
-  it('should have home route with right template, controller and a resolve block', function () {
-    var mainRoute = route.routes['/'];
-    expect(mainRoute).to.be.defined;
-    expect(mainRoute.controller).to.equal('MainController');
-    expect(mainRoute.templateUrl).to.equal('app/main/main.html');
   });
   
   it('should have a timestamp creation date', () => {
