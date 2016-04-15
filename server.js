@@ -90,7 +90,7 @@ app.post('/backstop-test-prep', function(req, res) {
       console.log('Writing to current-test.txt');
       res.send('ok');
     } else {
-      res.send({'status': 'busy'});
+      res.send('busy');
     }
 });
 

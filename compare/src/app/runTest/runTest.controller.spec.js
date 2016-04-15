@@ -8,7 +8,7 @@ describe('runTest controller', () => {
         sandbox = sinon.sandbox.create();
 
         sandbox.stub(setupTest, 'sendTestName', () => {
-            return $q.when([{}]);
+            return $q.when({});
         });
 
         $routeParams.testName = 'a-test';
@@ -27,6 +27,10 @@ describe('runTest controller', () => {
 
     it('should post test name to server', () => {
         expect(vm.status).to.equal('ok');
+    });
+
+    it('should stream output from server', () => {
+        expect(vm.streamCalled).to.equal(true);
     });
 
 });

@@ -5,6 +5,10 @@
       <acme-navbar></acme-navbar>
     </header>
     
+    <div ng-repeat="line in runTest.stream track by $index">
+      {{ line }}
+    </div>
+
   </md-content>
 
 </div>
