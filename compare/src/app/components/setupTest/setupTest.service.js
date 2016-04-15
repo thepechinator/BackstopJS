@@ -37,6 +37,7 @@ export class SetupTestService {
 
         testOutputStream.addEventListener('done', () => {
             testOutputStream.close();
+            this.$rootScope.$broadcast('testCompleted', 'done');
         }, false);
 
         return true;

@@ -33,4 +33,9 @@ describe('runTest controller', () => {
         expect(vm.streamCalled).to.equal(true);
     });
 
+    it('should redirect to main page', inject(($timeout, $location) => {
+        vm.completeTest($timeout, $location);
+        expect($location.path()).to.equal('/');
+    }));
+
 });
