@@ -1,4 +1,4 @@
-describe('controllers', () => {
+describe('main controller', () => {
   let vm;
   let sandbox;
 

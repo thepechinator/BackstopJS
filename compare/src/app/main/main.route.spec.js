@@ -9,7 +9,7 @@ describe('main page', () => {
 
     it('should have home route with right template, controller and a resolve block', function () {
         var mainRoute = route.routes['/'];
-        expect(mainRoute).to.be.defined;
+        expect(mainRoute).to.not.be.undefined;
         expect(mainRoute.controller).to.equal('MainController');
         expect(mainRoute.templateUrl).to.equal('app/main/main.html');
     });
