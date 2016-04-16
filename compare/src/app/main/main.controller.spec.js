@@ -4,12 +4,16 @@ describe('main controller', () => {
 
   beforeEach(angular.mock.module('compare'));
 
-  beforeEach(inject(($controller, webDevTec, toastr) => {
+  beforeEach(inject(($controller, webDevTec, toastr, testResults) => {
 
     sandbox = sinon.sandbox.create();
 
     sandbox.stub(webDevTec, 'getTec', function() {
       return [{}, {}, {}, {}, {}];
+    });
+
+    sandbox.stub(testResults, 'query', function() {
+      return [{}, {}, {}];
     });
 
     sandbox.stub(toastr, 'info', function() {
@@ -43,4 +47,10 @@ describe('main controller', () => {
     expect(angular.isArray(vm.awesomeThings)).to.be.ok;
     expect(vm.awesomeThings.length === 5).to.be.ok;
   });
+
+  it('should define at least 3 testPairs', () => {
+    expect(angular.isArray(vm.testPairs)).to.be.ok;
+    expect(vm.awesomeThings.length === 3).to.be.ok;
+  });
+
 });

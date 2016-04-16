@@ -6,6 +6,7 @@ import { runBlock } from './index.run';
 import { MainController } from './main/main.controller';
 import { RunTestController } from './runTest/runTest.controller';
 import { SetupTestService } from '../app/components/setupTest/setupTest.service';
+import { TestResultsService } from '../app/components/testResults/testResults.service';
 import { GithubContributorService } from '../app/components/githubContributor/githubContributor.service';
 import { WebDevTecService } from '../app/components/webDevTec/webDevTec.service';
 import { NavbarDirective } from '../app/components/navbar/navbar.directive';
@@ -18,6 +19,7 @@ angular.module('compare', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'n
   .config(routerConfig)
   .run(runBlock)
   .service('setupTest', SetupTestService)
+  .service('testResults', TestResultsService)
   .service('githubContributor', GithubContributorService)
   .service('webDevTec', WebDevTecService)
   .controller('MainController', MainController)

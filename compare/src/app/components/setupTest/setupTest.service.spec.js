@@ -20,11 +20,11 @@ describe('setupTest service', () => {
         }));
 
         it('should log a error', inject((setupTest, $httpBackend, $log) => {
-          $httpBackend.when('POST', '/backstop-test-prep').respond(500);
-          setupTest.sendTestName('all-for-not');
-          $httpBackend.flush();
-          $log.info(setupTest);
-          expect($log.error.logs[0][0]).to.include('XHR Failed for');
+            $httpBackend.when('POST', '/backstop-test-prep').respond(500);
+            setupTest.sendTestName('all-for-not');
+            $httpBackend.flush();
+            $log.info(setupTest);
+            expect($log.error.logs[0][0]).to.include('XHR Failed for');
         }));
     });
 });
