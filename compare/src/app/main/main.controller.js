@@ -7,7 +7,6 @@ export class MainController {
     this.classAnimation = '';
     this.creationDate = 1460406430773;
     this.toastr = toastr;
-
     this.activate($timeout, webDevTec, testResults);
   }
 
@@ -34,8 +33,7 @@ export class MainController {
 
   getTestResults(testResults) {
       testResults.query().then(response => {
-        this.testPairs = response;
+        this.testResults = response;
       });
-      this.$log.info(this.testPairs);
   }
 }

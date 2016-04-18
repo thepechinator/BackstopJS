@@ -9,6 +9,7 @@ exports.config = {
   //seleniumServerJar: deprecated, this should be set on node_modules/protractor/config.json
 
   // Capabilities to be passed to the webdriver instance.
+  framework: 'mocha',
   capabilities: {
     'browserName': 'chrome'
   },
@@ -19,9 +20,4 @@ exports.config = {
   // protractor is called.
   specs: [paths.e2e + '/**/*.js'],
 
-  // Options to be passed to Jasmine-node.
-  jasmineNodeOpts: {
-    showColors: true,
-    defaultTimeoutInterval: 30000
-  }
 };
