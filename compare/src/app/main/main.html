@@ -1,18 +1,18 @@
-<div layout="vertical" layout-fill>
+<div layout="column" flex layout-fill ng-cloak>
 
-  <md-content flex>
     <header>
       <acme-navbar creation-date="main.creationDate"></acme-navbar>
     </header>
-    
-    <section class="summary">
-        <md-list>
-            <md-list-item ng-repeat="test in main.testResults.testPairs">
-                <div test-meta class="md-list-item-text" layout="row" flex></div>
-                <md-divider ng-if="!$last"></md-divider>
-            </md-list-item>
-        </md-list>  
-    </section>
-  </md-content>
+
+    <md-content>
+        <section class="summary">
+            <md-list>
+                <md-list-item ng-repeat="test in main.testResults.testPairs">
+                    <div test-meta class="md-list-item-text" layout="row" flex></div>
+                    <md-divider ng-if="!$last"></md-divider>
+                </md-list-item>
+            </md-list>  
+        </section>
+    </md-content>
 
 </div>
