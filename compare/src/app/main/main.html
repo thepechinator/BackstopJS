@@ -7,7 +7,7 @@
     <md-content>
         <section class="summary">
             <md-list>
-                <md-list-item ng-repeat="test in main.testResults.testPairs">
+                <md-list-item ng-repeat="test in main.testResults.testPairs track by $index">
                     <div test-meta class="md-list-item-text" layout="row" flex></div>
                     <md-divider ng-if="!$last"></md-divider>
                 </md-list-item>
