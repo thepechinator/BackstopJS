@@ -8,19 +8,11 @@
     <section class="summary">
         <md-list>
             <md-list-item ng-repeat="test in main.testResults.testPairs">
-                <div class="md-list-item-text" layout="row" flex>
-                    <div class="test-status" flex="10">
-                        {{ test.local_testStatus}}
-                    </div>
-                    <div class="test-label" flex>
-                        {{ test.label}}
-                    </div>
-                </div>
-                <md-button class="md-secondary test-url">{{ test.scenario }}</md-button>
+                <div test-meta class="md-list-item-text" layout="row" flex></div>
                 <md-divider ng-if="!$last"></md-divider>
             </md-list-item>
         </md-list>  
     </section>
-      </md-content>
+  </md-content>
 
 </div>
