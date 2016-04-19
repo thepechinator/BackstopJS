@@ -55,4 +55,20 @@ describe('main controller', () => {
     expect(vm.testResults.length).to.equal(3);
   });
 
+  it('should scroll page to anchor ', inject($location => {
+    $location.hash('test');
+    vm.gotoAnchor('test');
+    expect($location.hash()).to.equal('test');
+  }));
+
+  it('should scroll page to anchor if list item is clicked', inject($location => {
+    $location.hash('test');
+    vm.gotoAnchor('test');
+    expect($location.hash()).to.equal('test');
+    $location.hash('something else');
+    vm.gotoAnchor('test');
+    expect($location.hash()).to.equal('test');
+  }));
+
 });
+

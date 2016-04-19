@@ -1,8 +1,10 @@
 export class MainController {
-  constructor ($log, $timeout, webDevTec, toastr, testResults) {
+  constructor ($log, $timeout, $anchorScroll, $location, webDevTec, toastr, testResults) {
     'ngInject';
 
     this.$log = $log;
+    this.$anchorScroll = $anchorScroll;
+    this.$location = $location;
     this.awesomeThings = [];
     this.classAnimation = '';
     this.creationDate = 1460406430773;
@@ -35,5 +37,17 @@ export class MainController {
       testResults.query().then(response => {
         this.testResults = response;
       });
+  }
+
+  gotoAnchor(id) {
+    if (this.$location.hash() !== id) {
+      // set the $location.hash to id and scroll to it
+      // $anchorScroll will automatically scroll to it
+      this.$location.hash(id);
+    } else {
+      // call $anchorScroll() explicitly,
+      // since $location.hash hasn't changed
+      this.$anchorScroll();
+    }
   }
 }

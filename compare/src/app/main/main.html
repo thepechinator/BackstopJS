@@ -7,7 +7,10 @@
     <md-content>
         <section class="summary">
             <md-list>
-                <md-list-item ng-repeat="test in main.testResults.testPairs track by $index">
+                <md-list-item 
+                    ng-repeat="test in main.testResults.testPairs track by $index" 
+                    ng-click="main.gotoAnchor(test.label + '-' + test.viewport)" 
+                    aria-label="go to detail">
                     <div test-meta class="md-list-item-text" layout="row" flex></div>
                     <md-divider ng-if="!$last"></md-divider>
                 </md-list-item>
@@ -15,7 +18,7 @@
         </section>
         <section class="detail">
             <div ng-repeat="test in main.testResults.testPairs track by $index">
-                <md-toolbar test-meta layout="row" flex></md-toolbar>
+                <md-toolbar id="{{test.label  + '-' + test.viewport}}" test-meta layout="row" flex></md-toolbar>
                 <div layout="row" flex layout-margin>
                     <div flex="33">
                         <img class="img-responsive" ng-src="{{ ::test.reference }}">
