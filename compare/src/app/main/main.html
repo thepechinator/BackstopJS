@@ -17,19 +17,8 @@
             </md-list>  
         </section>
         <section class="detail">
-            <div ng-repeat="test in main.testResults.testPairs track by $index">
-                <md-toolbar id="{{test.label  + '-' + test.viewport}}" test-meta layout="row" flex></md-toolbar>
-                <div layout="row" flex layout-margin>
-                    <div flex="33">
-                        <img class="img-responsive" ng-src="{{ ::test.reference }}">
-                    </div>
-                    <div flex="33">
-                        <img class="img-responsive" ng-src="{{ ::test.test }}">
-                    </div>
-                    <div flex="33">
-                        <img class="img-responsive" ng-src="{{ ::test.local_diff }}">
-                    </div>
-                </div>
+            <div ng-repeat="test in main.testResults.testPairs track by $index">                
+                <screenshot-details></screenshot-details>
             </div>
         </section>
     </md-content>

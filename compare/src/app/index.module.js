@@ -13,6 +13,7 @@ import { WebDevTecService } from '../app/components/webDevTec/webDevTec.service'
 import { NavbarDirective } from '../app/components/navbar/navbar.directive';
 import { MalarkeyDirective } from '../app/components/malarkey/malarkey.directive';
 import { TestMetaDirective } from '../app/components/testMeta/testMeta.directive';
+import { ScreenshotDetailsDirective } from '../app/components/screenshotDetails/screenshotDetails.directive';
 
 angular.module('compare', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngMessages', 'ngAria', 'ngResource', 'ngRoute', 'ngMaterial', 'toastr'])
   .constant('malarkey', malarkey)
@@ -29,4 +30,5 @@ angular.module('compare', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'n
   .controller('RunTestController', RunTestController)
   .directive('acmeNavbar', NavbarDirective)
   .directive('acmeMalarkey', MalarkeyDirective)
-  .directive('testMeta', TestMetaDirective);
+  .directive('testMeta', TestMetaDirective)
+  .directive('screenshotDetails', ScreenshotDetailsDirective);

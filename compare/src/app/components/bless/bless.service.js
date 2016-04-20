@@ -1,3 +1,6 @@
+// if toBless is true, sends the test screenshot to the backend
+// the backend sets the test status to 'blessed'
+// if toBless is false, the backend sets the test status back to 'fail'
 export class BlessService {
     constructor($http, $log) {
         'ngInject';

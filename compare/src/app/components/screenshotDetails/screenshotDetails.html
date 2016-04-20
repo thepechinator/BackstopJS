@@ -1,0 +1,23 @@
+<md-toolbar id="{{test.label  + '-' + test.viewport}}" test-meta layout="row" flex></md-toolbar>
+<div class="detail-subheader" layout="row" flex layout-margin>
+    <div flex="33">
+        Reference
+    </div>
+    <div flex="33">
+        Test
+    </div>
+    <div flex="33">
+        Diff
+    </div>
+</div>
+<div layout="row" flex layout-margin>
+    <div flex="33">
+        <img class="img-responsive" ng-src="{{ ::test.reference }}">
+    </div>
+    <div flex="33">
+        <img class="img-responsive" ng-src="{{ ::test.test }}">
+    </div>
+    <div flex="33">
+        <img class="img-responsive" ng-src="{{ ::test.local_diff }}">
+    </div>
+</div>
