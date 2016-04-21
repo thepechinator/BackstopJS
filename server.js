@@ -31,37 +31,40 @@ app.post('/baseline', function(req, res) {
   
   // TODO: Make the string splitting and manipulation more robust
   // TODO: Add error handling
-  var toBless = req.body.toBless;
-  var status = toBless ? 'blessed' : 'fail';
-
-  var blessed = req.body.blessed.split('.././bitmaps_test/')[1];
-  var blessedDest = blessed.split('/')[1];
+  var status = req.body.status;
+  var blessed = req.body.blessedId.split('bitmaps_test/')[1];
+    //blessed:  20160420-125151/mocks_pages_editorial_topic-disclaimer_html_0_--data-test-name--editorial-topic-disclaimer--_0_SMALL.png
+  var blessedDest = blessed.split('/')[1];   
+    //blessedDest:  mocks_pages_editorial_topic-disclaimer_html_0_--data-test-name--editorial-topic-disclaimer--_0_SMALL.png
 
   // move the blessed image to the bitmaps_refernce
   fs.createReadStream('bitmaps_test/' + blessed).pipe(fs.createWriteStream('bitmaps_reference/' + blessedDest));
 
   // update the config.json to reflect status of blessed
   var configFileName = 'compare/config.json';
-  var configToUpdate = req.body.index;
   var configObj;
 
   fs.readFile(configFileName, 'utf8', function (err, data) {
     if (err) throw err;
     configObj = JSON.parse(data);
-
-    configObj.testPairs[configToUpdate].local_testStatus = status;
+    for(var test of configObj.testPairs) {
+      if (test.test === req.body.blessedId) {
+        test.local_testStatus = status;
+        break;
+      }
+    }
 
     fs.writeFile(configFileName, JSON.stringify(configObj, null, 2), function (err) {
       if (err) throw err;
-
+      console.info('status: ', status); //wf
       console.log('\n');
-      if (toBless) {
+      if (status === 'blessed') {
         console.log('Blessed file received: ' + blessedDest);
         console.log('Moving to baseline reference directory, ready for version control'); 
       } else {
         console.log('File to Unbless received: ' + blessedDest);
         console.log('Reset to "fail" status'); 
-        var clean_file = spawn('gulp', ['backstop:clean_file', '--file=' + blessedDest], {cwd: '../../'});
+        var clean_file = spawn('gulp', ['backstop:clean_file', '--file=' + blessedDest], {cwd: '../usn-styleguide/'});
         clean_file.stdout.on('close', function (data) {
           console.log(blessedDest + ' no longer blessed for version control');
         });
@@ -71,12 +74,12 @@ app.post('/baseline', function(req, res) {
       }
       console.log('Updating data (writing to ' + configFileName + ')');
 
-      // respond with the index of the object to update on the client
-      res.send({testPairToUpdate: configToUpdate});
+      res.send({
+        status: req.body.status,
+        blessedId: req.body.blessedId 
+      });
     });
   });
-
-
 });
 
 // This receives and stores the test name and baseline boolean in a text file
@@ -126,7 +129,7 @@ app.get('/backstop', function(req, res) {
     "Cache-control": "no-cache"
   });
 
-  var spw = spawn('gulp', gulpBackstopOptions, {cwd: '../../'});
+  var spw = spawn('gulp', gulpBackstopOptions, {cwd: '../usn-styleguide'});
 
   var str = '';
 

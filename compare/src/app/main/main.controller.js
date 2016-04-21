@@ -1,5 +1,5 @@
 export class MainController {
-  constructor ($log, $timeout, $anchorScroll, $location, webDevTec, toastr, testResults) {
+  constructor ($log, $timeout, $anchorScroll, $location, webDevTec, toastr, testResults, bless) {
     'ngInject';
 
     this.$log = $log;
@@ -10,6 +10,8 @@ export class MainController {
     this.creationDate = 1460406430773;
     this.toastr = toastr;
     this.activate($timeout, webDevTec, testResults);
+    this.testResults;
+    this.bless = bless;
   }
 
   activate($timeout, webDevTec, testResults) {
@@ -49,5 +51,18 @@ export class MainController {
       // since $location.hash hasn't changed
       this.$anchorScroll();
     }
+  }
+
+  blessScreenshot(status, testScreenshot) {
+      for(let testPair of this.testResults.testPairs) {
+        if(testPair.test === testScreenshot) {
+          testPair.local_testStatus = status;
+          break;
+        }
+      }
+      this.bless.blessScreenshot(status, testScreenshot).then(() => {
+        // TODO: Put visual feedback indicatino here        
+      });
+      
   }
 }

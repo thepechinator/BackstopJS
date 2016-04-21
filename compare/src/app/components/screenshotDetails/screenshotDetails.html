@@ -4,7 +4,14 @@
         Reference
     </div>
     <div flex="33">
-        Test
+        Test {{test.local_testStatus}}
+        <md-checkbox ng-model="test.local_testStatus" 
+                     ng-true-value="'blessed'" 
+                     ng-false-value="'fail'" 
+                     aria-label="Bless this screenshot" 
+                     ng-change="main.blessScreenshot(test.local_testStatus, test.test)">
+            Bless this screenshot: {{ test.local_testStatus }}
+        </md-checkbox>
     </div>
     <div flex="33">
         Diff

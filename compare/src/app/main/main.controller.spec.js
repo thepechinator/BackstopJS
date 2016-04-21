@@ -13,7 +13,22 @@ describe('main controller', () => {
     });
 
     sandbox.stub(testResults, 'query', function() {
-      return $q.when([{}, {}, {}]);
+      return $q.when({
+        "testPairs" : [
+          {
+            "test": "mock_screenshot_example_A",
+            "local_testStatus": 'fail'
+          },
+          {
+            "test": "mock_screenshot_example_B",
+            "local_testStatus": 'fail'
+          },
+          {
+            "test": "mock_screenshot_example_C",
+            "local_testStatus": 'fail'
+          }
+        ]
+      });
     });
 
     sandbox.stub(toastr, 'info', function() {
@@ -51,8 +66,9 @@ describe('main controller', () => {
 
   it('should define at least 3 testPairs', () => {
     //console.info('vm: ', JSON.stringify(vm, null, 2)); //wf
-    expect(vm.testResults).to.be.an('array');
-    expect(vm.testResults.length).to.equal(3);
+    expect(vm.testResults).to.be.an('object');
+    expect(vm.testResults.testPairs).to.be.an('array');
+    expect(vm.testResults.testPairs.length).to.equal(3);
   });
 
   it('should scroll page to anchor ', inject($location => {
@@ -69,6 +85,14 @@ describe('main controller', () => {
     vm.gotoAnchor('test');
     expect($location.hash()).to.equal('test');
   }));
+
+  it('should toggle status of screenshot between blessed and fail', () => {
+    expect(vm.testResults.testPairs[1].local_testStatus).to.equal('fail');
+    vm.blessScreenshot('blessed', 'mock_screenshot_example_B');
+    expect(vm.testResults.testPairs[1].local_testStatus).to.equal('blessed');
+    vm.blessScreenshot('fail', 'mock_screenshot_example_B');
+    expect(vm.testResults.testPairs[1].local_testStatus).to.equal('fail');
+  });
 
 });
 

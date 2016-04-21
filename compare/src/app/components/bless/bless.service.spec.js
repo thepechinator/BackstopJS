@@ -6,20 +6,20 @@ describe('bless service', () => {
         expect(bless).to.not.equal(null);
     }));
 
-    describe('bless a screenshot', () => {
+    describe('when bless a screenshot', () => {
         it('should make http request to server', inject((bless, $httpBackend) => {
             $httpBackend.when('POST', '/baseline').respond(200, {
-                toBless: true,
+                status: 'blessed',
                 blessedId: 'test_mock'
             });
             let data;
-            bless.blessScreenshot('screenshot').then(function(screenshot) {
+            bless.blessScreenshot('blessed','screenshot').then(function(screenshot) {
                 data = screenshot;
             })
             $httpBackend.flush();
             expect(data).to.be.an('object');
             expect(data.blessedId).to.equal('test_mock');
-            expect(data.toBless).to.be.true;
+            expect(data.status).to.equal('blessed');
         }));
 
         it('should log a error', inject((bless, $httpBackend, $log) => {

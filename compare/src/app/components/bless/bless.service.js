@@ -8,18 +8,18 @@ export class BlessService {
         this.$log = $log;
     }
 
-    blessScreenshot(screenshot) {
+    blessScreenshot(status, testScreenshot) {
         return this.$http({
             method: 'POST',
             url: '/baseline',
             data: {
-                'toBless' : true,
-                'blessedId' : 'bitmaps_test/20160418-130025/mocks_pages_editorial_article-rail_html_0_--data-test-name--editorial-article-rail--_0_SMALL.png'
+                status : status,
+                blessedId : testScreenshot
             }
         })
         .then((response) => {
             return {
-                toBless: response.data.toBless,
+                status: response.data.status,
                 blessedId: response.data.blessedId
             }
         })
