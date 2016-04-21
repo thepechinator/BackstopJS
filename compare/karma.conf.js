@@ -33,6 +33,7 @@ function listFiles() {
     served: true,
     watched: false
   });
+  files.push('node_modules/babel-polyfill/dist/polyfill.js');
   return files;
 }
 
@@ -62,7 +63,8 @@ module.exports = function(config) {
       'karma-coverage',
       'karma-mocha',
       'karma-chai-sinon',
-      'karma-ng-html2js-preprocessor'
+      'karma-ng-html2js-preprocessor',
+      'karma-babel-preprocessor'
     ],
 
     coverageReporter: {
