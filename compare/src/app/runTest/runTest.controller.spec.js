@@ -4,14 +4,14 @@ describe('runTest controller', () => {
     
     beforeEach(angular.mock.module('compare'));
 
-    beforeEach(inject((setupTest, $controller, $routeParams, $rootScope, $q) => {
+    beforeEach(inject((setupTest, $controller, $stateParams, $rootScope, $q) => {
         sandbox = sinon.sandbox.create();
 
         sandbox.stub(setupTest, 'sendTestName', () => {
             return $q.when({});
         });
 
-        $routeParams.testName = 'a-test';
+        $stateParams.testName = 'a-test';
         vm = $controller('RunTestController');
 
         $rootScope.$digest();
@@ -33,8 +33,8 @@ describe('runTest controller', () => {
         expect(vm.streamCalled).to.equal(true);
     });
 
-    it('should redirect to main page', inject(($timeout, $location) => {
-        vm.completeTest($timeout, $location);
+    it('should redirect to main page', inject(($timeout, $state, $location) => {
+        vm.completeTest($timeout, $state);
         expect($location.path()).to.equal('/');
     }));
 

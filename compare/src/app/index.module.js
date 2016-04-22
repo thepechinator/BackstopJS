@@ -15,7 +15,7 @@ import { MalarkeyDirective } from '../app/components/malarkey/malarkey.directive
 import { TestMetaDirective } from '../app/components/testMeta/testMeta.directive';
 import { ScreenshotDetailsDirective } from '../app/components/screenshotDetails/screenshotDetails.directive';
 
-angular.module('compare', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngMessages', 'ngAria', 'ngResource', 'ngRoute', 'ngMaterial', 'toastr'])
+angular.module('compare', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngMessages', 'ngAria', 'ngResource', 'ui.router', 'ngMaterial', 'toastr'])
   .constant('malarkey', malarkey)
   .constant('moment', moment)
   .config(config)

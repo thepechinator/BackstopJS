@@ -1,16 +1,19 @@
 describe('main page', () => {
-    let route;
+    let state;
+    let rootScope;
 
     beforeEach(angular.mock.module('compare'));
 
-    beforeEach(inject($route => {
-        route = $route;
+    beforeEach(inject(($rootScope, $state) => {
+        state = $state;
+        rootScope = $rootScope;
     }));
 
-    it('should have home route with right template, controller and a resolve block', function () {
-        var mainRoute = route.routes['/'];
-        expect(mainRoute).to.not.be.undefined;
-        expect(mainRoute.controller).to.equal('MainController');
-        expect(mainRoute.templateUrl).to.equal('app/main/main.html');
+    it('should have home state with right controller and template', function () {
+        state.go('home');
+        rootScope.$digest();
+        expect(state.current.name).to.equal('home');
+        expect(state.current.controller).to.equal('MainController');
+        expect(state.current.templateUrl).to.equal('app/main/main.html');
     });
 });

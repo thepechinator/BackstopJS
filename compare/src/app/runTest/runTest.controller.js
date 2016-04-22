@@ -1,14 +1,14 @@
 // controls the view when a test is running
 export class RunTestController {
-    constructor ($routeParams, setupTest, $log, $rootScope, $location, $timeout) {
+    constructor ($stateParams, setupTest, $log, $rootScope, $state, $timeout) {
         'ngInject';
         this.$rootScope = $rootScope;
         this.$log = $log;
         // immediately send test name to server
         this.status = 'idle';
         this.stream = [];
-        this.runTest(setupTest, $routeParams.testName);
-        this.completeTest($timeout, $location);
+        this.runTest(setupTest, $stateParams.testName);
+        this.completeTest($timeout, $state);
     }   
 
     runTest(setupTest, testName) {
@@ -24,10 +24,10 @@ export class RunTestController {
         });
     }
 
-    completeTest($timeout, $location) {
+    completeTest($timeout, $state) {
         this.$rootScope.$on('testCompleted', () => {
             $timeout(function() {  
-                $location.path('/');
+                $state.go('home');
             });
         });
     }
