@@ -4,12 +4,24 @@
       <acme-navbar creation-date="main.creationDate"></acme-navbar>
     </header>
 
+    <div class="toolbar" layout="row" flex layout-margin>
+        <div flex="10">
+            <md-input-container>
+                <label>status</label>
+                <md-select ng-model="main.statusFilter" ng-change="main.setStatus(main.statusFilter)" ng-model-options="{ debounce: 500 }">
+                    <md-option ng-repeat="status in main.statusFilterOptions" value="{{status}}">{{status}}</md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+    </div>
+
     <md-content>
         <section class="summary">
             <md-list>
                 <md-list-item 
                     ng-repeat="test in main.testResults.testPairs track by $index" 
                     ng-click="main.gotoAnchor(test.label + '-' + test.viewport)" 
+                    ng-show="main.checkStatus(test.local_testStatus, test.statusDirty)"
                     aria-label="go to detail">
                     <div test-meta class="md-list-item-text" layout="row" flex></div>
                     <md-divider ng-if="!$last"></md-divider>
@@ -17,7 +29,8 @@
             </md-list>  
         </section>
         <section class="detail">
-            <div ng-repeat="test in main.testResults.testPairs track by $index">                
+            <div ng-repeat="test in main.testResults.testPairs track by $index"
+                 ng-show="main.checkStatus(test.local_testStatus, test.statusDirty)">
                 <screenshot-details></screenshot-details>
             </div>
         </section>

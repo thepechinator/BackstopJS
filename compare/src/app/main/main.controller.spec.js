@@ -35,6 +35,7 @@ describe('main controller', () => {
       return;
     });
 
+
     vm = $controller('MainController');
     $rootScope.$digest();
 
@@ -86,12 +87,64 @@ describe('main controller', () => {
     expect($location.hash()).to.equal('test');
   }));
 
-  it('should toggle status of screenshot between blessed and fail', () => {
-    expect(vm.testResults.testPairs[1].local_testStatus).to.equal('fail');
-    vm.blessScreenshot('blessed', 'mock_screenshot_example_B');
-    expect(vm.testResults.testPairs[1].local_testStatus).to.equal('blessed');
-    vm.blessScreenshot('fail', 'mock_screenshot_example_B');
-    expect(vm.testResults.testPairs[1].local_testStatus).to.equal('fail');
+  describe('when setting a filter', () => {
+    it('should filter the correct number of items', inject(($templateCache, $controller, $rootScope, $compile) => {
+      let template = $templateCache.get('app/main/main.html');
+      vm = $controller('MainController', {
+        $element: $compile(template)($rootScope.$new())
+      });
+      $rootScope.$apply();
+      vm.checkStatus = () => {return true};
+      let spy = sinon.spy(vm.checkStatus);
+      
+      $rootScope.$digest();
+      expect(spy).to.have.been.called;
+    }));
+
+    it('should filter by status', () => {
+      expect(vm.checkStatus('blessed', true)).to.be.true;
+      expect(vm.checkStatus('blessed', false)).to.be.false;
+    });
+
+    it('should default to filtering by "fail"', () => {
+      expect(vm.statusFilter).to.equal('fail');
+    });
+
+    it('should be able to filter by all', () => {
+      vm.statusFilter = 'all';
+      expect(vm.checkStatus()).to.be.true;
+    });
+
+    it('should filter by specified filter', () => {
+      vm.statusFilter = 'a-specific-filter';
+      expect(vm.checkStatus('a-specific-filter')).to.be.true;
+    });
+
+    it('should filter by the "status" state parameter if specified in url', inject(($controller) => {
+      vm = $controller('MainController', {$stateParams: {status: 'all'}});
+      expect(vm.statusFilter).to.equal('all');
+    }));
+
+    it('should have the correct status options available to filter', () => {
+      vm.statusFilterOptions = ['all','blessed','fail','pass'];
+    });
+  });
+  
+  describe('when blessing or unblessing a screenshot', () => {
+    it('should toggle status of screenshot between blessed and fail', () => {
+      expect(vm.testResults.testPairs[1].local_testStatus).to.equal('fail');
+      vm.blessScreenshot('blessed', 'mock_screenshot_example_B');
+      expect(vm.testResults.testPairs[1].local_testStatus).to.equal('blessed');
+      vm.blessScreenshot('fail', 'mock_screenshot_example_B');
+      expect(vm.testResults.testPairs[1].local_testStatus).to.equal('fail');
+    });
+
+    it('should not affect the visibility of the screenshot in current view', () => {
+      vm.blessScreenshot('blessed', vm.testResults.testPairs[1].test);
+      expect(vm.testResults.testPairs[1].statusDirty).to.be.true;
+      vm.setStatus('whatever');
+      expect(vm.testResults.testPairs[1].statusDirty).to.be.false;
+    });
   });
 
 });

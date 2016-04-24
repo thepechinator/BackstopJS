@@ -16,4 +16,10 @@ describe('main page', () => {
         expect(state.current.controller).to.equal('MainController');
         expect(state.current.templateUrl).to.equal('app/main/main.html');
     });
+
+    it('should have status parameter ', inject(($location, $stateParams) => {
+        $location.path('/blessed');
+        rootScope.$digest();
+        expect($stateParams.status).to.equal('blessed');
+    }));
 });
