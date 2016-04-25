@@ -1,8 +1,10 @@
 'use strict';
 
 var chai = require('chai');
+var chaiAsPromised = require('chai-as-promised');
+chai.use(chaiAsPromised);
 var expect = chai.expect;
-console.info('expect: ', expect); //wf
+
 describe('The main view', function () {
   var page;
 
@@ -26,7 +28,7 @@ describe('The main view', function () {
   });
 
   it('should list at least 3 tests', function () {
-    expect(page.tests.count()).to.be.at.least(3);
+      expect(page.tests.count()).to.eventually.be.at.least(3);
   });
 
 });

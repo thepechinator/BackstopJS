@@ -12,7 +12,7 @@ var MainPage = function() {
   //this.thumbnailEls = element(by.css('body')).all(by.repeater('awesomeThing in main.awesomeThings'));
 
   this.summary = element(by.css('.summary'));
-  this.tests = element(by.css('body')).all(by.repeater('test in main.testResults.testPairs'));
+  this.tests = element(by.css('body')).all(by.repeater('test in main.testResults.testPairs track by $index'));
 };
 
 module.exports = new MainPage();

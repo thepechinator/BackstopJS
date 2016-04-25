@@ -20,4 +20,8 @@ exports.config = {
   // protractor is called.
   specs: [paths.e2e + '/**/*.js'],
 
+  mochaOpts: {
+    reporter: "spec",
+    timeout: 10000
+  }
 };
