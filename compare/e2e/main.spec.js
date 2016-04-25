@@ -23,12 +23,16 @@ describe('The main view', function () {
     expect(page.tests.count()).toBeGreaterThan(5);
   });*/
 
+  it('should display a select box that defaults to fail', () => {
+      expect(page.statusFilter.getText()).to.eventually.equal('fail');
+  });
+
   it('should display the summary list of tests', () => {
     expect(page.summary).to.exist;
   });
 
   it('should list at least 3 tests', function () {
-      expect(page.tests.count()).to.eventually.be.at.least(3);
+    expect(page.tests.count()).to.eventually.be.at.least(3);
   });
 
 });

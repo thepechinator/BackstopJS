@@ -12,7 +12,10 @@ var MainPage = function() {
   //this.thumbnailEls = element(by.css('body')).all(by.repeater('awesomeThing in main.awesomeThings'));
 
   this.summary = element(by.css('.summary'));
-  this.tests = element(by.css('body')).all(by.repeater('test in main.testResults.testPairs track by $index'));
+  this.tests = element(by.css('body')).all(by.repeater('test in main.testResults.testPairs'));
+
+  this.statusFilter = element(by.css('.toolbar-status .md-text'));
+
 };
 
 module.exports = new MainPage();

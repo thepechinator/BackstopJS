@@ -88,18 +88,6 @@ describe('main controller', () => {
   }));
 
   describe('when setting a filter', () => {
-    it('should filter the correct number of items', inject(($templateCache, $controller, $rootScope, $compile) => {
-      let template = $templateCache.get('app/main/main.html');
-      vm = $controller('MainController', {
-        $element: $compile(template)($rootScope.$new())
-      });
-      $rootScope.$apply();
-      vm.checkStatus = () => {return true};
-      let spy = sinon.spy(vm.checkStatus);
-      
-      $rootScope.$digest();
-      expect(spy).to.have.been.called;
-    }));
 
     it('should filter by status', () => {
       expect(vm.checkStatus('blessed', true)).to.be.true;

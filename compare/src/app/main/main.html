@@ -8,7 +8,7 @@
         <div flex="10">
             <md-input-container>
                 <label>status</label>
-                <md-select ng-model="main.statusFilter" ng-change="main.setStatus(main.statusFilter)" ng-model-options="{ debounce: 500 }">
+                <md-select class="toolbar-status" ng-model="main.statusFilter" ng-change="main.setStatus(main.statusFilter)" ng-model-options="{ debounce: 500 }">
                     <md-option ng-repeat="status in main.statusFilterOptions" value="{{status}}">{{status}}</md-option>
                 </md-select>
             </md-input-container>
