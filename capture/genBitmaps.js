@@ -14,6 +14,7 @@ var hiddenSelectorPath = 'capture/resources/hiddenSelector_noun_63405.png'
 var genConfigPath = 'capture/config.json'
 
 var configJSON = fs.read(genConfigPath);
+
 var config = JSON.parse(configJSON);
 if (!config.paths) {
   config.paths = {};
@@ -25,6 +26,7 @@ var casper_scripts = config.paths.casper_scripts || null;
 var compareConfigFileName = config.paths.compare_data || 'compare/config.json';
 var viewports = config.viewports;
 var scenarios = config.scenarios||config.grabConfigs;
+var blacklistedRequests = config.blacklistedRequests || [];
 
 var compareConfig = {testPairs:[]};
 
@@ -61,24 +63,18 @@ var _isBlacklisted = function(requestData, request, regex) {
     return (regex.test(requestData.url));
 }
 
-// Our list of types to blacklist functions.
+// Each type may have an associated method to determine whether
+// the incoming request should be blacklisted
 var _requestHash = {
     'default': _isBlacklisted
-}
+};
 
 // Block certain requests.
 casper.on('resource.requested', function(requestData, request) {
-    // Look for certain patterns to determine if they are of that type.
-    var blacklistedRequests = [
-        // {"type": "css", "regex": "https?:\/\/.+?\\.css", "regexFlags": "gi"},
-        {"type": "ad",  "regex": "https?:\/\/.*?(ad\\.doubleclick\\.net)|(adserver)|(doubleclick)|(googleads).*", "regexFlags": "gi"}
-    //     {"type": "social", "regex": "https?:\/\/.*?(tpc\\.googlesyndication\\.com)|((s-static|static)\\.ak\\.facebook\\.com\/connect)|(facebook\\.com).*", "regexFlags": "gi"},
-    //     {"type": "youtube", "regex": "https?:\/\/.*?(youtube\\.com).*", "regexFlags": "gi"}
-    ];
-
     var abort = false,
         i = 0;
 
+    // Look for certain patterns to determine if they are of that type.
     while(i < blacklistedRequests.length) {
         var obj = blacklistedRequests[i],
             type = obj.type;
@@ -173,6 +169,7 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
           ,function(){casper.echo('ERROR: casper timeout.')} //on timeout
           ,scriptTimeout
         );
+
         casper.wait(scenario.delay||1);
 
       });
