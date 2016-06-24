@@ -28,6 +28,9 @@ var viewports = config.viewports;
 var scenarios = config.scenarios||config.grabConfigs;
 var blacklistedRequests = config.blacklistedRequests || [];
 
+//.Methods you want to execute for ALL pages
+var executeExternalJSMethods = config.executeExternalJSMethods || [];
+
 var compareConfig = {testPairs:[]};
 
 var casper = require("casper").create({
@@ -240,6 +243,30 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
                     s.style.display='none';
                   });
                 },o);
+              });
+            }
+
+            executeExternalJSMethods.forEach(function(methodKey,index,array){
+              casper.evaluate(function(methodKey){
+                USN.CSS_REGRESSION.JS_METHODS[methodKey]();
+                // in some namespace, there will be on window something we can
+                // access and execute
+                // Array.prototype.forEach.call(document.querySelectorAll(o), function(s, j){
+                //   s.style.display='none';
+                // });
+              },methodKey);
+            });
+
+            if ( scenario.hasOwnProperty('executeExternalJSMethods') ) {
+              scenario.executeExternalJSMethods.forEach(function(methodKey,index,array){
+                casper.evaluate(function(methodKey){
+                  USN.CSS_REGRESSION.JS_METHODS[methodKey]();
+                  // in some namespace, there will be on window something we can
+                  // access and execute
+                  // Array.prototype.forEach.call(document.querySelectorAll(o), function(s, j){
+                  //   s.style.display='none';
+                  // });
+                },methodKey);
               });
             }
 
