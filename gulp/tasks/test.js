@@ -94,7 +94,7 @@ gulp.task('test',['init'], function (cb) {
   // Set this based on a person's OS. We do one less than the amount of cores
   // because some people claim that it performs better since one core is needed
   // to handle runoff or something like that.
-  var maxProcessesDefault = os.cpus().length-1;
+  var maxProcessesDefault = 7;//os.cpus().length-1;
 
   // Figure out how many casper processes to spawn
   if (scenarios.length <= maxProcessesDefault) {
