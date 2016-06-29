@@ -1,85 +1,89 @@
-var gulp = require('gulp');
-var resemble = require('node-resemble-js');
-var paths = require('../util/paths');
-var fs = require('fs');
-var path = require('path');
-var _ = require('underscore');
+'use strict';
 
+let gulp = require('gulp');
+let resemble = require('node-resemble-js');
+let paths = require('../util/paths');
+let fs = require('fs');
+let path = require('path');
+let _ = require('underscore');
+let childProcess = require('child_process');
+let os = require('os');
 
 gulp.task('compare', function (done) {
-  var compareConfig = JSON.parse(fs.readFileSync(paths.compareConfigFileName, 'utf8'));
+  let compareConfig = JSON.parse(fs.readFileSync(paths.compareConfigFileName, 'utf8'));
+  let testPairs = compareConfig.testPairs;
 
-  // FORK: This is what compare.js uses.
-  var resembleTestConfig = {
-    errorColor: {red: 255, green: 0, blue: 255},
-    errorType: 'movement',
-    transparency: 0.1,
-    largeImageThreshold: 1200
-  };
-  resemble.outputSettings(resembleTestConfig);
+  // Set this based on a person's OS. We do one less than the amount of cores
+  // because some people claim that it performs better since one core is needed
+  // to handle runoff or something like that.
+  var maxProcessesDefault = os.cpus().length-1;
 
-  function updateProgress() {
-    var results = {};
-    _.each(compareConfig.testPairs, function (pair) {
-      if (!results[pair.testStatus]) {
-        results[pair.testStatus] = 0;
-      }
-      !results[pair.testStatus]++;
-    });
-    if (!results.running) {
-      console.log ("\nTest completed...");
-      console.log ((results.pass || 0) + " Passed");
-      console.log ((results.fail || 0) + " Failed\n");
+  // Figure out how many casper processes to spawn
+  if (testPairs.length <= maxProcessesDefault) {
+    // This means we need to set a cap
+    maxProcessesDefault = testPairs.length;
+  }
+  var maxProcesses = maxProcessesDefault;
 
-      if (results.fail) {
-        console.log ("*** Mismatch errors found ***");
-        console.log ("For a detailed report run `gulp openReport`\n");
-        if (paths.cliExitOnFail) {
-          done(new Error('Mismatch errors found.'));
-        }
-      } else {
-        done();
-      }
+  var itemsPerArray = Math.floor(testPairs.length/maxProcesses);
+  var currentIndex = 0;
+  var i = 0;
 
+  var workerResults = [];
+
+  // Result parameters
+  let failed = 0;
+  let passed = 0;
+
+  console.log(`Using ${maxProcesses} separate processes`);
+
+  for (i = 0; i < maxProcesses; i++) {
+    if ( (i+1) === maxProcesses ) {
+       // on the last index... so get the modulo to get the number of items
+       // extra we need to account for
+       let extra = testPairs.length % maxProcesses;
+
+       forkWorker(testPairs.slice(currentIndex, currentIndex+itemsPerArray+extra));
+    } else {
+      forkWorker(testPairs.slice(currentIndex, currentIndex+itemsPerArray));
     }
+
+    currentIndex += itemsPerArray;
   }
 
+  function forkWorker(testPairs) {
+    var child = childProcess.fork(path.join(__dirname, '../util/compare'));
 
-  _.each(compareConfig.testPairs, function (pair) {
-    pair.testStatus = "running";
-
-    var referencePath = path.join(paths.backstop, pair.reference);
-    var testPath = path.join(paths.backstop, pair.test);
-
-    resemble(referencePath).compareTo(testPath).onComplete(function (data) {
-      // FORK: Set a default
-      if (typeof pair.misMatchThreshold === 'undefined') {
-        pair.misMatchThreshold = 1;
-      }
-
-      var imageComparisonFailed = !data.isSameDimensions || data.misMatchPercentage > pair.misMatchThreshold;
-
-      if (imageComparisonFailed) {
-        pair.testStatus = "fail";
-        console.log('ERROR:', pair.label, pair.fileName);
-        storeFailedDiffImage(testPath, data);
-      } else {
-        pair.testStatus = "pass";
-        console.log('OK:', pair.label, pair.fileName);
-      }
-      updateProgress();
+    child.on('message', function(results) {
+      workerResults.push(results);
     });
-  });
 
-  function storeFailedDiffImage(testPath, data) {
-    var failedDiffFilename = getFailedDiffFilename(testPath);
-    console.log('Storing diff image in ', failedDiffFilename);
-    var failedDiffStream = fs.createWriteStream(failedDiffFilename);
-    data.getDiffImage().pack().pipe(failedDiffStream)
-  }
+    child.on('close', function(code) {
+      maxProcesses--;
 
-  function getFailedDiffFilename(testPath) {
-    var lastSlash = testPath.lastIndexOf('/');
-    return testPath.slice(0, lastSlash + 1) + 'failed_diff_' + testPath.slice(lastSlash + 1, testPath.length);
+      if (maxProcesses === 0) {
+        // Gather the results
+        for (let result of workerResults) {
+          passed += result.passed;
+          failed += result.failed;
+        }
+
+        console.log((passed || 0) + " Passed");
+        console.log((failed || 0) + " Failed\n");
+
+        if (failed > 0) {
+          console.log("*** Mismatch errors found ***");
+          console.log("For a detailed report run `gulp openReport`\n");
+          if (paths.cliExitOnFail) {
+            done(new Error('Mismatch errors found.'));
+          }
+        } else {
+          done();
+        }
+
+      }
+    });
+
+    child.send({ testPairs: testPairs });
   }
 });

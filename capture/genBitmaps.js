@@ -20,6 +20,7 @@ if (!config.paths) {
   config.paths = {};
 }
 
+// All of the options we need to look at
 var bitmaps_reference = config.paths.bitmaps_reference || 'bitmaps_reference';
 var bitmaps_test = config.paths.bitmaps_test || 'bitmaps_test';
 var casper_scripts = config.paths.casper_scripts || null;
@@ -33,34 +34,64 @@ var executeExternalJSMethods = config.executeExternalJSMethods || [];
 
 var compareConfig = {testPairs:[]};
 
-var casper = require("casper").create({
-  // clientScripts: ["jquery.js"] // uncomment to add jQuery if you need that.
-});
+// so here, we can define the number of our casper processes and then loop through the scenarios
+// smartly
+// console.log('scenarios', scenarios);
+//
+// var casperKlass = require("casper");
+//
+// var maxThreadsDefault = 8;
+//
+// var casperProcesses = [];
+//
+// console.log('scenarios.length', scenarios.length);
+// // Figure out how many casper processes to spawn
+// if (scenarios.length <= maxThreadsDefault) {
+//   // This means we need to set a cap
+//   maxThreadsDefault = scenarios.length;
+// }
+// console.log('maxThreadsDefault', maxThreadsDefault);
+//
+// var maxThreads = maxThreadsDefault;
+//
+// // Create a bunch of new casper instances
+// while (maxThreads > 0) {
+//   console.log('create casper');
+//   var kasper = casperKlass.create({
+//       verbose: true,
+//       logLevel: "debug"
+//   });
+//   bootstrapCasper(kasper);
+//   casperProcesses.push(kasper);
+//   maxThreads--;
+// }
+// // reset
+// maxThreads = maxThreadsDefault;
+
+
+// This is where casper gets initialized
+// var casper = casperKlass.create({
+//   // clientScripts: ["jquery.js"] // uncomment to add jQuery if you need that.
+// });
+// var options = kasper.cli.options;
+//
+// bootstrapCasper(casper);
+
+// var casper = casperProcesses[0];
+var casper = require('casper').create({});
 var options = casper.cli.options;
+bootstrapCasper(casper);
 
-if (config.debug) {
-  console.log('Debug is enabled!');
+// console.log('casper options', options['scenario-start-index'], options['scenario-end-index']);
+// console.log('hum');
 
-  casper.on("page.error", function(msg, trace) {
-      this.echo("Remote Error >    " + msg, "error");
-      this.echo("file:     " + trace[0].file, "WARNING");
-      this.echo("line:     " + trace[0].line, "WARNING");
-      this.echo("function: " + trace[0]["function"], "WARNING");
-  });
-}
-
-casper.on('remote.message', function(message) {
-  this.echo('remote console > ' + message);
-});
-
-casper.on('resource.received', function(resource) {
-  var status = resource.status;
-  if(status >= 400) {
-    casper.log('remote error > ' + resource.url + ' failed to load (' + status + ')', 'error');
-  }
-});
-
-
+// console.log('scenarios', scenarios.length);
+// we need to split the scenarios up... like so
+scenarios = scenarios.slice(options['scenario-start-index'], options['scenario-end-index']);
+// console.log('casper.cli.options', JSON.stringify(casper.cli.options));
+// console.log('after setting scenarios..', scenarios.length);
+// Helper functions
+//
 // Keep a list of blacklist functions to run against certain types.
 var _isBlacklisted = function(requestData, request, regex) {
     return (regex.test(requestData.url));
@@ -72,46 +103,73 @@ var _requestHash = {
     'default': _isBlacklisted
 };
 
-// Block certain requests.
-casper.on('resource.requested', function(requestData, request) {
-    var abort = false,
-        i = 0;
 
-    // Look for certain patterns to determine if they are of that type.
-    while(i < blacklistedRequests.length) {
-        var obj = blacklistedRequests[i],
-            type = obj.type;
-            regex = new RegExp(obj.regex, obj.regexFlags);
+function bootstrapCasper(casperInstance) {
+    if (config.debug) {
+      console.log('Debug is enabled!');
 
-        if (typeof _requestHash[type] === 'undefined') {
-            type = 'default';
-        }
-
-        try {
-            abort = _requestHash[type](requestData, request, regex);
-        } catch(e) {
-            casper.echo(e);
-        }
-        if (abort) {
-            casper.echo('Aborting request: ' + requestData.url);
-            request.abort();
-            break;
-        }
-
-        i++;
+      casperInstance.on("page.error", function(msg, trace) {
+          this.echo("Remote Error >    " + msg, "error");
+          this.echo("file:     " + trace[0].file, "WARNING");
+          this.echo("line:     " + trace[0].line, "WARNING");
+          this.echo("function: " + trace[0]["function"], "WARNING");
+      });
     }
-});
 
+    casperInstance.on('remote.message', function(message) {
+      this.echo('remote console > ' + message);
+    });
 
+    casperInstance.on('resource.received', function(resource) {
+      var status = resource.status;
+      if(status >= 400) {
+        casperInstance.log('remote error > ' + resource.url + ' failed to load (' + status + ')', 'error');
+      }
+    });
 
-function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_test,isReference){
+    // Block certain requests.
+    casperInstance.on('resource.requested', function(requestData, request) {
+        var abort = false,
+            i = 0;
 
-  var
-    screenshotNow = new Date(),
-    screenshotDateTime = screenshotNow.getFullYear() + pad(screenshotNow.getMonth() + 1) + pad(screenshotNow.getDate()) + '-' + pad(screenshotNow.getHours()) + pad(screenshotNow.getMinutes()) + pad(screenshotNow.getSeconds());
+        // Look for certain patterns to determine if they are of that type.
+        while(i < blacklistedRequests.length) {
+            var obj = blacklistedRequests[i],
+                type = obj.type;
+                regex = new RegExp(obj.regex, obj.regexFlags);
 
-  // FORK: Keeps track of all the filenames.
-  var scenarioRegistry = {};
+            if (typeof _requestHash[type] === 'undefined') {
+                type = 'default';
+            }
+
+            try {
+                abort = _requestHash[type](requestData, request, regex);
+            } catch(e) {
+                casperInstance.echo(e);
+            }
+            if (abort) {
+                casperInstance.echo('Aborting request: ' + requestData.url);
+                request.abort();
+                break;
+            }
+
+            i++;
+        }
+    });
+}
+
+// FORK: Keeps track of all the filenames.
+var scenarioRegistry = {};
+
+function capturePageSelectors(url,casper,scenarios,viewports,bitmaps_reference,bitmaps_test,isReference){
+
+  // console.log('hmm', casperProcesses.length);
+  // console.log('casperProcesses', JSON.stringify(casperProcesses));
+  // each scenario should go into its own separate process
+  // var casper = kasper;
+
+  var screenshotNow = new Date();
+  var screenshotDateTime = screenshotNow.getFullYear() + pad(screenshotNow.getMonth() + 1) + pad(screenshotNow.getDate()) + '-' + pad(screenshotNow.getHours()) + pad(screenshotNow.getMinutes()) + pad(screenshotNow.getSeconds());
 
   var consoleBuffer = '';
   var scriptTimeout = 20000;
@@ -157,6 +215,8 @@ function capturePageSelectors(url,scenarios,viewports,bitmaps_reference,bitmaps_
       this.then(function() {
         this.viewport(vp.width||vp.viewport.width, vp.height||vp.viewport.height);
       });
+
+      // console.log('open scenario.url', scenario.url);
       this.thenOpen(scenario.url, function() {
 
         casper.waitFor(
@@ -349,8 +409,87 @@ if(!exists || options.genReferenceMode){isReference=true; console.log('CREATING 
 //========================
 
 
+// split up all the scenarios
+// var splitScenarios = [];
+//
+// var itemsPerArray = Math.ceil(scenarios.length/casperProcesses.length);
+// var currentIndex = 0;
+// var i = 0;
+
+// console.log('itemsPerArray', itemsPerArray);
+
+// var workers = [];
+// for (i = 0; i < casperProcesses.length; i++) {
+//     splitScenarios[i] = scenarios.slice(currentIndex, currentIndex+itemsPerArray);
+//     currentIndex += itemsPerArray;
+//     console.log('splitScenarios.length', splitScenarios[i].length);
+//
+//     // This is where it all begins I think...
+//     // capturePageSelectors(
+//     //   'index.html'
+//     //   ,casper
+//     //   ,scenarios
+//     //   ,viewports
+//     //   ,bitmaps_reference
+//     //   ,bitmaps_test
+//     //   ,isReference
+//     // );
+//
+//     // workers.push(new Worker(function() {
+//     //   var _self = this;
+//     //
+//     //   function runProcess(i) {
+//     //     console.log('running the process...');
+//     //     casperProcesses[i].run(function() {
+//     //       maxThreads--;
+//     //
+//     //       if (maxThreads === 0) {
+//     //         console.log('all threads complete!');
+//     //         complete();
+//     //       }
+//     //       this.exit();
+//     //     });
+//     //   }
+//     //
+//     //   // pass the index we want to run
+//     //   this.onmessage = function(event) {
+//     //     runProcess(event.data);
+//     //   }
+//     // }));
+//
+//     // start running the worker
+//     // workers[i].postMessage(i);
+// }
+
+
+// workers.push(new Worker(function() {
+//   var _self = this;
+//
+//   function runProcess(i) {
+//     casperProcesses[i].run(function() {
+//       maxThreads--;
+//
+//       if (maxThreads === 0) {
+//         complete();
+//       }
+//       this.exit();
+//     });
+//   }
+//
+//   // pass the index we want to run
+//   this.onmessage = function(event) {
+//     runProcess(event.data);
+//   }
+// }));
+// after everything is defined, we then run casper on everything...
+// hmmm...
+
+// i = 0;
+
+// console.log('what happened?!');
 capturePageSelectors(
   'index.html'
+  ,casper
   ,scenarios
   ,viewports
   ,bitmaps_reference
@@ -358,19 +497,26 @@ capturePageSelectors(
   ,isReference
 );
 
+// console.log('running against scenarios', JSON.stringify(scenarios));
 casper.run(function(){
   complete();
   this.exit();
 });
 
+// We only do this once everything is complete...
+// and the compareConfig is something that gets added to
+// over the course of our runs
 function complete(){
-  var configData = JSON.stringify(compareConfig,null,2);
-  fs.touch(compareConfigFileName);
-  fs.write(compareConfigFileName, configData, 'w');
-  console.log(
-    'Comparison config file updated.'
-    //,configData
-  );
+  console.log('[DATA]:' + JSON.stringify(compareConfig,null,2));
+  // need to change this somehow
+
+  // var configData = JSON.stringify(compareConfig,null,2);
+  // fs.touch(compareConfigFileName);
+  // fs.write(compareConfigFileName, configData, 'w');
+  // console.log(
+  //   'Comparison config file updated.'
+  //   //,configData
+  // );
 }
 
 function pad(number) {

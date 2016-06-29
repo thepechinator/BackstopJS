@@ -1,15 +1,16 @@
+'use strict';
+
 var gulp  = require('gulp');
 var fs    = require('fs');
 var spawn = require('child_process').spawn;
 var paths = require('../util/paths');
 var argv = require('yargs').argv;
+var os = require('os');
 
 
 //This task will generate a date-named directory with DOM screenshot files as specified in `./capture/config.json` followed by running a report.
 //NOTE: If there is no bitmaps_reference directory or if the bitmaps_reference directory is empty then a new batch of reference files will be generated in the bitmaps_reference directory.  Reporting will be skipped in this case.
-gulp.task('test',['init'], function () {
-
-
+gulp.task('test',['init'], function (cb) {
   // genReferenceMode contains the state which switches test or reference file generation modes
   var genReferenceMode = argv.genReferenceMode || false;
 
@@ -75,36 +76,187 @@ gulp.task('test',['init'], function () {
   }
 
   var casperArgs = tests.concat(args);
+
+  // For x amount of scenarios, we need to start as many casper processes...
   var casperProcess = (process.platform === "win32" ? "casperjs.cmd" : "casperjs");
-  var casperChild = spawn(casperProcess, casperArgs);
+
+  var genConfigPath = 'capture/config.json'
+  var configJSON = fs.readFileSync(genConfigPath);
+  var config = JSON.parse(configJSON);
+  if (!config.paths) {
+    config.paths = {};
+  }
 
 
-  casperChild.stdout.on('data', function (data) {
-    console.log('CasperJS:', data.toString().slice(0, -1)); // Remove \n
-  });
+  var scenarios = config.scenarios||config.grabConfigs;
+  var compareConfigFileName = config.paths.compare_data || 'compare/config.json';
 
+  // Set this based on a person's OS. We do one less than the amount of cores
+  // because some people claim that it performs better since one core is needed
+  // to handle runoff or something like that.
+  var maxProcessesDefault = os.cpus().length-1;
 
-  casperChild.on('close', function (code) {
-    var success = code === 0; // Will be 1 in the event of failure
-    var result = (success)?'Bitmap file generation completed.':'Testing script failed with code: '+code;
+  // Figure out how many casper processes to spawn
+  if (scenarios.length <= maxProcessesDefault) {
+    // This means we need to set a cap
+    maxProcessesDefault = scenarios.length;
+  }
+  var maxProcesses = maxProcessesDefault;
 
-    console.log('\n'+result);
+  // Create a bunch of new casper instances
+  // while (maxProcesses > 0) {
+  //   console.log('create casper');
+  //   var kasper = casperKlass.create({
+  //       verbose: true,
+  //       logLevel: "debug"
+  //   });
+  //   bootstrapCasper(kasper);
+  //   casperProcesses.push(kasper);
+  //   maxProcesses--;
+  // }
+  // reset
+  // maxProcesses = maxProcessesDefault;
 
-    //exit if there was some kind of failure in the casperChild process
-    if(code!=0){
-      console.log('\nLooks like an error occured. You may want to try running `$ gulp echo`. This will echo the requested test URL output to the console. You can check this output to verify that the file requested is indeed being received in the expected format.');
-      return false;
-    };
+  var itemsPerArray = Math.floor(scenarios.length/maxProcesses);
+  var currentIndex = 0;
+  var i = 0;
 
+  var workerResults = [];
 
-    var resultConfig = JSON.parse(fs.readFileSync(paths.compareConfigFileName, 'utf8'));
-    if(genReferenceMode || !resultConfig.testPairs||resultConfig.testPairs.length==0){
-      console.log('\nRun `$ gulp test` to generate diff report.\n')
-    }else{
-      gulp.run('report');
+  console.log(`Using ${maxProcesses} separate processes`);
+
+  for (i = 0; i < maxProcesses; i++) {
+    if ( (i+1) === maxProcesses ) {
+       // on the last index... so get the modulo to get the number of items
+       // extra we need to account for
+       let extra = scenarios.length % maxProcesses;
+
+       spawnWorker({scenarioStartIndex: currentIndex, scenarioEndIndex: currentIndex+itemsPerArray+extra});
+    } else {
+      spawnWorker({scenarioStartIndex: currentIndex, scenarioEndIndex: currentIndex+itemsPerArray});
     }
 
-  });
+    currentIndex += itemsPerArray;
+  }
+
+  var compareConfig = { testPairs: [] };
+
+  function spawnWorker(opts) {
+    // console.log('spawning worker with opts', JSON.stringify(opts));
+
+    var extraArgs = ['--scenario-start-index=' + opts.scenarioStartIndex, '--scenario-end-index=' + opts.scenarioEndIndex];
+    var casperChild = spawn(casperProcess, casperArgs.concat(extraArgs));
+
+    casperChild.stdout.on('data', function (data) {
+      var scrubbedData = '';
+      data = data.toString();
+
+      if (data.indexOf('[DATA]:') !== -1) {
+        scrubbedData = data.replace('[DATA]:', '');
+        data = JSON.parse(scrubbedData);
+
+        if (data.testPairs.length) {
+          workerResults.push(data.testPairs);
+        }
+      } else {
+        console.log('CasperJS:', data.slice(0, -1)); // Remove \n
+      }
+    });
+
+    casperChild.stderr.on('data', function(data) {
+      console.log('ERROR:', data.toString().slice(0, -1));
+    });
+
+    casperChild.on('close', function (code) {
+      var success = code === 0; // Will be 1 in the event of failure
+      var result = (success)?'Bitmap file generation completed.':'Testing script failed with code: '+code;
+
+      console.log('\n'+result);
+
+      //exit if there was some kind of failure in the casperChild process
+      if(code !== 0) {
+        console.log('\nLooks like an error occured. You may want to try running `$ gulp echo`. This will echo the requested test URL output to the console. You can check this output to verify that the file requested is indeed being received in the expected format.');
+        return false;
+      };
+
+      maxProcesses--;
+
+      if (maxProcesses === 0) {
+        console.log('all threads finished');
+
+        // Always write to the config I guess.. we might not need to
+        // if the config testPairs is empty
+        //
+        // Gather the results
+        for (var i = 0; i < workerResults.length; i++) {
+          compareConfig.testPairs = compareConfig.testPairs.concat(workerResults[i]);
+        }
+
+        var configData = JSON.stringify(compareConfig,null,2);
+        // console.log('writing config testPairs to compareConfig', compareConfigFileName, configData);
+
+        fs.writeFileSync(compareConfigFileName, configData);
+
+        var resultConfig = compareConfig;
+
+        if(genReferenceMode || resultConfig.testPairs.length==0){
+          console.log('\nRun `$ gulp test` to generate diff report.\n');
+
+          // var configData = JSON.stringify(compareConfig,null,2);
+          // fs.writeFileSync(compareConfigFileName, configData);
+
+          cb();
+        } else {
+          console.log('Running report');
+
+          // var configData = JSON.stringify(compareConfig,null,2);
+          // fs.writeFileSync(compareConfigFileName, configData);
+
+          // Shouldn't use run here, but oh well.
+          gulp.run('report', function(err) {
+            if (err) {
+              return cb(err);
+            }
+
+            cb();
+          });
+        }
+      }
+
+      // if(genReferenceMode || !resultConfig.testPairs||resultConfig.testPairs.length==0){
+      //   maxProcesses--;
+      //
+      //   if (maxProcesses === 0) {
+      //     console.log('all threads finished');
+      //     console.log('\nRun `$ gulp test` to generate diff report.\n');
+      //
+      //     var configData = JSON.stringify(compareConfig,null,2);
+      //     fs.writeFileSync(compareConfigFileName, configData);
+      //
+      //     cb();
+      //   }
+      // }else{
+      //   maxProcesses--;
+      //
+      //   if (maxProcesses === 0) {
+      //     console.log('all threads finished... running report');
+      //
+      //     var configData = JSON.stringify(compareConfig,null,2);
+      //     fs.writeFileSync(compareConfigFileName, configData);
+      //
+      //     // Shouldn't use run here, but oh well.
+      //     gulp.run('report', function(err) {
+      //       if (err) {
+      //         return cb(err);
+      //       }
+      //
+      //       cb();
+      //     });
+      //   }
+      // }
+
+    });
+  }
 
 
 });
