@@ -11,6 +11,8 @@ var os = require('os');
 //This task will generate a date-named directory with DOM screenshot files as specified in `./capture/config.json` followed by running a report.
 //NOTE: If there is no bitmaps_reference directory or if the bitmaps_reference directory is empty then a new batch of reference files will be generated in the bitmaps_reference directory.  Reporting will be skipped in this case.
 gulp.task('test',['init'], function (cb) {
+
+
   // genReferenceMode contains the state which switches test or reference file generation modes
   var genReferenceMode = argv.genReferenceMode || false;
 
@@ -80,13 +82,14 @@ gulp.task('test',['init'], function (cb) {
   // For x amount of scenarios, we need to start as many casper processes...
   var casperProcess = (process.platform === "win32" ? "casperjs.cmd" : "casperjs");
 
+  // TODO: relocate the fetching of the settings to some
+  // centralized location.
   var genConfigPath = 'capture/config.json'
   var configJSON = fs.readFileSync(genConfigPath);
   var config = JSON.parse(configJSON);
   if (!config.paths) {
     config.paths = {};
   }
-
 
   var scenarios = config.scenarios||config.grabConfigs;
   var compareConfigFileName = config.paths.compare_data || 'compare/config.json';
@@ -95,9 +98,15 @@ gulp.task('test',['init'], function (cb) {
   // because some people claim that it performs better since one core is needed
   // to handle runoff or something like that.
   let maxProcessesDefault = os.cpus().length-1;
-  if (maxProcessesDefault <= 1) {
+
+  if (config.maxProcesses) {
+    maxProcessesDefault = config.maxProcesses;
+  } if (maxProcessesDefault <= 1 && (os.cpus().length > 1)) {
+    // force at least 2 if there are at least 2 cpus available
     maxProcessesDefault = 2;
   }
+
+  // console.log(`SCENARIOS.LENGTH ${scenarios.length}`);
 
   // Figure out how many casper processes to spawn
   if (scenarios.length <= maxProcessesDefault) {
@@ -126,7 +135,7 @@ gulp.task('test',['init'], function (cb) {
 
   var workerResults = [];
 
-  console.log(`Using ${maxProcesses} separate processes`);
+  console.log(`Running on ${maxProcesses} separate processes`);
 
   for (i = 0; i < maxProcesses; i++) {
     if ( (i+1) === maxProcesses ) {
@@ -149,21 +158,15 @@ gulp.task('test',['init'], function (cb) {
 
     var extraArgs = ['--scenario-start-index=' + opts.scenarioStartIndex, '--scenario-end-index=' + opts.scenarioEndIndex];
     var casperChild = spawn(casperProcess, casperArgs.concat(extraArgs));
+    var compiledData = '';
 
+    // we need to read in all of the data input into a string.. why not
+    // just read in all of the data and then on close, parse the json then
     casperChild.stdout.on('data', function (data) {
-      var scrubbedData = '';
-      data = data.toString();
+      data = data.toString().slice(0, -1);
+      compiledData += data;
 
-      if (data.indexOf('[DATA]:') !== -1) {
-        scrubbedData = data.replace('[DATA]:', '');
-        data = JSON.parse(scrubbedData);
-
-        if (data.testPairs.length) {
-          workerResults.push(data.testPairs);
-        }
-      } else {
-        console.log('CasperJS:', data.slice(0, -1)); // Remove \n
-      }
+      console.log('CasperJS:', data);
     });
 
     casperChild.stderr.on('data', function(data) {
@@ -181,6 +184,16 @@ gulp.task('test',['init'], function (cb) {
         console.log('\nLooks like an error occured. You may want to try running `$ gulp echo`. This will echo the requested test URL output to the console. You can check this output to verify that the file requested is indeed being received in the expected format.');
         return false;
       };
+
+      // we need to grab the data
+      let regexp = /\[DATA\](.+)\[\/DATA\]/g;
+      let matches = regexp.exec(compiledData);
+
+      if (matches !== null) {
+        // console.log('parsing compiled data\n', compiledData, '\n');
+        // parse the JSON and push it onto our results
+        workerResults.push(JSON.parse(matches[1]).testPairs);
+      }
 
       maxProcesses--;
 
@@ -205,15 +218,9 @@ gulp.task('test',['init'], function (cb) {
         if(genReferenceMode || resultConfig.testPairs.length==0){
           console.log('\nRun `$ gulp test` to generate diff report.\n');
 
-          // var configData = JSON.stringify(compareConfig,null,2);
-          // fs.writeFileSync(compareConfigFileName, configData);
-
           cb();
         } else {
           console.log('Running report');
-
-          // var configData = JSON.stringify(compareConfig,null,2);
-          // fs.writeFileSync(compareConfigFileName, configData);
 
           // Shouldn't use run here, but oh well.
           gulp.run('report', function(err) {
@@ -225,39 +232,6 @@ gulp.task('test',['init'], function (cb) {
           });
         }
       }
-
-      // if(genReferenceMode || !resultConfig.testPairs||resultConfig.testPairs.length==0){
-      //   maxProcesses--;
-      //
-      //   if (maxProcesses === 0) {
-      //     console.log('all threads finished');
-      //     console.log('\nRun `$ gulp test` to generate diff report.\n');
-      //
-      //     var configData = JSON.stringify(compareConfig,null,2);
-      //     fs.writeFileSync(compareConfigFileName, configData);
-      //
-      //     cb();
-      //   }
-      // }else{
-      //   maxProcesses--;
-      //
-      //   if (maxProcesses === 0) {
-      //     console.log('all threads finished... running report');
-      //
-      //     var configData = JSON.stringify(compareConfig,null,2);
-      //     fs.writeFileSync(compareConfigFileName, configData);
-      //
-      //     // Shouldn't use run here, but oh well.
-      //     gulp.run('report', function(err) {
-      //       if (err) {
-      //         return cb(err);
-      //       }
-      //
-      //       cb();
-      //     });
-      //   }
-      // }
-
     });
   }
 

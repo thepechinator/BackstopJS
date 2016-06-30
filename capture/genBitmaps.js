@@ -11,6 +11,9 @@ var utils = require('utils');
 
 var selectorNotFoundPath = 'capture/resources/selectorNotFound_noun_164558_cc.png'
 var hiddenSelectorPath = 'capture/resources/hiddenSelector_noun_63405.png'
+
+// TODO: relocate the fetching of the settings to some
+// centralized location.
 var genConfigPath = 'capture/config.json'
 
 var configJSON = fs.read(genConfigPath);
@@ -408,85 +411,6 @@ var isReference = false;
 if(!exists || options.genReferenceMode){isReference=true; console.log('CREATING NEW REFERENCE FILES')}
 //========================
 
-
-// split up all the scenarios
-// var splitScenarios = [];
-//
-// var itemsPerArray = Math.ceil(scenarios.length/casperProcesses.length);
-// var currentIndex = 0;
-// var i = 0;
-
-// console.log('itemsPerArray', itemsPerArray);
-
-// var workers = [];
-// for (i = 0; i < casperProcesses.length; i++) {
-//     splitScenarios[i] = scenarios.slice(currentIndex, currentIndex+itemsPerArray);
-//     currentIndex += itemsPerArray;
-//     console.log('splitScenarios.length', splitScenarios[i].length);
-//
-//     // This is where it all begins I think...
-//     // capturePageSelectors(
-//     //   'index.html'
-//     //   ,casper
-//     //   ,scenarios
-//     //   ,viewports
-//     //   ,bitmaps_reference
-//     //   ,bitmaps_test
-//     //   ,isReference
-//     // );
-//
-//     // workers.push(new Worker(function() {
-//     //   var _self = this;
-//     //
-//     //   function runProcess(i) {
-//     //     console.log('running the process...');
-//     //     casperProcesses[i].run(function() {
-//     //       maxThreads--;
-//     //
-//     //       if (maxThreads === 0) {
-//     //         console.log('all threads complete!');
-//     //         complete();
-//     //       }
-//     //       this.exit();
-//     //     });
-//     //   }
-//     //
-//     //   // pass the index we want to run
-//     //   this.onmessage = function(event) {
-//     //     runProcess(event.data);
-//     //   }
-//     // }));
-//
-//     // start running the worker
-//     // workers[i].postMessage(i);
-// }
-
-
-// workers.push(new Worker(function() {
-//   var _self = this;
-//
-//   function runProcess(i) {
-//     casperProcesses[i].run(function() {
-//       maxThreads--;
-//
-//       if (maxThreads === 0) {
-//         complete();
-//       }
-//       this.exit();
-//     });
-//   }
-//
-//   // pass the index we want to run
-//   this.onmessage = function(event) {
-//     runProcess(event.data);
-//   }
-// }));
-// after everything is defined, we then run casper on everything...
-// hmmm...
-
-// i = 0;
-
-// console.log('what happened?!');
 capturePageSelectors(
   'index.html'
   ,casper
@@ -500,23 +424,15 @@ capturePageSelectors(
 // console.log('running against scenarios', JSON.stringify(scenarios));
 casper.run(function(){
   complete();
-  this.exit();
+
+  this.exit(0);
 });
 
 // We only do this once everything is complete...
 // and the compareConfig is something that gets added to
 // over the course of our runs
 function complete(){
-  console.log('[DATA]:' + JSON.stringify(compareConfig,null,2));
-  // need to change this somehow
-
-  // var configData = JSON.stringify(compareConfig,null,2);
-  // fs.touch(compareConfigFileName);
-  // fs.write(compareConfigFileName, configData, 'w');
-  // console.log(
-  //   'Comparison config file updated.'
-  //   //,configData
-  // );
+  console.log('[DATA]' + JSON.stringify(compareConfig) + '[/DATA]');
 }
 
 function pad(number) {

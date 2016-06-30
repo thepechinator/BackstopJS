@@ -9,6 +9,10 @@ let _ = require('underscore');
 let childProcess = require('child_process');
 let os = require('os');
 
+var genConfigPath = '../../capture/config.json'
+var config = require(genConfigPath);
+// var config = JSON.parse(configJSON);
+
 gulp.task('compare', function (done) {
   let compareConfig = JSON.parse(fs.readFileSync(paths.compareConfigFileName, 'utf8'));
   let testPairs = compareConfig.testPairs;
@@ -17,7 +21,11 @@ gulp.task('compare', function (done) {
   // because some people claim that it performs better since one core is needed
   // to handle runoff or something like that.
   let maxProcessesDefault = os.cpus().length-1;
-  if (maxProcessesDefault <= 1) {
+
+  if (config.maxProcesses) {
+    maxProcessesDefault = config.maxProcesses;
+  } if (maxProcessesDefault <= 1 && (os.cpus().length > 1)) {
+    // force at least 2 if there are at least 2 cpus available
     maxProcessesDefault = 2;
   }
 
@@ -38,7 +46,7 @@ gulp.task('compare', function (done) {
   let failed = 0;
   let passed = 0;
 
-  console.log(`Using ${maxProcesses} separate processes`);
+  console.log(`Running on ${maxProcesses} separate processes`);
 
   for (i = 0; i < maxProcesses; i++) {
     if ( (i+1) === maxProcesses ) {
