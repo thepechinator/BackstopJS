@@ -135,7 +135,7 @@ gulp.task('test',['init'], function (cb) {
 
   var workerResults = [];
 
-  console.log(`Running on ${maxProcesses} separate processes`);
+  console.log(`Running on ${maxProcesses} separate processes!`);
 
   for (i = 0; i < maxProcesses; i++) {
     if ( (i+1) === maxProcesses ) {
@@ -160,27 +160,27 @@ gulp.task('test',['init'], function (cb) {
     var casperChild = spawn(casperProcess, casperArgs.concat(extraArgs));
     var compiledData = '';
 
-    let code = 1;
+    // let code = 1;
 
     // we need to read in all of the data input into a string.. why not
     // just read in all of the data and then on close, parse the json then
     casperChild.stdout.on('data', function (data) {
-      data = data.toString().slice(0, -1);
+      data = data.toString().trim();
       compiledData += data;
 
       console.log('CasperJS:', data);
 
-      if (data.indexOf('[END_OF_BUFFER]') !== -1) {
-        code = 0;
-        casperChild.kill();
-      }
+      // if (data.indexOf('[END_OF_BUFFER]') !== -1) {
+      //   code = 0;
+      //   casperChild.kill();
+      // }
     });
 
     casperChild.stderr.on('data', function(data) {
       console.log('ERROR:', data.toString().slice(0, -1));
     });
 
-    casperChild.on('close', function () {
+    casperChild.on('close', function (code) {
       var success = code === 0; // Will be 1 in the event of failure
       var result = (success)?'Bitmap file generation completed.':'Testing script failed with code: '+code;
 

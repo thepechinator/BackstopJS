@@ -424,6 +424,7 @@ capturePageSelectors(
 // console.log('running against scenarios', JSON.stringify(scenarios));
 casper.run(function(){
   complete();
+  this.exit();
 });
 
 // We only do this once everything is complete...
