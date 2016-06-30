@@ -424,8 +424,6 @@ capturePageSelectors(
 // console.log('running against scenarios', JSON.stringify(scenarios));
 casper.run(function(){
   complete();
-
-  this.exit(0);
 });
 
 // We only do this once everything is complete...
@@ -433,6 +431,7 @@ casper.run(function(){
 // over the course of our runs
 function complete(){
   console.log('[DATA]' + JSON.stringify(compareConfig) + '[/DATA]');
+  console.log('\n[END_OF_BUFFER]\n');
 }
 
 function pad(number) {
