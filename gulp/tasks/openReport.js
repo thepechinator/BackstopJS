@@ -8,8 +8,20 @@ var jeditor = require("gulp-json-editor");
 var referenceDir = './bitmaps_reference/';
 var testDir = './bitmaps_test/';
 
-gulp.task("openReport", function(){
+var runSequence = require('run-sequence');
 
+gulp.task("bitmaps-reference", function() {
+  // cache bitmaps_reference files locally
+  return gulp.src(paths.bitmaps_reference + '/**/*')
+    .pipe(gulp.dest(referenceDir));
+});
+
+gulp.task("bitmaps-test", function() {
+  return gulp.src(paths.bitmaps_test + '/**/*')
+    .pipe(gulp.dest(testDir));
+});
+
+gulp.task("openReport:do", function() {
   console.log('\nTesting with ',paths.compareConfigFileName);
   console.log('Opening report -> ',paths.compareReportURL + '\n');
 
@@ -18,16 +30,7 @@ gulp.task("openReport", function(){
     ,app: isWin ? "chrome" : "Google Chrome"
   };
 
-  // cache bitmaps_reference files locally
-  gulp.src(paths.bitmaps_reference + '/**/*')
-    .pipe(gulp.dest(referenceDir));
-
-  // cache bitmaps_test files locally
-  gulp.src(paths.bitmaps_test + '/**/*')
-    .pipe(gulp.dest(testDir));
-
-
-  gulp.src(paths.compareConfigFileName)
+  return gulp.src(paths.compareConfigFileName)
     .pipe(jeditor(function(json) {
       json.testPairs.forEach(function(item){
         var rFile = referenceDir + item.reference.split('/').slice(-1)[0];
@@ -40,5 +43,8 @@ gulp.task("openReport", function(){
     .pipe(rename('compare/config.json'))
     .pipe(gulp.dest('.'))
     .pipe(open("",options));
+});
 
+gulp.task("openReport", function(cb) {
+  runSequence("bitmaps-reference", "bitmaps-test", "openReport:do", cb);
 });
