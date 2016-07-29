@@ -10,13 +10,44 @@ var testDir = './bitmaps_test/';
 
 var runSequence = require('run-sequence');
 
-gulp.task("bitmaps-reference", function() {
+var genConfigPath = '../../capture/config.json'
+var config = require(genConfigPath);
+
+var maxStoredRuns = config.maxStoredRuns || 5;
+
+var exec = require('child_process').exec;
+
+gulp.task("bitmaps-reference:copy", function() {
   // cache bitmaps_reference files locally
   return gulp.src(paths.bitmaps_reference + '/**/*')
     .pipe(gulp.dest(referenceDir));
 });
 
-gulp.task("bitmaps-test", function() {
+gulp.task("bitmaps-test:remove-old-runs", function(cb) {
+  var myProcess = exec('rm -rf `ls -1dt * | tail -n +' + (maxStoredRuns+1) + '`',
+    {cwd: paths.bitmaps_test}, function(err, stdout, stderr) {
+      if (err) {
+        console.error(err);
+
+        cb();
+      }
+
+      cb();
+    }
+  );
+
+  myProcess.stdout.on('data', (data) => {
+    // don't use console.log, otherwise you'll get a bunch
+    // of excess newslines per data piece coming in
+    process.stdout.write(data);
+  });
+
+  myProcess.stderr.on('data', (data) => {
+    console.error(data);
+  });
+});
+
+gulp.task("bitmaps-test:copy", ["bitmaps-test:remove-old-runs"], function() {
   return gulp.src(paths.bitmaps_test + '/**/*')
     .pipe(gulp.dest(testDir));
 });
@@ -46,5 +77,5 @@ gulp.task("openReport:do", function() {
 });
 
 gulp.task("openReport", function(cb) {
-  runSequence("bitmaps-reference", "bitmaps-test", "openReport:do", cb);
+  runSequence("bitmaps-reference:copy", "bitmaps-test:copy", "openReport:do", cb);
 });
