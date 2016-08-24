@@ -2,7 +2,6 @@
 var fs = require('fs');
 var utils = require('utils');
 
-
 // Fork Stuff
 // var bitmaps_reference = 'bitmaps_reference';
 // var bitmaps_test = 'bitmaps_test';
@@ -348,7 +347,8 @@ function capturePageSelectors(url,casper,scenarios,viewports,bitmaps_reference,b
           var reference_FP  = bitmaps_reference + '/' + fileName;
           // FORK
           var reference_tmp_FP = bitmaps_reference + '/.tmp/' + fileName;
-          var test_FP       = bitmaps_test + '/' + screenshotDateTime + '/' + fileName;
+          var test_Dir      = bitmaps_test + '/' + screenshotDateTime;
+          var test_FP       = test_Dir + '/' + fileName;
 
           var filePath      = (isReference)?reference_FP:test_FP;
 
@@ -361,14 +361,36 @@ function capturePageSelectors(url,casper,scenarios,viewports,bitmaps_reference,b
               if (!options.baseline && options.sync && fs.exists(reference_tmp_FP) && !fs.exists(reference_FP)) {
                   // If we don't catch the exception here, it will cause the backstop process
                   // to just hang-- which sucks.
+                  //
                   try {
                       fs.move(reference_tmp_FP, reference_FP);
                   } catch(e) {
-                      that.echo(e);
+                      casper.echo('ERROR', 'RED_BAR');
+                      console.log(e);
+                      casper.echo(e);
+                  }
+              } else if (!isReference && options.baseline) {
+                  // Just copy the reference over to the test filepath-- no need
+                  // to retake a screenshot.
+                  try {
+                      fs.makeTree(test_Dir);
+                      fs.copy(reference_FP, test_FP);
+                  } catch(e) {
+                      casper.echo('ERROR', 'RED_BAR');
+                      console.log(e);
+                      // error handling so we don't get hanging
+                      casper.echo(e);
                   }
               } else {
-                  // that.echo('capture');
                   casper.captureSelector(filePath, o);
+
+                  // Final safety check. If for some reason while generating
+                  // the test screens, the reference screenshot does not
+                  // exist, then make it.
+                  if (!fs.exists(reference_FP)) {
+                      casper.echo('Reference image ' + reference_FP + ' does not yet exist. Automatically creating to prevent further issues. This can be done before running the tests by passing --sync.', 'WARN_BAR');
+                      fs.copy(filePath, reference_FP);
+                  }
               }
             } else {
               var assetData = fs.read(hiddenSelectorPath, 'b');
