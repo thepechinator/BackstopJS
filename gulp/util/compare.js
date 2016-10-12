@@ -1,9 +1,16 @@
+var gulp  = require('gulp');
+var open  = require("gulp-open");
+var rename = require('gulp-rename');
+var jeditor = require("gulp-json-editor");
+
 var resemble = require('node-resemble-js');
 var paths = require('./paths');
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
 
+
+var failsStorage = [];
 var compareConfig = JSON.parse(fs.readFileSync(paths.compareConfigFileName, 'utf8'));
 
 // FORK: This is what compare.js uses.
@@ -17,9 +24,9 @@ resemble.outputSettings(resembleTestConfig);
 
 function test(testPairs) {
   var numberOfTests = testPairs.length;
-
   var passed = 0;
   var failed = 0;
+  var startDiffStore = false;
 
   // The main code execution
   _.each(testPairs, function (pair) {
@@ -49,12 +56,13 @@ function test(testPairs) {
 
       var testStatus = '';
       if (imageComparisonFailed) {
-        // testStatus = "fail";
+        pair.testStatus = "fail";
         failed++;
         console.log('ERROR:', pair.label, pair.fileName);
-        storeFailedDiffImage(testPath, data);
+        console.info("pair: ", pair); //wf
+        storeFailedDiffImage(testPath, data, pair.fileName);
       } else {
-        // testStatus = "pass";
+        pair.testStatus = "pass";
         passed++;
         console.log('OK:', pair.label, pair.fileName);
       }
@@ -65,9 +73,9 @@ function test(testPairs) {
   }
 
   function checkQueue() {
-    if (numberOfTests === 0) {
+    if (numberOfTests === 0 && !startDiffStore) {
       console.log('ALL DONE FOR THIS PROCESS, sending message');
-      process.send({ passed: passed, failed: failed });
+      process.send({ passed: passed, failed: failed, failFiles: failsStorage });
 
       if (failed > 0) {
         process.exit(1);
@@ -76,18 +84,30 @@ function test(testPairs) {
       }
     }
   }
-}
 
-function storeFailedDiffImage(testPath, data) {
-  var failedDiffFilename = getFailedDiffFilename(testPath);
-  console.log('Storing diff image in ', failedDiffFilename);
-  var failedDiffStream = fs.createWriteStream(failedDiffFilename);
-  data.getDiffImage().pack().pipe(failedDiffStream)
-}
+  function storeFailedDiffImage(testPath, data, testFile) {
+    startDiffStore = true;
+    var failedDiffFilename = getFailedDiffFilename(testPath);
+    failsStorage.push(failedDiffFilename.partial);
+    console.log('Storing diff image in ', failedDiffFilename.full);
+    var failedDiffStream = fs.createWriteStream(failedDiffFilename.full);
+    failedDiffStream.on('close', function() {
+      console.log('file done');
+      startDiffStore = false;
+      checkQueue();
+    });
+    data.getDiffImage().pack().pipe(failedDiffStream);
+  }
 
-function getFailedDiffFilename(testPath) {
-  var lastSlash = testPath.lastIndexOf('/');
-  return testPath.slice(0, lastSlash + 1) + 'failed_diff_' + testPath.slice(lastSlash + 1, testPath.length);
+  function getFailedDiffFilename(testPath) {
+    var lastSlash = testPath.lastIndexOf('/');
+    console.info("testPath: ", testPath); //wf
+    return {
+      full: testPath.slice(0, lastSlash + 1) + 'failed_diff_' + testPath.slice(lastSlash + 1, testPath.length),
+      partial: testPath.slice(lastSlash + 1, testPath.length)
+    }
+  }
+
 }
 
 process.on('message', function(data) {

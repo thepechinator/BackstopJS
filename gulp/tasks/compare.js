@@ -8,6 +8,7 @@ let path = require('path');
 let _ = require('underscore');
 let childProcess = require('child_process');
 let os = require('os');
+var jsonfile = require('jsonfile')
 
 var genConfigPath = '../../capture/config.json'
 var config = require(genConfigPath);
@@ -45,6 +46,7 @@ gulp.task('compare', function (done) {
   // Result parameters
   let failed = 0;
   let passed = 0;
+  let failFiles = [];
 
   console.log(`Running on ${maxProcesses} separate processes`);
 
@@ -64,7 +66,6 @@ gulp.task('compare', function (done) {
 
   function forkWorker(testPairs) {
     var child = childProcess.fork(path.join(__dirname, '../util/compare'));
-
     child.on('message', function(results) {
       workerResults.push(results);
     });
@@ -77,10 +78,16 @@ gulp.task('compare', function (done) {
         for (let result of workerResults) {
           passed += result.passed;
           failed += result.failed;
+          failFiles.push(result.failFiles);
         }
-
+        console.info("failFiles: ", _.flatten(failFiles)); //wf
         console.log((passed || 0) + " Passed");
         console.log((failed || 0) + " Failed\n");
+
+        const failsFile = paths.comparePath + '/fails.json';
+        const failsObj = {fails: _.flatten(failFiles)};
+
+        jsonfile.writeFileSync(failsFile, failsObj, {spaces: 2});
 
         if (failed > 0) {
           console.log("*** Mismatch errors found ***");

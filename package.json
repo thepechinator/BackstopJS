@@ -30,6 +30,7 @@
     "gulp-rename": "^1.2.0",
     "http-proxy": "~1.1.4",
     "is-running": "~1.0.5",
+    "jsonfile": "^2.3.1",
     "node-resemble-js": "0.0.4",
     "require-dir": "^0.1.0",
     "run-sequence": "^1.1.5",

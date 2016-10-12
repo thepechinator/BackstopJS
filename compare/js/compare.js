@@ -49,8 +49,8 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
 
 
-
-  var testPairObj = function(a,b,c,o){
+  // add fileName from config.js to more easily match against fails
+  var testPairObj = function(a,b,c,o, fileName){
     this.a={src:a||'',srcClass:'reference'},
       this.b={src:b||'',srcClass:'test'},
       this.c={src:c||'',srcClass:'diff'},
@@ -59,6 +59,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     this.passed=false;
     this.meta = o;
     this.meta.misMatchThreshold = (o && o.misMatchThreshold && o.misMatchThreshold >= 0) ? o.misMatchThreshold : defaultMisMatchThreshold;
+    this.fileName=fileName;
   };
 
   $scope.$on("$routeChangeSuccess", function( $currentRoute, $previousRoute ){
@@ -88,10 +89,17 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
       .success(function(data, status) {
         // console.log('got data!',status,data);
         data.testPairs.forEach(function(o,i,a){
-          $scope.testPairs.push(new testPairObj('../'+o.local_reference, '../'+o.local_test, null, o));
+          $scope.testPairs.push(new testPairObj('../'+o.local_reference, '../'+o.local_test, null, o, o.fileName));
         });
-        $scope.compareTestPairs($scope.testPairs);
 
+        $http.get('./fails.json')
+          .success(function(data, status) {
+              $scope.fails = data.fails;
+              $scope.compareTestPairs($scope.testPairs);
+          })
+          .error(function(data, status) {
+              console.log('fails file operation failed '+status);
+          });
       })
       .error(function(data, status) {
         console.log('config file operation failed '+status);
@@ -112,7 +120,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
           if(o.passed)$scope.passedCount++;
           $scope.testPairsCompleted++;
           $scope.testDuration = (new Date()-startTs);
-          $scope.$digest();
+          //$scope.$digest();
           cb();
         });
       }
@@ -134,17 +142,27 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
   //TEST AN INDIVIDUAL testPair OBJECT.  UPDATES THE OBJECT WITH RESULTS AND THEN RETURNS THE OBJECT WITH THE CALLBACK
   $scope.compareTestPair = function compareTestPair(testPair,cb){
-    testPair.processing=true;
+    // check and see if the testPair is one of the fails or not
+    testPair.processing = true;
+    if( $scope.fails.indexOf(testPair.fileName) > -1) {
+      testPair.c.src = testPair.b.src.replace('mocks_pages_', 'failed_diff_mocks_pages_');
+      testPair.passed = false;
+    } else {
+      testPair.passed = true;
+    }
+    testPair.processing = false;
+    if(cb)cb(testPair);
+    //testPair.processing=true;
 
-    resemble.outputSettings(resembleTestConfig);
+    // resemble.outputSettings(resembleTestConfig);
 
-    var diff = resemble(testPair.a.src).compareTo(testPair.b.src).onComplete(function(diffData){
-      testPair.report = JSON.stringify(diffData,null,2);
-      testPair.c.src = diffData.getImageDataUrl();
-      testPair.processing=false;
-      testPair.passed=(diffData.isSameDimensions && diffData.misMatchPercentage<testPair.meta.misMatchThreshold)?true:false;
-      if(cb)cb(testPair);
-    });
+    // var diff = resemble(testPair.a.src).compareTo(testPair.b.src).onComplete(function(diffData){
+    //   testPair.report = JSON.stringify(diffData,null,2);
+    //   testPair.c.src = diffData.getImageDataUrl();
+    //   testPair.processing=false;
+    //   testPair.passed=(diffData.isSameDimensions && diffData.misMatchPercentage<testPair.meta.misMatchThreshold)?true:false;
+    //   if(cb)cb(testPair);
+    // });
   };//scope.compareTestPair()
 
 
