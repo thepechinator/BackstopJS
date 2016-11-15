@@ -101,9 +101,6 @@ gulp.task('test',['init'], function (cb) {
 
   if (config.maxProcesses) {
     maxProcessesDefault = config.maxProcesses;
-  } if (maxProcessesDefault <= 1 && (os.cpus().length > 1)) {
-    // force at least 2 if there are at least 2 cpus available
-    maxProcessesDefault = 2;
   }
 
   // console.log(`SCENARIOS.LENGTH ${scenarios.length}`);
