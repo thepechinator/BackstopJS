@@ -763,6 +763,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
         //$scope.passedCount++;
         //$scope.msg = TODO;
     }).error(function(data, status, headers, config) {
+        console.info('something went wrong');
         $scope.status = status;
     });
 

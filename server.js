@@ -1,28 +1,35 @@
-var express = require('express'),
-    app     = express(),
-    _       = require('underscore'),
-    os      = require('os'),
-    sys     = require('sys'),
-    exec    = require('child_process').exec,
-    spawn    = require('child_process').spawn, // TODO: combine this with above
-    argv    = require('yargs').argv,
-    //paths   = require('../util/paths'),
-    fs      = require('fs');
+// This file is leveraged when the start actually spins a new server up.
+// Meaning, updated code here WILL NOT RUN unless a new server needs to spun
+// up. To force a new server to spin up, alternative between different ports
+// when running `gulp openReport`, like so:
+//
+// `gulp openReport --report-port=3034`
+const express = require('express');
+const path = require('path');
+const _ = require('underscore');
+const os = require('os');
+const sys = require('sys');
+// const exec = require('child_process').exec;
+const spawn = require('child_process').spawn; // TODO: combine this with above
+const argv = require('yargs').argv;
+const paths = require('./gulp/util/paths');
+const fs = require('fs');
+
+const app = express();
 
 fs.writeFileSync('current-test.txt', 'done');
 
-//var autoShutDownMs = (Number(argv.t) === argv.t && argv.t % 1 === 0) ? 1000 * 60 * argv.t : 1000 * 60 * 60;
-var rootDir = __dirname;
+const rootDir = __dirname;
 
 // FORK: Allow port to be configurable.
-var port  = argv['report-port'] || 3001;
+const port = argv['report-port'] || 3001;
 
-// console.info('ROOT DIR', rootDir);
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.static(rootDir));
-app.use('/bitmaps_reference', express.static('../../test/css/bitmaps_reference'));
-app.use('/bitmaps_test', express.static('../../test/css/bitmaps_test'));
+
+app.use('/bitmaps_reference', express.static(paths.bitmaps_reference));
+app.use('/bitmaps_test', express.static(paths.bitmaps_test));
 
 // app.all('/app/',function(req,res){
 //  console.log(new Date());
@@ -30,25 +37,41 @@ app.use('/bitmaps_test', express.static('../../test/css/bitmaps_test'));
 //  res.send('ok');
 // })
 
-app.post('/baseline', function(req, res) {
-
+app.post('/baseline', (req, res) => {
   // TODO: Make the string splitting and manipulation more robust
   // TODO: Add error handling
   var toBless = req.body.toBless;
   var status = toBless ? 'blessed' : 'fail';
 
-  var blessed = req.body.blessed.split('.././bitmaps_test/')[1];
-  var blessedDest = blessed.split('/')[1];
+  // I think something about this process isn't right. We are really just trying
+  // to grab the test image and replace the reference image with it.
+  //
+  // We also need to revert it if possible.
+  var blessed = req.body.blessed.split('bitmaps_test/')[1];
+  var blessedDest = path.basename(blessed);
 
-  // move the blessed image to the bitmaps_refernce
-  fs.createReadStream('bitmaps_test/' + blessed).pipe(fs.createWriteStream('bitmaps_reference/' + blessedDest));
+  // move the blessed image to the bitmaps reference.
+  //
+  // In all of this, we just need to know the locations of the references
+  // and test directories.
+  //
+  // We are copying the screenshot from the bitmaps_test directory to
+  // the bitmaps_reference directory. That is what 'blessing' does.
+  //
+  // something like ../../ will be extracted
+  const cwd = `${paths.bitmaps_reference.split('../')[0]}../`;
+  const copyFrom = path.join(paths.bitmaps_test, blessed);
+  const copyTo = path.join(paths.bitmaps_reference, blessedDest);
+
+  fs.createReadStream(copyFrom)
+    .pipe(fs.createWriteStream(copyTo));
 
   // update the config.json to reflect status of blessed
-  var configFileName = 'compare/config.json';
-  var configToUpdate = req.body.index;
-  var configObj;
+  const configFileName = paths.compareConfigFileName;
+  const configToUpdate = req.body.index;
+  let configObj;
 
-  fs.readFile(configFileName, 'utf8', function (err, data) {
+  fs.readFile(configFileName, 'utf8', (err, data) => {
     if (err) throw err;
     configObj = JSON.parse(data);
 
@@ -64,7 +87,7 @@ app.post('/baseline', function(req, res) {
       } else {
         console.log('File to Unbless received: ' + blessedDest);
         console.log('Reset to "fail" status');
-        var clean_file = spawn('gulp', ['backstop:clean_file', '--file=' + blessedDest], {cwd: '../../'});
+        var clean_file = spawn('git', ['checkout', copyTo.replace(cwd, '')], { cwd });
         clean_file.stdout.on('close', function (data) {
           console.log(blessedDest + ' no longer blessed for version control');
         });
@@ -75,11 +98,9 @@ app.post('/baseline', function(req, res) {
       console.log('Updating data (writing to ' + configFileName + ')');
 
       // respond with the index of the object to update on the client
-      res.send({testPairToUpdate: configToUpdate});
+      res.send({ testPairToUpdate: configToUpdate });
     });
   });
-
-
 });
 
 // This receives and stores the test name and baseline boolean in a text file

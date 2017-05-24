@@ -55,13 +55,17 @@ gulp.task("start",function(cb){
     var time = (Number(argv.t) === argv.t && argv.t % 1 === 0) ? argv.t : 15;
 
     // FORK: also pass in the port for the server to use.
-    var serverHook = spawn('node', ['server.js', '--t=' + time, '--report-port=' + port],  {detached: false, stdio:'inherit'});
+    var serverHook = spawn('node', ['server.js', '--t=' + time, '--report-port=' + port], { detached: false, stdio: 'inherit' });
+
+    // serverHook.stdout.on('data', (data) => {
+    //   console.info('server.js output:', data.toString());
+    // });
 
     serverHook.unref();
 
     // FORK: Write json string in file so we can include the port number.
-    fs.writeFileSync(paths.serverPidFile, JSON.stringify({pid: serverHook.pid, port: port}));
-    console.log('\nServer launched in background on port ' + port + ' with PID: '+serverHook.pid);
+    fs.writeFileSync(paths.serverPidFile, JSON.stringify({ pid: serverHook.pid, port }));
+    console.log('\nServer launched in background on port ' + port + ' with PID: ' + serverHook.pid);
 
     //if (time > 0) {
     //  console.log('NOTE: Server will auto-shutdown in ' + time + ' mins.\n');
