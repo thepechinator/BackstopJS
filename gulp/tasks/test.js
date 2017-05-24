@@ -91,7 +91,7 @@ gulp.task('test',['init'], function (cb) {
     config.paths = {};
   }
 
-  var scenarios = config.scenarios||config.grabConfigs;
+  var scenarios = config.scenarios || config.grabConfigs;
   var compareConfigFileName = config.paths.compare_data || 'compare/config.json';
 
   // Set this based on a person's OS. We do one less than the amount of cores
@@ -126,7 +126,7 @@ gulp.task('test',['init'], function (cb) {
   // reset
   // maxProcesses = maxProcessesDefault;
 
-  var itemsPerArray = Math.floor(scenarios.length/maxProcesses);
+  var itemsPerArray = Math.floor(scenarios.length / maxProcesses);
   var currentIndex = 0;
   var i = 0;
 
@@ -136,11 +136,11 @@ gulp.task('test',['init'], function (cb) {
 
   for (i = 0; i < maxProcesses; i++) {
     if ( (i+1) === maxProcesses ) {
-       // on the last index... so get the modulo to get the number of items
-       // extra we need to account for
-       let extra = scenarios.length % maxProcesses;
+      // on the last index... so get the modulo to get the number of items
+      // extra we need to account for
+      let extra = scenarios.length % maxProcesses;
 
-       spawnWorker({scenarioStartIndex: currentIndex, scenarioEndIndex: currentIndex+itemsPerArray+extra});
+      spawnWorker({scenarioStartIndex: currentIndex, scenarioEndIndex: currentIndex+itemsPerArray+extra});
     } else {
       spawnWorker({scenarioStartIndex: currentIndex, scenarioEndIndex: currentIndex+itemsPerArray});
     }
@@ -182,6 +182,7 @@ gulp.task('test',['init'], function (cb) {
       var result = (success)?'Bitmap file generation completed.':'Testing script failed with code: '+code;
 
       console.log('\n'+result);
+      // console.info('ngProgress|compareStage');
 
       //exit if there was some kind of failure in the casperChild process
       if(code !== 0) {

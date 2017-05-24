@@ -1,26 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="compareApp">
 <head>
   <title>BackstopJS Report</title>
 
   <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="bower_components/twentytwenty/twentytwenty.css">
+  <link rel="stylesheet" href="bower_components/ngprogress/ngProgress.css">
   <link rel="stylesheet" type="text/css" href="css/styles.css">
 
+  <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
   <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
   <script type="text/javascript" src="bower_components/angular-route/angular-route.min.js"></script>
+  <script type="text/javascript" src="bower_components/sticky-kit/sticky-kit.min.js"></script>
   <script type="text/javascript" src="bower_components/resemblejs/resemble.js"></script>
   <script type="text/javascript" src="bower_components/async/lib/async.js"></script>
+  <script type="text/javascript" src="bower_components/completely/completely.js"></script>
+  <script type="text/javascript" src="bower_components/twentytwenty/jquery.twentytwenty.js"></script>
+  <script type="text/javascript" src="bower_components/twentytwenty/jquery.event.move.js"></script>
+  <script type="text/javascript" src="bower_components/ngprogress/ngprogress.min.js"></script>
   <script type="text/javascript" src="js/compare.js"></script>
 </head>
 
-<body ng-app="compareApp">
-  <div id="root" ng-controller="MainCtrl">
-    <div class="container"><h1>BackstopJS Report</h1></div>
-    <div class="container summaryBlock">
-      <h2 class='lead'>
-        <div class="stat">Passed <strong class='green circle'>{{passedCount}}</strong>&nbsp;&nbsp; Failed <strong class='red circle'>{{testPairsCompleted-passedCount}}</strong></div>
-        <div class="stat">{{testPairsCompleted}} of {{testPairs.length}}</div>
-        <div class="stat">{{testDuration/1000 | number : 2}}s</div>
+<body ng-controller="MainCtrl" ng-class="{'is-running': testRunning == true, 'is-error': isError == true}">
+  
+  <div ng-show="isError" class="fade-in">
+    <div class="row">
+    <div class="col-md-4"></div>
+     <div class="col-md-4 panel panel-default panel-error">
+        <div class="panel-body">
+          <p>Another CSS Regression test is either currently running 
+          (probably in another tab) or something went horribly wrong.</p>
+          <p>You can try re-running this test when the current test is 
+          completed by refreshing this page.</p>
+          <p>Another option is to restart the test server.</p>
+        </div>
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+  </div>
+  <a class="anchor" id="root"></a>
+  <div class="content-main">
+
+    <header class="header" ng-include="'js/views/header.html'"></header>
+    <div class="running-command">{{runningCommand}}</div>
+    <div id="runningBlock">  
+      <code>
+        <div ng-repeat="output in backstopStdout track by $index">
+          {{output}}
+        </div>
+      </code>
+    </div>
+    <div class="phalanx-dude">
+      <!-- <div class="running-progress fade-in" ng-show="prepStage || scenarioStage || compareStage">
+        <div class="fade-in" ng-show="prepStage">Preparing Tests!<br>Please be patient.</div>
+        <div class="fade-in" ng-show="scenarioStage">Visiting urls and taking screenshots!</div>
+        <div class="fade-in" ng-show="compareStage">Comparing screenshots to baseline references!</div>
+      </div> -->
+      <div ng-show="prepStage || scenarioStage || compareStage || isError" ng-include="'js/views/logo.html'"></div>
+    </div>
+
+
+  <div class="filterGroup form-group subheader">
+    <div class="logo" ng-class="{hasFails: (testPairsCompleted - passedCount) > 0}" ng-include="'js/views/logo.html'"></div>
+    <div class="row">
+      <div class="col-md-1">
+        <label for="statusFilter" class="control-label">status</label>{{statusFilter}}
+        <select id="statusFilter" class="form-control" ng-model="statusFilter" ng-options="status for status in detailFilterOptions"></select>
+      </div>
+      <div class="col-md-2 viewport">
+        <label class="control-label">viewports</label>
+        <div class="viewport-container">
+          <label class="viewport-filter" ng-click="includeViewport('SMALL')">
+            <i class="material-icons small-viewport">phone_iphone</i>
+            <i class="material-icons checkbox-small">{{toggleFauxCheck('SMALL')}}</i>
+          </label class="viewport-filter">
+          <label class="viewport-filter" ng-click="includeViewport('MEDIUM')">
+            <i class="material-icons medium-viewport">tablet_mac</i>
+            <i class="material-icons checkbox-small">{{toggleFauxCheck('MEDIUM')}}</i>
+          </label class="viewport-filter">
+          <label class="viewport-filter" ng-click="includeViewport('LARGE')">
+            <i class="material-icons large-viewport">desktop_mac</i>
+            <i class="material-icons checkbox-small">{{toggleFauxCheck('LARGE')}}</i>
+          </label>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="directoryFilter">filter</label>
+          <div completely id="directoryFilter" suggestions="directories"></div>  
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat" ng-if=displayMode>{{testPairsCompleted}} of {{testPairs.length}}</div>
+        <div class="stat" ng-if=displayMode>{{testDuration/1000 | number : 2}}s</div>
         <div class="progressBarBlock" ng-if="testIsRunning">
           <div class="progress">
             <div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="{{testPairsCompleted}}" aria-valuemin="0" aria-valuemax="{{testPairs.length}}" style="width: {{testPairsCompleted/testPairs.length*100| number : 0}}%">
@@ -28,70 +101,61 @@
             </div>
           </div>
         </div>
-      </h2>
-      <table class="summaryList">
-        <tr ng-repeat="thisTestPair in testPairs">
-          <td class="statusInds">
-            <div class="indicator scanning" ng-if="thisTestPair.processing"><span class="dot yellow flash"></span>scanning</div>
-            <div class="indicator failed" ng-if="!thisTestPair.passed&&!thisTestPair.processing"><span class="dot red"></span>failed</div>
-            <div class="indicator passed" ng-if="thisTestPair.passed"><span class="dot green"></span>passed</div>
-          </td>
-          <td>
-            {{ thisTestPair.meta.label }} {{ thisTestPair.meta.selector }} <span class="fileName">{{ thisTestPair.meta.fileName }}</span>
-          </td>
-        </tr>
-      </table>
-    </div> <!-- end summaryBlock -->
-
-    <div class="detailReport">
-
-      <div class='filterGroup form-group'>
-        <label for="statusFilter" class="control-label">status filter</label>
-        <select id="statusFilter" class="form-control" ng-model="statusFilter" ng-options="status for status in detailFilterOptions"></select>
-
       </div>
+    </div>
+    <div class="row" ng-show="selection.length">
+      <div class="col-md-12 command-container">
+        <div class="text-right">              
+          <!--<button class="btn btn-lg btn-primary" ng-click="createBaseline()">create baselines</button>-->
+          <div><code>{{ gulpCommand }}</code></div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="summaryBlock">
 
-      <table ng-repeat="thisTestPair in testPairs | filter : displayOnStatusFilter ">
+
+      
+      <div class="summary-list-container">
+        <table class="summaryList">
         <thead>
           <tr>
-            <th class="selector" colspan="2">{{ thisTestPair.meta.label }} {{ thisTestPair.meta.selector }}</th>
-            <th class="filename" colspan="2">{{ thisTestPair.meta.fileName }}</th>
-          </tr>
-          <tr>
-            <th>Reference</th>
-            <th>Test</th>
-            <th>Diff</th>
-            <th>Report</th>
+            <th class="statusInds"><h3 ng-if="filtered.length > 0">Summary</h3></th>
+            <th><!-- <a class="btn btn-primary" href="#/running/{{testNames}}">Run Test</a> --></th>
           </tr>
         </thead>
-        <tr>
-          <td>
-            <img ng-src="{{ thisTestPair.a.src }}">
-          </td>
-          <td>
-            <img ng-src="{{ thisTestPair.b.src }}">
-          </td>
-          <td>
-            <img ng-src="{{ thisTestPair.c.src }}" image-name="c">
-          </td>
-          <td>
-            <div class="statusInds">
-              <div class="indicator scanning" ng-if="thisTestPair.processing"><span class="dot yellow flash"></span>scanning</div>
-              <div class="indicator failed" ng-if="!thisTestPair.passed&&!thisTestPair.processing"><span class="dot red"></span>failed</div>
-              <div class="indicator passed" ng-if="thisTestPair.passed"><span class="dot green"></span>passed</div>
-            </div>
-            <div class="reportTxt">Threshold: {{ thisTestPair.meta.misMatchThreshold}}</div>
-            <div class="reportTxt">Report: {{ thisTestPair.report }}</div>
-          </td>
-        </tr>
-      </table>
+        <tbody>
+          <tr ng-class="{new: markNewGroup($index, thisTestPair.meta.label)}" ng-repeat="thisTestPair in testPairs | filter:viewportFilter | filter : displayOnStatusFilter | filter : directoryFilter as filtered">
+            <td class="statusInds">
+              <div class="scanning" ng-if="thisTestPair.processing"><span class="dot yellow flash"></span>scanning</div>
+              <div class="failed" ng-if="thisTestPair.testStatus=='fail'&&!thisTestPair.processing"><div class="stat-label">failed</div></div>
+              <div class="passed" ng-if="thisTestPair.testStatus=='pass'"><div class="stat-label">passed</div></div>
+              <div class="blessed" ng-if="thisTestPair.testStatus=='blessed'"><div class="stat-label">blessed</div></div>
+            </td>
+            <td class="test-summary">
+              <test-result-summary></test-result-summary>
+            </td>
+          </tr>
+        </tbody>
+        </table>
+      </div>
+    </div> <!-- end summaryBlock -->
 
-
+    <div class="detailReport fade-in">
+      <h3 ng-if="filtered.length > 0">Details</h3>
+      <div class="detail-container" ng-include="'js/views/detail-view.html'"></div>
+      <div class="no-results-msg" ng-if="filtered.length === 0">
+        <p>Nothing to see here!
+          <br>
+          <small><em>Try changing filters.</em></small>
+        </p>
+      </div>
     </div> <!-- end detailReport -->
 
 
-  <footer></footer>
-
+  <footer class="footer text-right">
+    <span class="btn btn-primary back-to-top" ng-click="scrollTo('root')">top <i class="material-icons">keyboard_arrow_up</i></span>
+  </footer>
 
   </div> <!-- end #root -->
 

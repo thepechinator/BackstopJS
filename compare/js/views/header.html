@@ -1,0 +1,57 @@
+<div class="row">
+    <div class="col-md-5">
+        <h1 class="header-title">CSS <span>Regression Testing</span></h1>
+        <span ng-show="testRunning && scenarioStage" class="filter-length">
+            <span>capturing</span>
+            <strong>{{capturesCompleted}}</strong> 
+            <span>of</span>
+            <strong>{{numScenarios * 3}}</strong> 
+            <span>screenshots</span>
+        </span>
+        <span ng-show="testRunning && compareStage" class="filter-length">
+            <span>comparing</span> 
+            <strong>{{testPairsCompleted}}</strong>
+            <span>of</span>
+            <strong>{{numScenarios * 3}}</strong> 
+            <span>screenshots</span>
+        </span>
+        <span ng-show="!testRunning" class="filter-length">
+            <span>showing</span> 
+            <strong>{{filtered.length}}</strong> 
+            <span>of</span> 
+            <strong>{{testPairs.length}}</strong> 
+            <span>screenshots</span>
+        </span>
+    
+    </div>
+    <div class="col-md-5">
+        <div class="stat-main-container text-center fade-in">
+            <!-- <div><label>totals</label></div> -->
+            
+            <div ng-show="blessedCount >= 1">
+                <!-- blessed -->
+                <div class="stat-main blessed" ng-click="setStatus('blessed')">
+                    <div class="count">{{blessedCount}}</div>
+                    <div class="stat-label">blessed</div>
+                </div>
+            </div>
+
+            <div ng-show="compareStage || !testRunning">
+                <!-- passed -->    
+                <div class="stat-main passed" ng-click="setStatus('passed')">
+                    <div class="count">{{passedCount}}</div>
+                    <div class="stat-label">passed</div>
+                </div>
+              
+                <!-- failed -->
+                <div class="stat-main failed" ng-click="setStatus('failed')">
+                    <div class="count">{{testPairsCompleted-passedCount-blessedCount}}</div>
+                    <div class="stat-label">failed</div>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>

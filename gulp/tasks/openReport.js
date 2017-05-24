@@ -3,7 +3,7 @@ var open  = require("gulp-open");
 var isWin = require('../util/isWin');
 var paths = require('../util/paths');
 var rename = require('gulp-rename');
-var jeditor = require("gulp-json-editor");
+var jeditor = require('gulp-json-editor');
 
 var referenceDir = './bitmaps_reference/';
 var testDir = './bitmaps_test/';
@@ -61,6 +61,7 @@ gulp.task("openReport:do", function() {
     ,app: isWin ? "chrome" : "Google Chrome"
   };
 
+  console.info('compareConfigFileName', paths.compareConfigFileName);
   return gulp.src(paths.compareConfigFileName)
     .pipe(jeditor(function(json) {
       json.testPairs.forEach(function(item){
@@ -73,7 +74,7 @@ gulp.task("openReport:do", function() {
     }))
     .pipe(rename('compare/config.json'))
     .pipe(gulp.dest('.'))
-    .pipe(open("",options));
+    .pipe(open("", options));
 });
 
 gulp.task("openReport", function(cb) {

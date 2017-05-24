@@ -29,10 +29,14 @@ var casper_scripts = config.paths.casper_scripts || null;
 var compareConfigFileName = config.paths.compare_data || 'compare/config.json';
 var viewports = config.viewports;
 var scenarios = config.scenarios||config.grabConfigs;
+
 var blacklistedRequests = config.blacklistedRequests || [];
 
 //.Methods you want to execute for ALL pages
 var executeExternalJSMethods = config.executeExternalJSMethods || [];
+
+console.info('ngProgress|scenarioStage|' + scenarios.length); //wf
+console.info('CasperJS: One sec, we are just getting started...');
 
 var compareConfig = {testPairs:[]};
 
@@ -105,10 +109,20 @@ var _requestHash = {
     'default': _isBlacklisted
 };
 
-
 function bootstrapCasper(casperInstance) {
     if (config.debug) {
       console.log('Debug is enabled!');
+
+      try {
+          abort = _requestHash[type](requestData, request, regex);
+      } catch(e) {
+          casper.echo(e);
+      }
+      if (abort) {
+          casper.echo('Aborting blacklisted request: ' + requestData.url);
+          request.abort();
+          return;
+      }
 
       casperInstance.on("page.error", function(msg, trace) {
           this.echo("Remote Error >    " + msg, "error");
@@ -284,6 +298,7 @@ function capturePageSelectors(url,casper,scenarios,viewports,bitmaps_reference,b
 
       this.then(function(){
 
+        // Note: this echo w/ string 'Screenshots for ' is currently necessary for detecting progress of test for the ngProgress bar
         this.echo('Screenshots for ' + vp.name + ' (' + (vp.width||vp.viewport.width) + 'x' + (vp.height||vp.viewport.height) + ')', 'info');
 
         //HIDE SELECTORS WE WANT TO AVOID
@@ -409,7 +424,9 @@ function capturePageSelectors(url,casper,scenarios,viewports,bitmaps_reference,b
               selector:o,
               fileName:fileName,
               label:scenario.label,
-              misMatchThreshold: scenario.misMatchThreshold
+              misMatchThreshold: scenario.misMatchThreshold,
+              scenario: scenario.url,
+              viewport: vp.name
             });
           }
 

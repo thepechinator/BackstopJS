@@ -44,6 +44,7 @@ gulp.task('compare', function (done) {
   let failed = 0;
   let passed = 0;
   let failFiles = [];
+  let testPairsToSave = [];
 
   console.log(`Running on ${maxProcesses} separate processes`);
 
@@ -76,6 +77,7 @@ gulp.task('compare', function (done) {
           passed += result.passed;
           failed += result.failed;
           failFiles.push(result.failFiles);
+          testPairsToSave.push(result.testPairs);
         }
         console.info("failFiles: ", _.flatten(failFiles)); //wf
         console.log((passed || 0) + " Passed");
@@ -83,8 +85,11 @@ gulp.task('compare', function (done) {
 
         const failsFile = paths.comparePath + '/fails.json';
         const failsObj = {fails: _.flatten(failFiles)};
+        testPairsToSave = _.flatten(testPairsToSave);
 
+        // Here we can somehow tap into the testpairs.
         jsonfile.writeFileSync(failsFile, failsObj, {spaces: 2});
+        jsonfile.writeFileSync(paths.compareConfigFileName, { testPairs: testPairsToSave }, { spaces: 2 });
 
         if (failed > 0) {
           console.log("*** Mismatch errors found ***");
@@ -99,6 +104,6 @@ gulp.task('compare', function (done) {
       }
     });
 
-    child.send({ testPairs: testPairs });
+    child.send({ testPairs });
   }
 });
