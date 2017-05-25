@@ -88,7 +88,7 @@ gulp.task('compare', function (done) {
         testPairsToSave = _.flatten(testPairsToSave);
 
         // Here we can somehow tap into the testpairs.
-        jsonfile.writeFileSync(failsFile, failsObj, {spaces: 2});
+        jsonfile.writeFileSync(failsFile, failsObj, { spaces: 2 });
         jsonfile.writeFileSync(paths.compareConfigFileName, { testPairs: testPairsToSave }, { spaces: 2 });
 
         if (failed > 0) {

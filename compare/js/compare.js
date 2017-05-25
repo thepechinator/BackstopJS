@@ -605,6 +605,8 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   $scope.compareTestPairs = function compareTestPairs(testPairs){
     var startTs = new Date();
 
+    $scope.passedCount = 0;
+    $scope.blessedCount = 0;
     $scope.testPairsCompleted = 0;
 
     async.eachLimit(

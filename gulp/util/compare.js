@@ -28,9 +28,12 @@ function test(testPairs) {
   var failed = 0;
   var startDiffStore = false;
 
+  console.info('TEST THIS TESTPAIR', testPairs);
+
   // The main code execution
   // The testPairs can't be mutated here...
   _.each(testPairs, function (pair) {
+    console.info('TEST PAIRS TO SENDBACK LENGTH', testPairsToSendBack.length);
     pair.testStatus = "running";
 
     // need the pair, referencePath, and testPath...
@@ -68,15 +71,13 @@ function test(testPairs) {
       }
 
       storeDiffImage(pair, testPath, data, pair.fileName, pair.testStatus);
-
-      numberOfTests--;
-      checkQueue();
     });
   }
 
   function checkQueue() {
+    console.info('checkQueue', numberOfTests, !startDiffStore);
     if (numberOfTests === 0 && !startDiffStore) {
-      console.log('COMPARE : ALL DONE FOR THIS PROCESS, sending message');
+      // console.log('COMPARE : ALL DONE FOR THIS PROCESS, sending message', testPairsToSendBack);
       process.send({ testPairs, passed, failed, failFiles: failsStorage });
 
       if (failed > 0) {
@@ -89,12 +90,12 @@ function test(testPairs) {
 
   function storeDiffImage(pair, testPath, data, testFile, status) {
     startDiffStore = true;
-    var diffFilename = getDiffFilename(testPath, status);
+    let diffFilename = getDiffFilename(testPath, status);
     pair.diff = diffFilename;
 
     // hack this in until we find a good place to put it, to complete the merge.
-    var rFile = './bitmaps_reference/' + pair.reference.split('/').slice(-1)[0];
-    var tFile = './bitmaps_test/' + pair.test.split('/').slice(-2).join('/');
+    let rFile = './bitmaps_reference/' + pair.reference.split('/').slice(-1)[0];
+    let tFile = './bitmaps_test/' + pair.test.split('/').slice(-2).join('/');
     pair.local_reference = rFile;
     pair.local_test = tFile;
     pair.local_diff = diffFilename.partial;
@@ -106,19 +107,24 @@ function test(testPairs) {
       failsStorage.push(diffFilename.baseName);
       let failedDiffStream = fs.createWriteStream(diffFilename.full);
       failedDiffStream.on('close', function() {
-        console.log('file done');
         startDiffStore = false;
+        numberOfTests--;
         checkQueue();
       });
       data.getDiffImage().pack().pipe(failedDiffStream);
     } else if (status === 'pass') {
-      var passedDiffStream = fs.createWriteStream(diffFilename);
+      let passedDiffStream = fs.createWriteStream(diffFilename.full);
       passedDiffStream.on('close', function() {
-        console.log('file done');
         startDiffStore = false;
+        numberOfTests--;
         checkQueue();
       });
       data.getDiffImage().pack().pipe(passedDiffStream);
+        // .on('finish', () => {
+        //   console.log('ON PASS file done');
+        //   startDiffStore = false;
+        //   checkQueue();
+        // });
     }
   }
 
