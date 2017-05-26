@@ -1,22 +1,22 @@
-var path = require('path');
-var fs = require('fs');
-var argv = require('yargs').argv;
+const path = require('path');
+const fs = require('fs');
+const argv = require('yargs').argv;
 
-var paths = {};
+const paths = {};
 
 // BACKSTOP MODULE PATH
-paths.backstop                      = path.join(__dirname, '../..');
+paths.backstop = path.join(__dirname, '../..');
 
 function getBackstopConfigFileName() {
-	if(argv.backstopConfigFilePath) {
-		var isAbsolutePath = argv.backstopConfigFilePath.charAt(0) === '/';
-		var configPath = isAbsolutePath ? argv.backstopConfigFilePath : path.join(paths.backstop, argv.backstopConfigFilePath);
-		if(!fs.existsSync(configPath)) {
-			throw new Error('Couldn\'t resolve backstop config file');
-		}
-		return configPath;
-	}
-	return path.join(paths.backstop, '../../backstop.json');
+  if (argv.backstopConfigFilePath) {
+    const isAbsolutePath = argv.backstopConfigFilePath.charAt(0) === '/';
+    const configPath = isAbsolutePath ? argv.backstopConfigFilePath : path.join(paths.backstop, argv.backstopConfigFilePath);
+    if (!fs.existsSync(configPath)) {
+      throw new Error('Couldn\'t resolve backstop config file');
+    }
+    return configPath;
+  }
+  return path.join(paths.backstop, '../../backstop.json');
 }
 // BACKSTOP CONFIG PATH
 paths.backstopConfigFileName = getBackstopConfigFileName();
@@ -26,42 +26,42 @@ paths.backstopConfigFileName = getBackstopConfigFileName();
 paths.reportPort = 3001;
 
 // BITMAPS PATHS -- note: this path is overwritten if config files exist.  see below.
-paths.bitmaps_reference             = paths.backstop + '/bitmaps_reference';
-paths.bitmaps_test                  = paths.backstop + '/bitmaps_test';
+paths.bitmaps_reference = `${paths.backstop}/bitmaps_reference`;
+paths.bitmaps_test = `${paths.backstop}/bitmaps_test`;
 
 // COMPARE PATHS -- note: compareConfigFileName is overwritten if config files exist.  see below.
-paths.comparePath                   = paths.backstop + '/compare';
-paths.compareConfigFileName         = paths.comparePath+'/config.json';
-paths.compareReportURL              = 'http://localhost:' + paths.reportPort + '/compare/';
+paths.comparePath = `${paths.backstop}/compare`;
+paths.compareConfigFileName = `${paths.comparePath}/config.json`;
+paths.compareReportURL = `http://localhost:${paths.reportPort}/compare/`;
 
 // CAPTURE CONFIG PATHS
-paths.captureConfigFileName         = paths.backstop + '/capture/config.json';
-paths.captureConfigFileNameCache    = paths.backstop + '/capture/.config.json.cache';
-paths.captureConfigFileNameDefault  = paths.backstop + '/capture/config.default.json';
+paths.captureConfigFileName = `${paths.backstop}/capture/config.json`;
+paths.captureConfigFileNameCache = `${paths.backstop}/capture/.config.json.cache`;
+paths.captureConfigFileNameDefault = `${paths.backstop}/capture/config.default.json`;
 
 // SCRIPTS PATHS -- note: scripts is overwritten if config file exists.
-paths.casper_scripts                = null;
-paths.casper_scripts_default        = paths.backstop + '/capture/casper_scripts';
+paths.casper_scripts = null;
+paths.casper_scripts_default = `${paths.backstop}/capture/casper_scripts`;
 
 // SERVER PID PATH
-paths.serverPidFile                 = paths.backstop + '/server.pid';
+paths.serverPidFile = `${paths.backstop}/server.pid`;
 
 // ACTIVE CAPTURE CONFIG PATH
-paths.activeCaptureConfigPath       = '';
+paths.activeCaptureConfigPath = '';
 
-if(!fs.existsSync(paths.backstopConfigFileName)){
+if (!fs.existsSync(paths.backstopConfigFileName)) {
   // console.log('\nCould not find a valid config file.');
-  console.log('\nCurrent config file location...\n ==> '+paths.backstopConfigFileName);
-  console.log('\n`$ gulp genConfig` generates a configuration boilerplate file in `' + paths.backstopConfigFileName + '`. (Will overwrite existing files.)\n')
+  console.log(`\nCurrent config file location...\n ==> ${paths.backstopConfigFileName}`);
+  console.log(`\n\`$ gulp genConfig\` generates a configuration boilerplate file in \`${paths.backstopConfigFileName}\`. (Will overwrite existing files.)\n`);
   paths.activeCaptureConfigPath = paths.captureConfigFileNameDefault;
-}else{
+} else {
   console.log('\nBackstopJS Config loaded at location', paths.backstopConfigFileName);
   paths.activeCaptureConfigPath = paths.backstopConfigFileName;
 }
 
 // overwrite default filepaths if config files exist
-if(fs.existsSync(paths.activeCaptureConfigPath)){
-  var config = require(paths.activeCaptureConfigPath);
+if (fs.existsSync(paths.activeCaptureConfigPath)) {
+  const config = require(paths.activeCaptureConfigPath);
   if (config.paths) {
     paths.bitmaps_reference = config.paths.bitmaps_reference || paths.bitmaps_reference;
     paths.bitmaps_test = config.paths.bitmaps_test || paths.bitmaps_test;
@@ -78,13 +78,12 @@ if(fs.existsSync(paths.activeCaptureConfigPath)){
   if (argv['report-port']) {
     paths.reportPort = argv['report-port'];
   }
-  paths.compareReportURL = 'http://localhost:' + paths.reportPort + '/compare/';
+  paths.compareReportURL = `http://localhost:${paths.reportPort}/compare/`;
 
   paths.cliExitOnFail = config.cliExitOnFail || false;
   paths.casperFlags = config.casperFlags || null;
   paths.engine = config.engine || null;
   paths.report = config.report || null;
-
 }
 
 module.exports = paths;

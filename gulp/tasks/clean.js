@@ -1,14 +1,14 @@
-var gulp                    = require('gulp');
-var del                     = require('del');
-var paths                   = require('../util/paths');
-var genDefaultCompareConfig = require('../util/genDefaultCompareConfig');
+const gulp = require('gulp');
+const del = require('del');
+const paths = require('../util/paths');
+const genDefaultCompareConfig = require('../util/genDefaultCompareConfig');
 
 
-//CLEAN THE bitmaps_reference DIRECTORY
-gulp.task('clean', function (cb) {
+// CLEAN THE bitmaps_reference DIRECTORY
+gulp.task('clean', (cb) => {
   del([
-    paths.bitmaps_reference + '/**'
-  ], {force: true}, cb);
+    `${paths.bitmaps_reference}/**`,
+  ], { force: true }, cb);
   genDefaultCompareConfig();
   console.log('bitmaps_reference was cleaned.');
 });

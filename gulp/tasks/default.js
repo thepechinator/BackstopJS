@@ -1,1 +1,1 @@
-require('gulp').task('default',function(){});
+require('gulp').task('default', () => {});

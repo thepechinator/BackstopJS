@@ -1,31 +1,31 @@
-var gulp  = require('gulp');
-var open  = require("gulp-open");
-var isWin = require('../util/isWin');
-var paths = require('../util/paths');
-var rename = require('gulp-rename');
-var jeditor = require('gulp-json-editor');
+const gulp = require('gulp');
+const open = require('gulp-open');
+const isWin = require('../util/isWin');
+const paths = require('../util/paths');
+const rename = require('gulp-rename');
+const jeditor = require('gulp-json-editor');
 
-var referenceDir = './bitmaps_reference/';
-var testDir = './bitmaps_test/';
+const referenceDir = './bitmaps_reference/';
+const testDir = './bitmaps_test/';
 
-var runSequence = require('run-sequence');
+const runSequence = require('run-sequence');
 
-var genConfigPath = '../../capture/config.json'
-var config = require(genConfigPath);
+const genConfigPath = '../../capture/config.json';
+const config = require(genConfigPath);
 
-var maxStoredRuns = config.maxStoredRuns || 5;
+const maxStoredRuns = config.maxStoredRuns || 5;
 
-var exec = require('child_process').exec;
+const exec = require('child_process').exec;
 
-gulp.task("bitmaps-reference:copy", function() {
+gulp.task('bitmaps-reference:copy', () => {
   // cache bitmaps_reference files locally
-  return gulp.src(paths.bitmaps_reference + '/**/*')
+  return gulp.src(`${paths.bitmaps_reference}/**/*`)
     .pipe(gulp.dest(referenceDir));
 });
 
-gulp.task("bitmaps-test:remove-old-runs", function(cb) {
-  var myProcess = exec('rm -rf `ls -1dt * | tail -n +' + (maxStoredRuns+1) + '`',
-    {cwd: paths.bitmaps_test}, function(err, stdout, stderr) {
+gulp.task('bitmaps-test:remove-old-runs', (cb) => {
+  const myProcess = exec(`rm -rf \`ls -1dt * | tail -n +${maxStoredRuns + 1}\``,
+    { cwd: paths.bitmaps_test }, (err, stdout, stderr) => {
       if (err) {
         console.error(err);
 
@@ -47,36 +47,36 @@ gulp.task("bitmaps-test:remove-old-runs", function(cb) {
   });
 });
 
-gulp.task("bitmaps-test:copy", ["bitmaps-test:remove-old-runs"], function() {
-  return gulp.src(paths.bitmaps_test + '/**/*')
+gulp.task('bitmaps-test:copy', ['bitmaps-test:remove-old-runs'], () => {
+  return gulp.src(`${paths.bitmaps_test}/**/*`)
     .pipe(gulp.dest(testDir));
 });
 
-gulp.task("openReport:do", function() {
-  console.log('\nTesting with ',paths.compareConfigFileName);
-  console.log('Opening report -> ',paths.compareReportURL + '\n');
+gulp.task('openReport:do', () => {
+  console.log('\nTesting with ', paths.compareConfigFileName);
+  console.log('Opening report -> ', `${paths.compareReportURL}\n`);
 
-  var options = {
-    url: paths.compareReportURL
-    ,app: isWin ? "chrome" : "Google Chrome"
+  const options = {
+    url: paths.compareReportURL,
+    app: isWin ? 'chrome' : 'Google Chrome',
   };
 
   console.info('compareConfigFileName', paths.compareConfigFileName);
   return gulp.src(paths.compareConfigFileName)
-    .pipe(jeditor(function(json) {
-      json.testPairs.forEach(function(item){
-        var rFile = referenceDir + item.reference.split('/').slice(-1)[0];
-        var tFile = testDir + item.test.split('/').slice(-2).join('/');
+    .pipe(jeditor((json) => {
+      json.testPairs.forEach((item) => {
+        const rFile = referenceDir + item.reference.split('/').slice(-1)[0];
+        const tFile = testDir + item.test.split('/').slice(-2).join('/');
         item.local_reference = rFile;
         item.local_test = tFile;
-      })
+      });
       return json;
     }))
     .pipe(rename('compare/config.json'))
     .pipe(gulp.dest('.'))
-    .pipe(open("", options));
+    .pipe(open('', options));
 });
 
-gulp.task("openReport", function(cb) {
-  runSequence("bitmaps-reference:copy", "bitmaps-test:copy", "openReport:do", cb);
+gulp.task('openReport', (cb) => {
+  runSequence('bitmaps-reference:copy', 'bitmaps-test:copy', 'openReport:do', cb);
 });
