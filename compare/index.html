@@ -23,15 +23,15 @@
 </head>
 
 <body ng-controller="MainCtrl" ng-class="{'is-running': testRunning == true, 'is-error': isError == true}">
-  
+
   <div ng-show="isError" class="fade-in">
     <div class="row">
     <div class="col-md-4"></div>
      <div class="col-md-4 panel panel-default panel-error">
         <div class="panel-body">
-          <p>Another CSS Regression test is either currently running 
+          <p>Another CSS Regression test is either currently running
           (probably in another tab) or something went horribly wrong.</p>
-          <p>You can try re-running this test when the current test is 
+          <p>You can try re-running this test when the current test is
           completed by refreshing this page.</p>
           <p>Another option is to restart the test server.</p>
         </div>
@@ -44,7 +44,7 @@
 
     <header class="header" ng-include="'js/views/header.html'"></header>
     <div class="running-command">{{runningCommand}}</div>
-    <div id="runningBlock">  
+    <div id="runningBlock">
       <code>
         <div ng-repeat="output in backstopStdout track by $index">
           {{output}}
@@ -88,7 +88,7 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="directoryFilter">filter</label>
-          <div completely id="directoryFilter" suggestions="directories"></div>  
+          <div completely id="directoryFilter" suggestions="directories"></div>
         </div>
       </div>
       <div class="col-md-3">
@@ -105,7 +105,7 @@
     </div>
     <div class="row" ng-show="selection.length">
       <div class="col-md-12 command-container">
-        <div class="text-right">              
+        <div class="text-right">
           <!--<button class="btn btn-lg btn-primary" ng-click="createBaseline()">create baselines</button>-->
           <div><code>{{ gulpCommand }}</code></div>
         </div>
@@ -115,7 +115,7 @@
     <div class="summaryBlock">
 
 
-      
+
       <div class="summary-list-container">
         <table class="summaryList">
         <thead>
@@ -125,7 +125,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-class="{new: markNewGroup($index, thisTestPair.meta.label)}" ng-repeat="thisTestPair in testPairs | filter:viewportFilter | filter : displayOnStatusFilter | filter : directoryFilter as filtered">
+          <tr ng-class="{new: markNewGroup($index, thisTestPair.meta.label)}" ng-repeat="thisTestPair in testPairs | filter:viewportFilter | filter : displayOnStatusFilter | filter : directoryFilter as filtered track by $index">
             <td class="statusInds">
               <div class="scanning" ng-if="thisTestPair.processing"><span class="dot yellow flash"></span>scanning</div>
               <div class="failed" ng-if="thisTestPair.testStatus=='fail'&&!thisTestPair.processing"><div class="stat-label">failed</div></div>

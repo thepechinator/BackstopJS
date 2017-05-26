@@ -586,7 +586,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
           }
           $scope.testPairsCompleted++;
           $scope.testDuration = (new Date()-startTs);
-          //$scope.$digest();
+          // $scope.$digest();
           cb();
         });
       }
@@ -739,8 +739,12 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
   $scope.bless = function(testPair, index) {
 
-    $scope.testPairs[index].blessed = !$scope.testPairs[index].blessed;
-    var toBless = $scope.testPairs[index].blessed;
+    // console.info('testPair.blessed', testPair.blessed);
+    // let toBeforeBless = testPair.blessed;
+    // console.info('toBeforeBless', toBeforeBless);
+    let toBless = !testPair.blessed;
+    // console.info('$scope.testPairs[index].blessed', $scope.testPairs[index].blessed);
+    // console.info('!$scope.testPairs[index].blessed', !$scope.testPairs[index].blessed);
     $http({
         url: '/baseline',
         method: 'POST',
@@ -750,15 +754,17 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
                'index': index
               }
     }).success(function(data, status, headers, config) {
-        var testPairToUpdate = $scope.testPairs[data.testPairToUpdate];
+        let testPairToUpdate = testPair;
         if (toBless) {
           testPairToUpdate.testStatus = 'blessed';
           testPairToUpdate.blessed = true;
+          $scope.testPairs[index] = testPairToUpdate;
           $scope.blessedCount++;
           console.info('$scope.blessedCount: ', $scope.blessedCount); //wf
         } else {
           testPairToUpdate.testStatus = 'fail';
           testPairToUpdate.blessed = false;
+          $scope.testPairs[index] = testPairToUpdate;
           $scope.blessedCount--;
         }
         //testPairToUpdate.passed = true;

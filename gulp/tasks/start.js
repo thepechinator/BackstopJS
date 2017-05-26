@@ -22,7 +22,7 @@ gulp.task('start', (cb) => {
       // new server on a different port if the user
       // wants that.
       data = JSON.parse(data);
-      const pid = parseInt(data.pid);
+      const pid = parseInt(data.pid, 10);
       const oldPort = data.port;
 
       // FORK: additional check

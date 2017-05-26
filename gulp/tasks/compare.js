@@ -1,5 +1,3 @@
-
-
 const gulp = require('gulp');
 const resemble = require('node-resemble-js');
 const paths = require('../util/paths');
@@ -13,6 +11,11 @@ const jsonfile = require('jsonfile');
 const genConfigPath = '../../capture/config.json';
 const config = require(genConfigPath);
 // var config = JSON.parse(configJSON);
+
+// There needs to be something here where we can keep track of all the different
+// processes and log them to the right place.
+//
+// We also need something to help time how long the actual compare takes.
 
 gulp.task('compare', (done) => {
   const compareConfig = JSON.parse(fs.readFileSync(paths.compareConfigFileName, 'utf8'));

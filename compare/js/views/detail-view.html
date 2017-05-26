@@ -1,4 +1,4 @@
-<div id="{{thisTestPair.meta.label + thisTestPair.meta.viewport}}" class="detail container-fluid" ng-repeat="thisTestPair in testPairs | filter : viewportFilter | filter : displayOnStatusFilter | filter : directoryFilter">
+<div id="{{thisTestPair.meta.label + thisTestPair.meta.viewport}}" class="detail container-fluid" ng-repeat="thisTestPair in testPairs | filter : viewportFilter | filter : displayOnStatusFilter | filter : directoryFilter track by $index">
     <a class="anchor" id="{{ thisTestPair.meta.fileName | anchor }}"></a>
     <div class="row sticky">
         <div class="col-md-12">
