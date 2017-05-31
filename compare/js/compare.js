@@ -38,7 +38,16 @@ compareApp.filter('scenarioTitle', function() {
     if (input) {
       return input.split('/mocks/pages/')[1];
     }
-  }
+  };
+});
+
+compareApp.filter('scenarioUrl', () => {
+  return (input) => {
+    if (input) {
+      return `/mocks/pages/${input.split('/mocks/pages/')[1]}`;
+    }
+    return '';
+  };
 });
 
 compareApp.directive('resolveHost', function($window) {
@@ -517,7 +526,6 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
 
   //TAKES PARAMETERS FROM URL AND RUNS IMG DIFF TEST
   $scope.runUrlConfig = function(params){
-    console.log('hm', params);
     $scope.testPairs.push(new testPairObj('../'+params.a, '../'+params.b, null));
     $scope.compareTestPair($scope.testPairs[0]);
   };
@@ -606,7 +614,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
     var startTs = new Date();
 
     $scope.passedCount = 0;
-    $scope.blessedCount = 0;
+    // $scope.blessedCount = 0;
     $scope.testPairsCompleted = 0;
 
     async.eachLimit(
