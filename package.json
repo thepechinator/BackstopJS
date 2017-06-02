@@ -22,7 +22,9 @@
     "eslint-plugin-no-unused-vars-rest": "^1.0.6",
     "eslint-plugin-react": "^7.0.1",
     "mocha": "^1.21.5",
-    "mockery": "^1.4.0"
+    "mockery": "^1.4.0",
+    "pixelmatch": "^4.0.2",
+    "pngjs": "^3.2.0"
   },
   "dependencies": {
     "del": "^0.1.3",
