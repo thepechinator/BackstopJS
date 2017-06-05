@@ -67,16 +67,16 @@ gulp.task('compare', (done) => {
 
   function forkWorker(testPairs) {
     const child = childProcess.fork(path.join(__dirname, '../util/compare'));
-    child.on('exit', (code, signal) => {
-      console.log('Child exited:', code, signal);
-    });
+    // child.on('exit', (code, signal) => {
+    //   console.log('Child exited:', code, signal);
+    // });
 
     child.on('error', (err) => {
       console.error('Child error:', err);
     });
 
     child.on('message', (result) => {
-      console.info('child message:', result.toString());
+      // console.info('child message:', result.toString());
       workerResults.push(result);
 
       if (result.shouldExit) {

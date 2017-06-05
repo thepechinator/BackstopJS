@@ -1,7 +1,7 @@
-const gulp = require('gulp');
-const open = require('gulp-open');
-const rename = require('gulp-rename');
-const jeditor = require('gulp-json-editor');
+// const gulp = require('gulp');
+// const open = require('gulp-open');
+// const rename = require('gulp-rename');
+// const jeditor = require('gulp-json-editor');
 
 const PNG = require('pngjs').PNG;
 const pixelmatch = require('pixelmatch');
@@ -14,7 +14,7 @@ const _ = require('underscore');
 
 
 const failsStorage = [];
-const compareConfig = JSON.parse(fs.readFileSync(paths.compareConfigFileName, 'utf8'));
+// const compareConfig = JSON.parse(fs.readFileSync(paths.compareConfigFileName, 'utf8'));
 let numberOfTests = 0;
 let passed = 0;
 let failed = 0;
@@ -54,7 +54,7 @@ function getDiffFilename(testPath, status) {
   };
 }
 
-function storeDiffImage(pair, testPath, diff, testFile, status) {
+function storeDiffImage(pair, testPath, data, testFile, status) {
   startDiffStore = true;
   const diffFilename = getDiffFilename(testPath, status);
   pair.diff = diffFilename;
@@ -71,45 +71,23 @@ function storeDiffImage(pair, testPath, diff, testFile, status) {
 
   if (status === 'fail') {
     failsStorage.push(diffFilename.basename);
-    const failedDiffStream = fs.createWriteStream(diffFilename.full);
-    failedDiffStream.on('close', () => {
-      startDiffStore = false;
-      numberOfTests -= 1;
-      checkQueue();
-    });
-    diff.pack().pipe(failedDiffStream);
-  } else if (status === 'pass') {
-    const passedDiffStream = fs.createWriteStream(diffFilename.full);
-    passedDiffStream.on('close', () => {
-      startDiffStore = false;
-      numberOfTests -= 1;
-      checkQueue();
-    });
-    diff.pack().pipe(passedDiffStream);
-      // .on('finish', () => {
-      //   console.log('ON PASS file done');
-      //   startDiffStore = false;
-      //   checkQueue();
-      // });
   }
+
+  const writeStream = fs.createWriteStream(diffFilename.full);
+  writeStream.on('close', () => {
+    startDiffStore = false;
+    numberOfTests -= 1;
+    checkQueue();
+  });
+  data.pack().pipe(writeStream);
 }
 
-function compareImages(referencePath, testPath, pair) {
-  console.info('compareImages');
-  console.info('referencePath', referencePath);
-  console.info('testPath', testPath);
-
-  if (typeof pair.misMatchThreshold === 'undefined') {
-    pair.misMatchThreshold = 0.1;
-  }
-  const threshold = pair.misMatchThreshold;
-
+const runPixelmatch = (referencePath, testPath, pair) => {
   let filesRead = 0;
   let refImg = null;
   let testImg = null;
 
   const doneReading = () => {
-    console.info('doneReading');
     filesRead += 1;
     if (filesRead < 2) {
       return;
@@ -119,42 +97,79 @@ function compareImages(referencePath, testPath, pair) {
     //
     // console.info('pixelmatch!');
     // try {
-    const result = pixelmatch(
+    //
+    // Make it return a promise.. maybe that will make it actually
+    // faster.
+    pixelmatch(
       refImg.data,
       testImg.data,
       diff.data,
       refImg.width,
       refImg.height,
-      { threshold: 0.1 }
-    );
+      { threshold: 0.1, includeAA: true }
+    )
+    .then((result) => {
+      console.info('pixelmatch done');
+      if (result > 0) {
+        // If there are some mismatches
+        pair.testStatus = 'fail';
+        failed += 1;
+        console.log('ERROR:', pair.label, pair.fileName);
+        // console.info('pair: ', pair); // wf
+      } else {
+        // No errors
+        pair.testStatus = 'pass';
+        passed += 1;
+        console.log('OK:', pair.label, pair.fileName);
+      }
 
-    if (result > 0) {
-      // If there are some mismatches
-      pair.testStatus = 'fail';
-      failed += 1;
-      console.log('ERROR:', pair.label, pair.fileName);
-      console.info('pair: ', pair); // wf
-    } else {
-      // No errors
-      pair.testStatus = 'pass';
-      passed += 1;
-      console.log('OK:', pair.label, pair.fileName);
-    }
-
-    storeDiffImage(pair, testPath, diff, pair.fileName, pair.testStatus);
+      storeDiffImage(pair, testPath, diff, pair.fileName, pair.testStatus);
+    });
   };
 
   refImg = fs.createReadStream(referencePath).pipe(new PNG()).on('parsed', doneReading);
   testImg = fs.createReadStream(testPath).pipe(new PNG()).on('parsed', doneReading);
+};
+
+const resembleConfig = {
+  errorColor: { red: 244, green: 67, blue: 54 },
+  errorType: 'movement',
+  transparency: 0.1,
+  largeImageThreshold: 1200,
+};
+
+resemble.outputSettings(resembleConfig);
+const runResemble = (referencePath, testPath, pair) => {
+  resemble(referencePath).compareTo(testPath)
+    .onComplete((diff) => {
+      const imageComparisonFailed = !diff.isSameDimensions ||
+        (diff.misMatchPercentage > pair.misMatchThreshold);
+
+      if (imageComparisonFailed) {
+        pair.testStatus = 'fail';
+        failed += 1;
+      } else {
+        pair.testStatus = 'pass';
+        passed += 1;
+      }
+
+      storeDiffImage(pair, testPath, diff.getDiffImage(), pair.fileName, pair.testStatus);
+    });
+};
+
+function compareImages(referencePath, testPath, pair) {
+  if (typeof pair.misMatchThreshold === 'undefined') {
+    pair.misMatchThreshold = 0.1;
+  }
+
+  runPixelmatch(referencePath, testPath, pair);
+  // runResemble(referencePath, testPath, pair);
 }
 
 function test() {
-  console.info('compare test images!');
-
   // The main code execution
   // The testPairs can't be mutated here...
   _.each(testPairs, (pair) => {
-    console.info('run!');
     pair.testStatus = 'running';
 
     // need the pair, referencePath, and testPath...
@@ -171,18 +186,17 @@ function test() {
 }
 
 process.on('message', (data) => {
-  console.info('run compare test!');
   // do something
   numberOfTests = data.testPairs.length;
   testPairs = data.testPairs;
   test();
 });
 
-process.on('error', (err) => {
-  console.error('Child error:', err.toString());
-  process.send(err);
-});
-
-process.on('uncaughtException', function(e){
-    process.send(e);
-})
+// process.on('error', (err) => {
+//   console.error('Child error:', err.toString());
+//   process.send(err);
+// });
+//
+// process.on('uncaughtException', function(e){
+//     process.send(e);
+// })
