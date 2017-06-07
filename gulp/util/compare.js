@@ -162,8 +162,8 @@ function compareImages(referencePath, testPath, pair) {
     pair.misMatchThreshold = 0.1;
   }
 
-  runPixelmatch(referencePath, testPath, pair);
-  // runResemble(referencePath, testPath, pair);
+  // runPixelmatch(referencePath, testPath, pair);
+  runResemble(referencePath, testPath, pair);
 }
 
 function test() {
