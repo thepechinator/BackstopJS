@@ -100,7 +100,7 @@ const runPixelmatch = (referencePath, testPath, pair) => {
     //
     // Make it return a promise.. maybe that will make it actually
     // faster.
-    pixelmatch(
+    const result = pixelmatch(
       refImg.data,
       testImg.data,
       diff.data,
@@ -108,23 +108,22 @@ const runPixelmatch = (referencePath, testPath, pair) => {
       refImg.height,
       { threshold: 0.1, includeAA: true }
     )
-    .then((result) => {
-      console.info('pixelmatch done');
-      if (result > 0) {
-        // If there are some mismatches
-        pair.testStatus = 'fail';
-        failed += 1;
-        console.log('ERROR:', pair.label, pair.fileName);
-        // console.info('pair: ', pair); // wf
-      } else {
-        // No errors
-        pair.testStatus = 'pass';
-        passed += 1;
-        console.log('OK:', pair.label, pair.fileName);
-      }
 
-      storeDiffImage(pair, testPath, diff, pair.fileName, pair.testStatus);
-    });
+    console.info('pixelmatch done');
+    if (result > 0) {
+      // If there are some mismatches
+      pair.testStatus = 'fail';
+      failed += 1;
+      console.log('ERROR:', pair.label, pair.fileName);
+      // console.info('pair: ', pair); // wf
+    } else {
+      // No errors
+      pair.testStatus = 'pass';
+      passed += 1;
+      console.log('OK:', pair.label, pair.fileName);
+    }
+
+    storeDiffImage(pair, testPath, diff, pair.fileName, pair.testStatus);
   };
 
   refImg = fs.createReadStream(referencePath).pipe(new PNG()).on('parsed', doneReading);
@@ -162,8 +161,8 @@ function compareImages(referencePath, testPath, pair) {
     pair.misMatchThreshold = 0.1;
   }
 
-  // runPixelmatch(referencePath, testPath, pair);
-  runResemble(referencePath, testPath, pair);
+  runPixelmatch(referencePath, testPath, pair);
+  // runResemble(referencePath, testPath, pair);
 }
 
 function test() {
