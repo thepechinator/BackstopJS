@@ -1,5 +1,19 @@
 [![Build Status](https://travis-ci.org/garris/BackstopJS.svg)](https://travis-ci.org/garris/BackstopJS)
 
+# USN Strategy
+
+* Need to come up with an approach where devs can easily check in blessed screenshots from the UI.
+* Applying the blessed screenshots to next.usnews.com is a bit of a challenge since it doesn't have the .git information, though maybe we can change that? Or not, since a lot of the repo is missing.
+* Another idea is to take the blessed screenshots and scp them into a static repo the user specifies. He/she can specify:
+  * The server (sandbox, etc)
+  * Optionally, downloading the blessed screenshots (or entire bitmaps_reference directory) to copy and paste somewhere.
+* Yet another idea is providing the user an scp command they can use anywhere to copy the files down from next (I think the easiest). <--- I think this idea is the winner
+
+* The other problem is figuring out how to keep separate instances of the backstop report running. A new instance should be kicked off when the static-acceptance-tests job finishes.
+  * There should be a limit in the amount of reports that can be open at one time, maybe like 5 reports before the oldest one has to shut off.
+
+I think if both requirements are met, then this feature should be complete.
+
 #BackstopJS
 **Catch CSS curve balls.**
 
