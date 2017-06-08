@@ -23,7 +23,6 @@
     "eslint-plugin-react": "^7.0.1",
     "mocha": "^1.21.5",
     "mockery": "^1.4.0",
-    "pixelmatch": "^4.0.2",
     "pngjs": "^3.2.0"
   },
   "dependencies": {
@@ -41,6 +40,7 @@
     "is-running": "~1.0.5",
     "jsonfile": "^2.3.1",
     "node-resemble-js": "0.0.4",
+    "pixelmatch": "^4.0.2",
     "require-dir": "^0.1.0",
     "run-sequence": "^1.1.5",
     "underscore": "~1.6.0",
