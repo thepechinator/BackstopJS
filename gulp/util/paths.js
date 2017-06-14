@@ -43,8 +43,8 @@ paths.captureConfigFileNameDefault = `${paths.backstop}/capture/config.default.j
 paths.casper_scripts = null;
 paths.casper_scripts_default = `${paths.backstop}/capture/casper_scripts`;
 
-// SERVER PID PATH
-paths.serverPidFile = `${paths.backstop}/server.pid`;
+// SERVER CONFIG PATH
+paths.reportServerConfig = argv['report-server-config'] || `${paths.backstop}/report-server-config.json`;
 
 // ACTIVE CAPTURE CONFIG PATH
 paths.activeCaptureConfigPath = '';

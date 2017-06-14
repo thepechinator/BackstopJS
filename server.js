@@ -8,7 +8,6 @@ const express = require('express');
 const path = require('path');
 const _ = require('underscore');
 const os = require('os');
-const sys = require('sys');
 // const exec = require('child_process').exec;
 const spawn = require('child_process').spawn; // TODO: combine this with above
 const argv = require('yargs').argv;
@@ -199,17 +198,6 @@ console.log();
 console.log('Current Directory: '+__dirname);
 console.log('Serving files from: '+rootDir);
 console.log('Listening on: ' + getAddresses() + ':' + port + '');
-console.log('Press Ctrl + C to stop.');
-
-
-/*if(autoShutDownMs>0){
-  setTimeout(function(){
-    console.log('\n['+new Date()+'] Server is shutting down now. Bye!\n');
-    listenerHook.close();
-  }, autoShutDownMs);
-
-  console.log('\n['+new Date()+'] PLEASE NOTE: THIS SERVER WILL AUTOMATICALLY SHUT DOWN IN ' + Math.round(autoShutDownMs/60000 * 100) / 100+ ' MINS.\n')
-}*/
 
 //=====================
 function getAddresses(){
@@ -224,8 +212,3 @@ function getAddresses(){
 
   return addresses;
 }
-
-function puts(error, stdout, stderr) {sys.puts(stdout)}
-
-
-

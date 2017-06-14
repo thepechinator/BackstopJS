@@ -1,5 +1,6 @@
 const gulp = require('gulp');
 const open = require('gulp-open');
+const fs = require('fs-extra');
 const isWin = require('../util/isWin');
 const paths = require('../util/paths');
 const rename = require('gulp-rename');
@@ -9,9 +10,7 @@ const referenceDir = './bitmaps_reference/';
 const testDir = './bitmaps_test/';
 
 const runSequence = require('run-sequence');
-
-const genConfigPath = '../../capture/config.json';
-const config = require(genConfigPath);
+const config = require('../../capture/config.json');
 
 const maxStoredRuns = config.maxStoredRuns || 5;
 
@@ -53,18 +52,25 @@ gulp.task('bitmaps-test:copy', ['bitmaps-test:remove-old-runs'], () => {
 });
 
 gulp.task('openReport:do', () => {
-  console.log('\nTesting with ', paths.compareConfigFileName);
-  console.log('Opening report -> ', `${paths.compareReportURL}\n`);
+  let serverConfig = { currentPort: paths.reportPort };
+  try {
+    serverConfig = fs.readJsonSync(paths.reportServerConfig);
+  } catch (e) {
+    console.warn(e);
+  }
 
   const options = {
-    url: paths.compareReportURL,
+    url: paths.compareReportURL.replace(/:[0-9]+/, `:${serverConfig.currentPort}`),
     app: isWin ? 'chrome' : 'Google Chrome',
   };
 
-  console.info('compareConfigFileName', paths.compareConfigFileName);
+  console.log('\nTesting with ', paths.compareConfigFileName);
+  console.log('Opening report -> ', `${options.url}\n`);
+
   return gulp.src(paths.compareConfigFileName)
     .pipe(jeditor((json) => {
-      json.testPairs.forEach((item) => {
+      json.testPairs.forEach((params) => {
+        const item = Object.assign({}, params);
         const rFile = referenceDir + item.reference.split('/').slice(-1)[0];
         const tFile = testDir + item.test.split('/').slice(-2).join('/');
         item.local_reference = rFile;
