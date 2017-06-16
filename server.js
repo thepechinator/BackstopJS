@@ -105,16 +105,16 @@ app.post('/baseline', (req, res) => {
 // This receives and stores the test name and baseline boolean in a text file
 // The /backstop request will read the data from this file
 // TODO: see if this is even necessary
-app.post('/backstop-test-prep', function(req, res) {
-    var currentTest = fs.readFileSync('current-test.txt', 'utf8');
-    if (currentTest === 'done') {
-      console.log('Preparing to test: ', req.body.test_name);
-      fs.writeFileSync('current-test.txt', JSON.stringify(req.body));
-      console.log('Writing to current-test.txt');
-      res.send('ok');
-    } else {
-      res.send({'status': 'busy'});
-    }
+app.post('/backstop-test-prep', (req, res) => {
+  const currentTest = fs.readFileSync('current-test.txt', 'utf8');
+  if (currentTest === 'done') {
+    console.log('Preparing to test: ', req.body.test_name);
+    fs.writeFileSync('current-test.txt', JSON.stringify(req.body));
+    console.log('Writing to current-test.txt');
+    res.send('ok');
+  } else {
+    res.send({ status: 'busy' });
+  }
 });
 
 // This fires off a gulp backstop task
@@ -194,7 +194,6 @@ app.get('/backstop', function(req, res) {
 var listenerHook = app.listen(port);
 
 //===================
-console.log();
 console.log('Current Directory: '+__dirname);
 console.log('Serving files from: '+rootDir);
 console.log('Listening on: ' + getAddresses() + ':' + port + '');

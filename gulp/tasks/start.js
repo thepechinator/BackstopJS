@@ -52,7 +52,7 @@ gulp.task('start', (cb) => {
 
   const start = () => {
     // Check for an open port, using the port argument as the default.
-    portfinder.baseport = port;
+    portfinder.basePort = port;
     portfinder.getPortPromise()
       .then((port) => {
         // By default, let server run forever.
