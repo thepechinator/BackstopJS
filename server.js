@@ -89,7 +89,12 @@ app.post('/baseline', (req, res) => {
     if (err) throw err;
     configObj = JSON.parse(data);
 
-    configObj.testPairs[configToUpdate].local_testStatus = status;
+    for (testPair of configObj.testPairs) {
+        if (testPair.fileName === req.body.fileName) {
+          testPair.local_testStatus = status;
+        }
+      }
+
 
     fs.writeFile(configFileName, JSON.stringify(configObj, null, 2), function (err) {
       if (err) throw err;

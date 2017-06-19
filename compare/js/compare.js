@@ -759,25 +759,25 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
         data: {
                'toBless' : toBless,
                'blessed' : testPair.b.src,
-               'index': index
+               'index': index,
+               'fileName' : testPair.fileName
               }
     }).success(function(data, status, headers, config) {
         let testPairToUpdate = testPair;
         if (toBless) {
           testPairToUpdate.testStatus = 'blessed';
           testPairToUpdate.blessed = true;
-          $scope.testPairs[index] = testPairToUpdate;
           $scope.blessedCount++;
-          console.info('$scope.blessedCount: ', $scope.blessedCount); //wf
         } else {
           testPairToUpdate.testStatus = 'fail';
           testPairToUpdate.blessed = false;
-          $scope.testPairs[index] = testPairToUpdate;
           $scope.blessedCount--;
         }
-        //testPairToUpdate.passed = true;
-        //$scope.passedCount++;
-        //$scope.msg = TODO;
+        for (testPair of $scope.testPairs) {
+          if (testPair.fileName === testPairToUpdate.fileName) {
+            testPair = testPairToUpdate;
+          }
+        }
     }).error(function(data, status, headers, config) {
         console.info('something went wrong');
         $scope.status = status;

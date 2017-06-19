@@ -65,7 +65,7 @@
     <div class="logo" ng-class="{hasFails: (testPairsCompleted - passedCount) > 0}" ng-include="'js/views/logo.html'"></div>
     <div class="row">
       <div class="col-md-1">
-        <label for="statusFilter" class="control-label">status</label>{{statusFilter}}
+        <label for="statusFilter" class="control-label">status</label>
         <select id="statusFilter" class="form-control" ng-model="statusFilter" ng-options="status for status in detailFilterOptions"></select>
       </div>
       <div class="col-md-2 viewport">
