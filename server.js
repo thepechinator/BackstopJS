@@ -13,6 +13,7 @@ const spawn = require('child_process').spawn; // TODO: combine this with above
 const argv = require('yargs').argv;
 const paths = require('./gulp/util/paths');
 const fs = require('fs-extra');
+const archiver = require('archiver');
 
 const app = express();
 
@@ -35,6 +36,34 @@ app.use('/bitmaps_test', express.static(paths.bitmaps_test));
 //  exec("gulp test",puts);
 //  res.send('ok');
 // })
+//
+app.get('/download', (req, res) => {
+  const output = fs.createWriteStream(__dirname + '/bitmaps_reference.zip');
+  const archive = archiver('zip', {
+    store: true,
+  });
+
+  // listen for all archive data to be written
+  output.on('close', function() {
+    console.log(archive.pointer() + ' total bytes');
+    console.log('archiver has been finalized and the output file descriptor has closed.');
+    res.download(path.resolve(path.join(__dirname, '/bitmaps_reference.zip')));
+  });
+
+  // good practice to catch this error explicitly
+  archive.on('error', (err) => {
+    throw err;
+  });
+
+  // pipe archive data to the file
+  archive.pipe(output);
+
+  // append files from a directory
+  archive.directory(paths.bitmaps_reference, 'bitmaps_reference', false);
+
+  // finalize the archive (ie we are done appending files but streams have to finish yet)
+  archive.finalize();
+});
 
 app.post('/baseline', (req, res) => {
   const params = req.body;
