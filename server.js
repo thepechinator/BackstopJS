@@ -12,7 +12,7 @@ const os = require('os');
 const spawn = require('child_process').spawn; // TODO: combine this with above
 const argv = require('yargs').argv;
 const paths = require('./gulp/util/paths');
-const fs = require('fs');
+const fs = require('fs-extra');
 
 const app = express();
 
@@ -37,17 +37,24 @@ app.use('/bitmaps_test', express.static(paths.bitmaps_test));
 // })
 
 app.post('/baseline', (req, res) => {
+  const params = req.body;
+
   // TODO: Make the string splitting and manipulation more robust
   // TODO: Add error handling
-  var toBless = req.body.toBless;
-  var status = toBless ? 'blessed' : 'fail';
+  const toBless = params.toBless;
+  const status = toBless ? 'blessed' : 'fail';
 
   // I think something about this process isn't right. We are really just trying
   // to grab the test image and replace the reference image with it.
   //
   // We also need to revert it if possible.
-  var blessed = req.body.blessed.split('bitmaps_test/')[1];
-  var blessedDest = path.basename(blessed);
+  // This gives us the right directory under bitmaps_test the
+  // relevant screenshots are in.
+  const blessed = params.blessed.split('bitmaps_test/')[1];
+  // This gives us the basename.
+  const basename = path.basename(blessed);
+  console.info('blessed', blessed);
+  console.info('basename', basename);
 
   // move the blessed image to the bitmaps reference.
   //
@@ -58,16 +65,24 @@ app.post('/baseline', (req, res) => {
   // the bitmaps_reference directory. That is what 'blessing' does.
   //
   // something like ../../ will be extracted
-  const cwd = `${paths.bitmaps_reference.split('../')[0]}../`;
-  const copyFrom = path.join(paths.bitmaps_test, blessed);
-  const copyTo = path.join(paths.bitmaps_reference, blessedDest);
+  //
+  // I do not really understand yet how to get the right cwd.
+  // const cwd = `${paths.bitmaps_reference.split('../')[0]}../`;
+  const testFile = path.join(paths.bitmaps_test, blessed);
+  const refFile = path.join(paths.bitmaps_reference, basename);
+  const revertFile = path.join(paths.bitmaps_reference, '../', 'tmp', basename);
 
-  fs.createReadStream(copyFrom)
-    .pipe(fs.createWriteStream(copyTo));
+  // console.info('cwd', cwd);
+  // console.info('testFile', testFile);
+  // console.info('refFile', refFile);
+  // console.info('revertFile', revertFile);
+  //
+  // fs.createReadStream(testFile)
+  //   .pipe(fs.createWriteStream(refFile));
 
   // update the config.json to reflect status of blessed
   const configFileName = paths.compareConfigFileName;
-  const configToUpdate = req.body.index;
+  const configToUpdate = params.index;
   let configObj;
 
   fs.readFile(configFileName, 'utf8', (err, data) => {
@@ -81,18 +96,14 @@ app.post('/baseline', (req, res) => {
 
       console.log('\n');
       if (toBless) {
-        console.log('Blessed file received: ' + blessedDest);
+        console.log('Blessed file received: ' + basename);
+        fs.copySync(refFile, revertFile);
+        fs.copySync(testFile, refFile);
         console.log('Moving to baseline reference directory, ready for version control');
       } else {
-        console.log('File to Unbless received: ' + blessedDest);
+        console.log('File to Unbless received: ' + basename);
+        fs.copySync(revertFile, refFile);
         console.log('Reset to "fail" status');
-        var clean_file = spawn('git', ['checkout', copyTo.replace(cwd, '')], { cwd });
-        clean_file.stdout.on('close', function (data) {
-          console.log(blessedDest + ' no longer blessed for version control');
-        });
-        clean_file.stderr.on('data', function (data) {
-          console.log('error: ', data.toString()); //wf
-        });
       }
       console.log('Updating data (writing to ' + configFileName + ')');
 
