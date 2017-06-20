@@ -289,7 +289,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   $scope.blessedCount = 0;
   $scope.testDuration = 0;
   $scope.testIsRunning = true;
-
+  $scope.downloadUrl = location.origin + '/download';
 
   $scope.detailFilterOptions = ['all','blessed', 'failed','passed'];
   $scope.statusFilter = 'failed';

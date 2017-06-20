@@ -1,11 +1,11 @@
 <div class="row bless-command" ng-if="blessedCount">
     <div class="col-md-12">
         <code>
-            node yarn update-refs -- --url=http://build2.usnews.com:3003/download
+            node yarn update-refs -- --url={{downloadUrl}}
         </code>
         <span>(or</span>
-        <a href="">download</a>
-        <span>baselines to local machine)</span>
+        <a href="/download">download</a>
+        <span>blessed baselines to local machine)</span>
     </div>
 </div>
 <div class="row">
@@ -13,31 +13,31 @@
         <h1 class="header-title">CSS <span>Regression Testing</span></h1>
         <span ng-show="testRunning && scenarioStage" class="filter-length">
             <span>capturing</span>
-            <strong>{{capturesCompleted}}</strong> 
+            <strong>{{capturesCompleted}}</strong>
             <span>of</span>
-            <strong>{{numScenarios * 3}}</strong> 
+            <strong>{{numScenarios * 3}}</strong>
             <span>screenshots</span>
         </span>
         <span ng-show="testRunning && compareStage" class="filter-length">
-            <span>comparing</span> 
+            <span>comparing</span>
             <strong>{{testPairsCompleted}}</strong>
             <span>of</span>
-            <strong>{{numScenarios * 3}}</strong> 
+            <strong>{{numScenarios * 3}}</strong>
             <span>screenshots</span>
         </span>
         <span ng-show="!testRunning" class="filter-length">
-            <span>showing</span> 
-            <strong>{{filtered.length}}</strong> 
-            <span>of</span> 
-            <strong>{{testPairs.length}}</strong> 
+            <span>showing</span>
+            <strong>{{filtered.length}}</strong>
+            <span>of</span>
+            <strong>{{testPairs.length}}</strong>
             <span>screenshots</span>
         </span>
-    
+
     </div>
     <div class="col-md-5">
         <div class="stat-main-container text-center fade-in">
             <!-- <div><label>totals</label></div> -->
-            
+
             <div ng-show="blessedCount >= 1">
                 <!-- blessed -->
                 <div class="stat-main blessed" ng-click="setStatus('blessed')">
@@ -47,12 +47,12 @@
             </div>
 
             <div ng-show="compareStage || !testRunning">
-                <!-- passed -->    
+                <!-- passed -->
                 <div class="stat-main passed" ng-click="setStatus('passed')">
                     <div class="count">{{passedCount}}</div>
                     <div class="stat-label">passed</div>
                 </div>
-              
+
                 <!-- failed -->
                 <div class="stat-main failed" ng-click="setStatus('failed')">
                     <div class="count">{{testPairsCompleted-passedCount-blessedCount}}</div>
@@ -60,7 +60,7 @@
                 </div>
             </div>
 
-            
+
         </div>
     </div>
     <div class="col-md-2"></div>
