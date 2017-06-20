@@ -129,11 +129,10 @@ app.post('/baseline', (req, res) => {
     configObj = JSON.parse(data);
 
     for (testPair of configObj.testPairs) {
-        if (testPair.fileName === req.body.fileName) {
-          testPair.local_testStatus = status;
-        }
+      if (testPair.fileName === req.body.fileName) {
+        testPair.local_testStatus = status;
       }
-
+    }
 
     fs.writeFile(configFileName, JSON.stringify(configObj, null, 2), function (err) {
       if (err) throw err;
