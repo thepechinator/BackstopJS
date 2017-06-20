@@ -1,6 +1,6 @@
 <div id="{{thisTestPair.meta.label + thisTestPair.meta.viewport}}" class="detail container-fluid" ng-repeat="thisTestPair in testPairs | filter : viewportFilter | filter : displayOnStatusFilter | filter : directoryFilter track by $index">
     <a class="anchor" id="{{ thisTestPair.meta.fileName | anchor }}"></a>
-    <div class="row sticky">
+    <div ng-class="{'row sticky' : true, 'is-blessed' : blessedCount }">
         <div class="col-md-12">
             <div class="{{thisTestPair.testStatus}} detail-summary-header row">
                 <div class="detail-summary-status status col-md-1">

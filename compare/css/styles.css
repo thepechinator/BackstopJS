@@ -882,3 +882,21 @@ input.bless-checkbox {
 .no-results-msg p small {
     font-weight: normal;
 }
+
+.bless-command {
+    padding: 4px;
+    text-align: center;
+    margin-top: -6px;
+    margin-bottom: 3px;
+}
+
+.bless-command code {
+    color: #64B5F6;
+}
+
+.sticky {
+    top: 40px !important;
+}
+.sticky.is-blessed {
+    top: 64px !important;
+}

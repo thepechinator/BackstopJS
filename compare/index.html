@@ -25,7 +25,7 @@
 <body ng-controller="MainCtrl" ng-class="{'is-running': testRunning == true, 'is-error': isError == true}">
 
   <div ng-show="isError" class="fade-in">
-    <div class="row">
+    <div class="row">ng
     <div class="col-md-4"></div>
       <div class="col-md-4 panel panel-default panel-error">
         <div class="panel-body">
@@ -41,8 +41,7 @@
   </div>
   <a class="anchor" id="root"></a>
   <div class="content-main">
-
-    <header class="header" ng-include="'js/views/header.html'"></header>
+    <header class="header" ng-include="'js/views/header.html'" ng-style="{ height: blessedCount ? '64px' : '40px' }"></header>
     <div class="running-command">{{runningCommand}}</div>
     <div id="runningBlock">
       <code>

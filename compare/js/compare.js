@@ -300,7 +300,7 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   $scope.displayOnStatusFilter = function(o){
     // console.info('o', o);
     // TODO: Move this into a directive that watches this
-    $('.sticky').stick_in_parent({offset_top:40});
+    $('.sticky').stick_in_parent({offset_top: $scope.blessedCount ? 64 : 40 });
 
     if (o.processing) return false;
 
@@ -746,7 +746,6 @@ compareApp.controller('MainCtrl', function ($scope, $route, $routeParams, $q, $h
   };
 
   $scope.bless = function(testPair, index) {
-
     // console.info('testPair.blessed', testPair.blessed);
     // let toBeforeBless = testPair.blessed;
     // console.info('toBeforeBless', toBeforeBless);
