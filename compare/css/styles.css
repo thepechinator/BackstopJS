@@ -888,10 +888,25 @@ input.bless-checkbox {
     text-align: center;
     margin-top: -6px;
     margin-bottom: 3px;
+    margin-right: 12px;
 }
 
 .bless-command code {
     color: #64B5F6;
+}
+
+.bless-command span {
+    color: #aaa;
+}
+
+.bless-command a {
+    color:  #ccc;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.bless-command a:hover {
+    color:  #64B5F6;
 }
 
 .sticky {
