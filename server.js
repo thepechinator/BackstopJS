@@ -38,15 +38,25 @@ app.use('/bitmaps_test', express.static(paths.bitmaps_test));
 // })
 //
 app.get('/download', (req, res) => {
-  const output = fs.createWriteStream(__dirname + '/bitmaps_reference.zip');
+  const blessedDir = path.join(paths.bitmaps_reference, '../', 'blessed');
+
+  try {
+    fs.accessSync(blessedDir);
+  } catch (e) {
+    res.send('No images have been blessed yet to download.');
+    return;
+  }
+
+  const output = fs.createWriteStream(`${__dirname}/bitmaps_reference.zip`);
   const archive = archiver('zip', {
     store: true,
   });
 
   // listen for all archive data to be written
-  output.on('close', function() {
-    console.log(archive.pointer() + ' total bytes');
+  output.on('close', () => {
+    console.log(`${archive.pointer()} total bytes`);
     console.log('archiver has been finalized and the output file descriptor has closed.');
+
     res.download(path.resolve(path.join(__dirname, '/bitmaps_reference.zip')));
   });
 
@@ -58,8 +68,7 @@ app.get('/download', (req, res) => {
   // pipe archive data to the file
   archive.pipe(output);
 
-  // append files from a directory
-  archive.directory(paths.bitmaps_reference, 'bitmaps_reference', false);
+  archive.directory(blessedDir, 'bitmaps_reference', false);
 
   // finalize the archive (ie we are done appending files but streams have to finish yet)
   archive.finalize();
@@ -100,6 +109,7 @@ app.post('/baseline', (req, res) => {
   const testFile = path.join(paths.bitmaps_test, blessed);
   const refFile = path.join(paths.bitmaps_reference, basename);
   const revertFile = path.join(paths.bitmaps_reference, '../', 'tmp', basename);
+  const downloadFile = path.join(paths.bitmaps_reference, '../', 'blessed', basename);
 
   // console.info('cwd', cwd);
   // console.info('testFile', testFile);
@@ -133,10 +143,12 @@ app.post('/baseline', (req, res) => {
         console.log('Blessed file received: ' + basename);
         fs.copySync(refFile, revertFile);
         fs.copySync(testFile, refFile);
+        fs.copySync(testFile, downloadFile);
         console.log('Moving to baseline reference directory, ready for version control');
       } else {
         console.log('File to Unbless received: ' + basename);
         fs.copySync(revertFile, refFile);
+        fs.removeSync(downloadFile);
         console.log('Reset to "fail" status');
       }
       console.log('Updating data (writing to ' + configFileName + ')');
