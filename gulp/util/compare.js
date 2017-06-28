@@ -106,7 +106,7 @@ const runPixelmatch = (referencePath, testPath, pair) => {
       diff.data,
       refImg.width,
       refImg.height,
-      { threshold: 0.1, includeAA: true }
+      { threshold: pair.misMatchThreshold, includeAA: true }
     )
 
     console.info('pixelmatch done');
@@ -158,7 +158,7 @@ const runResemble = (referencePath, testPath, pair) => {
 
 function compareImages(referencePath, testPath, pair) {
   if (typeof pair.misMatchThreshold === 'undefined') {
-    pair.misMatchThreshold = 0.1;
+    pair.misMatchThreshold = 0.5;
   }
 
   runPixelmatch(referencePath, testPath, pair);
