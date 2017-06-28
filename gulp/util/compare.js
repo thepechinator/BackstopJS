@@ -158,11 +158,11 @@ const runResemble = (referencePath, testPath, pair) => {
 
 function compareImages(referencePath, testPath, pair) {
   if (typeof pair.misMatchThreshold === 'undefined') {
-    pair.misMatchThreshold = 0.5;
+    pair.misMatchThreshold = 0.1;
   }
 
-  runPixelmatch(referencePath, testPath, pair);
-  // runResemble(referencePath, testPath, pair);
+  // runPixelmatch(referencePath, testPath, pair);
+  runResemble(referencePath, testPath, pair);
 }
 
 function test() {
